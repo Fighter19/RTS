@@ -31,15 +31,23 @@
 #ifndef __BEZIERSEGMENT_H__
 #define __BEZIERSEGMENT_H__
 
+#ifdef RTS_USE_GLM
+#include <glm/glm.hpp>
+#else
 #include <D3DX8Math.h>
-#include "Common/STLTypeDefs.h"
+#endif
+#include "Common/STLTypedefs.h"
 
 #define USUAL_TOLERANCE 1.0f
 
 class BezierSegment
 {
 	protected:
+	#ifdef RTS_USE_GLM
+		static const glm::mat4 s_bezBasisMatrix;
+	#else
 		static const D3DXMATRIX s_bezBasisMatrix;
+	#endif
 		Coord3D m_controlPoints[4];
 
 	public:	// Constructors

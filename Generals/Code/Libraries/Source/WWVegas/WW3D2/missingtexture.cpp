@@ -18,8 +18,10 @@
 
 #include "missingtexture.h"
 #include "texture.h"
+#ifdef _WIN32
 #include "dx8wrapper.h"
 #include <D3dx8core.h>
+#endif
 
 static unsigned missing_image_width=128;
 static unsigned missing_image_height=128;
@@ -33,12 +35,15 @@ static IDirect3DTexture8 * _MissingTexture = NULL;
 IDirect3DTexture8* MissingTexture::_Get_Missing_Texture()
 {
 	WWASSERT(_MissingTexture);
+#ifdef _WIN32
 	_MissingTexture->AddRef();
+#endif
 	return _MissingTexture;
 }
 
 IDirect3DSurface8* MissingTexture::_Create_Missing_Surface()
 {
+#ifdef _WIN32
 	IDirect3DSurface8 *texture_surface = NULL;
 	DX8_ErrorCode(_MissingTexture->GetSurfaceLevel(0, &texture_surface));
 	D3DSURFACE_DESC texture_surface_desc;
@@ -54,12 +59,15 @@ IDirect3DSurface8* MissingTexture::_Create_Missing_Surface()
 	DX8CALL(CopyRects(texture_surface, NULL, 0, surface, NULL));
 	texture_surface->Release();
 	return surface;
+#else
+	return NULL; // Not implemented for non-Windows platforms
+#endif
 }
 
 void MissingTexture::_Init()
 {
 	WWASSERT(!_MissingTexture);
-
+#ifdef _WIN32
 	IDirect3DTexture8* tex=DX8Wrapper::_Create_DX8_Texture(
 		missing_image_width,
 		missing_image_height,
@@ -114,6 +122,7 @@ void MissingTexture::_Init()
 	}
 
 	_MissingTexture=tex;
+#endif
 /*
 	//Load an 8-bit tga and generate text representation
 	FILE *fp;
@@ -155,11 +164,13 @@ void MissingTexture::_Init()
 
 void MissingTexture::_Deinit()
 {
+#ifdef _WIN32
 	_MissingTexture->Release();
+#endif
 	_MissingTexture=0;
 }
 
-static unsigned int missing_image_palette[]={
+unsigned int missing_image_palette[]={
 0x7F040204,0x7F048AC4,0x7F84829C,0x7FFC0204,0x7F0442AB,0x7FFCFE04,0x7F444244,0x7F0462FC,
 0x7F84CEE4,0x7FC4C6CF,0x7F9CA6B2,0x7FC4E6F4,0x7F04FE04,0x7F4C82D4,0x7F2452A1,0x7F0442D4,
 0x7F446AB0,0x7FA4A6B6,0x7F2C62C2,0x7FE4E6E9,0x7F646264,0x7F0402FC,0x7FC4D6E1,0x7F44B6DC,
@@ -193,7 +204,7 @@ static unsigned int missing_image_palette[]={
 0x7FACDEEC,0x7F2CA6D4,0x7F0452E4,0x7FD4D6E4,0x7F849ED4,0x7FB4B6CC,0x7F4C7ACC,0x7FACC6FC,
 0x7F9496B4,0x7F042AA4,0x7F1C62E4,0x7F74A6EC,0x7FE4EEFC,0x7F1C72FC,0x7FD4DEEC,0x7F2C5ABC};
 
-static unsigned int missing_image_pixels[]={
+unsigned int missing_image_pixels[]={
 0x03030303,0x03030303,0xA7A7A7A7,0xA7A7A7A7,0xA7A7A7A7,0xA7A7A7A7,0xA7A7A7A7,0xA7A7A7A7,
 0xA7A7A7A7,0xA7A7A7A7,0xA7A7A7A7,0xA7A7A7A7,0xA7A7A7A7,0xA7A7A7A7,0xA7A7A7A7,0xA7A7A7A7,
 0xA7A7A7A7,0xA7A7A7A7,0xA7A7A7A7,0xA7A7A7A7,0xA7A7A7A7,0xA7A7A7A7,0xA7A7A7A7,0xA7A7A7A7,

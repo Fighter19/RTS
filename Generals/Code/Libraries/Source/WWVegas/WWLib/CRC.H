@@ -22,7 +22,7 @@
  *                                                                                             * 
  *                 Project Name : Command & Conquer                                            * 
  *                                                                                             * 
- *                     $Archive:: /G/wwlib/crc.h                                              $* 
+ *                     $Archive:: /G/wwlib/CRC.H                                              $* 
  *                                                                                             * 
  *                      $Author:: Neal_k                                                      $*
  *                                                                                             * 
@@ -113,7 +113,7 @@ class CRCEngine {
 // of being unique under most circumstances.
 // Note: this code was provided by Byon Garrabrant
 //
-// 12/09/97 EHC - converted from c to c++ static class and added to crc.h and crc.cpp
+// 12/09/97 EHC - converted from c to c++ static class and added to CRC.H and crc.cpp
 //
 #define CRC32(c,crc) (CRC::_Table[((unsigned long)(crc) ^ (c)) & 0xFFL] ^ (((crc) >> 8) & 0x00FFFFFFL))
 class CRC {

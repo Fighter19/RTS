@@ -27,8 +27,6 @@
 #include "Common/BezierSegment.h"
 #include "Common/BezFwdIterator.h"
 
-#include <D3DX8Math.h>
-
 //-------------------------------------------------------------------------------------------------
 BezierSegment::BezierSegment()
 { 
@@ -102,6 +100,8 @@ void BezierSegment::evaluateBezSegmentAtT(Real tValue, Coord3D *outResult) const
 	if (!outResult)
 		return;
 
+#ifdef RTS_USE_GLM
+#else
 	D3DXVECTOR4	tVec(tValue * tValue * tValue, tValue * tValue, tValue, 1);
 
 	D3DXVECTOR4 xCoords(m_controlPoints[0].x, m_controlPoints[1].x, m_controlPoints[2].x, m_controlPoints[3].x);
@@ -114,6 +114,7 @@ void BezierSegment::evaluateBezSegmentAtT(Real tValue, Coord3D *outResult) const
 	outResult->x = D3DXVec4Dot(&xCoords, &tResult);
 	outResult->y = D3DXVec4Dot(&yCoords, &tResult);
 	outResult->z = D3DXVec4Dot(&zCoords, &tResult);
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -238,9 +239,18 @@ void BezierSegment::splitSegmentAtT(Real tValue, BezierSegment &outSeg1, BezierS
 
 //-------------------------------------------------------------------------------------------------
 // The Basis Matrix for a bezier segment
+#ifdef RTS_USE_GLM
+const glm::mat4 BezierSegment::s_bezBasisMatrix(
+	-1.0f,  3.0f, -3.0f,  1.0f,
+	 3.0f, -6.0f,  3.0f,  0.0f,
+	-3.0f,  3.0f,  0.0f,  0.0f,
+	 1.0f,  0.0f,  0.0f,  0.0f
+);
+#else
 const D3DXMATRIX BezierSegment::s_bezBasisMatrix(
 	-1.0f,  3.0f, -3.0f,  1.0f,
 	 3.0f, -6.0f,  3.0f,  0.0f,
 	-3.0f,  3.0f,  0.0f,  0.0f,
 	 1.0f,  0.0f,  0.0f,  0.0f
 );
+#endif

@@ -88,12 +88,11 @@
 #include "assetmgr.h"
 #include "simplevec.h"
 #include "realcrc.h"
-#include "dx8wrapper.h"
 
 #include <stdio.h>
 
-#ifdef _UNIX
-#include "osdep/osdep.h"
+#ifdef _WIN32
+#include "dx8wrapper.h"
 #endif
 
 #define MESH_SINGLE_MATERIAL_HACK		0		// (gth) forces all multi-material meshes to use their first material only. (NOT RECOMMENDED, TESTING ONLY!)
@@ -910,7 +909,9 @@ WW3DErrorType MeshModelClass::read_vertex_colors(ChunkLoadClass & cload,MeshLoad
 
 			Vector4 col;
 			col.Set((float)color.R / 255.0f,(float)color.G / 255.0f,(float)color.B / 255.0f, 1.0f);
+#ifdef _WIN32
 			dcg[i]=DX8Wrapper::Convert_Color(col);
+#endif
 		}	
 	}
 	CurMatDesc->Set_DCG_Source(context->CurPass,VertexMaterialClass::COLOR1);
@@ -1282,7 +1283,9 @@ WW3DErrorType MeshModelClass::read_dcg(ChunkLoadClass & cload,MeshLoadContextCla
 			cload.Read(&color,sizeof(color));
 			Vector4 col;
 			W3dUtilityClass::Convert_Color(color,&col);
+#ifdef _WIN32
 			dcg[i]=DX8Wrapper::Convert_Color(col);
+#endif
 		}
 	} else if (context->PrelitChunkID==W3D_CHUNK_PRELIT_VERTEX) {
 		
@@ -1292,9 +1295,11 @@ WW3DErrorType MeshModelClass::read_dcg(ChunkLoadClass & cload,MeshLoadContextCla
 		for (int i=0; i<Get_Vertex_Count(); i++) {
 			cload.Read(&color,sizeof(color));
 			Vector4 col;
+#ifdef _WIN32
 			col=DX8Wrapper::Convert_Color(dcg[i]);
 			col.W = float(color.A)/255.0f;
 			dcg[i]=DX8Wrapper::Convert_Color(col);
+#endif
 		}
 	}
 
@@ -1344,19 +1349,21 @@ WW3DErrorType MeshModelClass::read_dig(ChunkLoadClass & cload,MeshLoadContextCla
 			col.Y = float(color.G)/255.0f;
 			col.Z = float(color.B)/255.0f;
 			col.W = 1.0f;
+#ifdef _WIN32
 			dcg[i]=DX8Wrapper::Convert_Color(col);
-
-
+#endif
 		}
 	} else {
 		unsigned * dcg = matdesc->Get_Color_Array(0);
 		for (int i=0; i<Get_Vertex_Count(); i++) {
 			cload.Read(&color,sizeof(color));
+#ifdef _WIN32
 			Vector4 col=DX8Wrapper::Convert_Color(dcg[i]);
 			col.X *= float(color.R)/255.0f;
 			col.Y *= float(color.G)/255.0f;
 			col.Z *= float(color.B)/255.0f;
 			dcg[i]=DX8Wrapper::Convert_Color(col);
+#endif
 		}
 	}
 
@@ -2060,7 +2067,8 @@ void MeshLoadContextClass::Add_Legacy_Material(ShaderClass shader,VertexMaterial
 	LegacyMaterialClass * mat = W3DNEW LegacyMaterialClass;
 
 	// add the shader if it is unique
-	for (int si=0; si<Shaders.Count(); si++) {
+	int si;
+	for (si=0; si<Shaders.Count(); si++) {
 		if (Shaders[si] == shader) break;
 	}
 	if (si == Shaders.Count()) {
@@ -2073,8 +2081,9 @@ void MeshLoadContextClass::Add_Legacy_Material(ShaderClass shader,VertexMaterial
 	if (vmat == NULL) {
 		mat->VertexMaterialIdx = -1;
 	} else {
-		unsigned long crc = vmat->Get_CRC();	
-		for (int vi=0; vi<VertexMaterialCrcs.Count(); vi++) {
+		unsigned long crc = vmat->Get_CRC();
+		int vi;
+		for (vi=0; vi<VertexMaterialCrcs.Count(); vi++) {
 			if (VertexMaterialCrcs[vi] == crc) break;
 		}
 		if (vi == VertexMaterials.Count()) {
@@ -2090,7 +2099,8 @@ void MeshLoadContextClass::Add_Legacy_Material(ShaderClass shader,VertexMaterial
 	if (tex == NULL) {
 		mat->TextureIdx = -1;
 	} else {
-		for (int ti=0; ti<Textures.Count(); ti++) {
+		int ti;
+		for (ti=0; ti<Textures.Count(); ti++) {
 			if (Textures[ti] == tex) break;
 			if (stricmp(Textures[ti]->Get_Texture_Name(),tex->Get_Texture_Name()) == 0) break;
 		}

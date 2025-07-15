@@ -43,7 +43,6 @@
 #include "coltest.h"
 #include "w3d_file.h"
 #include "texture.h"
-#include "dx8wrapper.h"
 #include "vp.h"
 #include "vector3i.h"
 #include "sortingrenderer.h"

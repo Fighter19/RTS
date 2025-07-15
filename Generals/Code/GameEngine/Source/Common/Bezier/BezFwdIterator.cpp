@@ -61,6 +61,16 @@ void BezFwdIterator::start(void)
 	float d2 = d * d;
 	float d3 = d * d2;
 
+#ifdef RTS_USE_GLM
+	glm::vec4 px(mBezSeg.m_controlPoints[0].x, mBezSeg.m_controlPoints[1].x, mBezSeg.m_controlPoints[2].x, mBezSeg.m_controlPoints[3].x);
+	glm::vec4 py(mBezSeg.m_controlPoints[0].y, mBezSeg.m_controlPoints[1].y, mBezSeg.m_controlPoints[2].y, mBezSeg.m_controlPoints[3].y);
+	glm::vec4 pz(mBezSeg.m_controlPoints[0].z, mBezSeg.m_controlPoints[1].z, mBezSeg.m_controlPoints[2].z, mBezSeg.m_controlPoints[3].z);
+
+	glm::vec4 cVec[3];
+	// glm::vec4_transform(cVec[0], px, BezierSegment::s_bezBasisMatrix);
+	// glm::vec4_transform(cVec[1], py, BezierSegment::s_bezBasisMatrix);
+	// glm::vec4_transform(cVec[2], pz, BezierSegment::s_bezBasisMatrix);
+#else
 	D3DXVECTOR4 px(mBezSeg.m_controlPoints[0].x, mBezSeg.m_controlPoints[1].x, mBezSeg.m_controlPoints[2].x, mBezSeg.m_controlPoints[3].x);
 	D3DXVECTOR4 py(mBezSeg.m_controlPoints[0].y, mBezSeg.m_controlPoints[1].y, mBezSeg.m_controlPoints[2].y, mBezSeg.m_controlPoints[3].y);
 	D3DXVECTOR4 pz(mBezSeg.m_controlPoints[0].z, mBezSeg.m_controlPoints[1].z, mBezSeg.m_controlPoints[2].z, mBezSeg.m_controlPoints[3].z);
@@ -69,6 +79,7 @@ void BezFwdIterator::start(void)
 	D3DXVec4Transform(&cVec[0], &px, &BezierSegment::s_bezBasisMatrix);
 	D3DXVec4Transform(&cVec[1], &py, &BezierSegment::s_bezBasisMatrix);
 	D3DXVec4Transform(&cVec[2], &pz, &BezierSegment::s_bezBasisMatrix);
+#endif
 
 	mCurrPoint = mBezSeg.m_controlPoints[0];
 

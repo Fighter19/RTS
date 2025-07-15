@@ -60,15 +60,15 @@
 *
 ****************************************************************************/
 
-#include "targa.h"
+#include "TARGA.H"
 #ifndef TGA_USES_WWLIB_FILE_CLASSES
 #include <stdio.h>
 #endif
-#include <malloc.h>
+//#include <malloc.h>
 #include <memory.h>
 #include <string.h>
 #ifdef TGA_USES_WWLIB_FILE_CLASSES
-#include "wwfile.h"
+#include "WWFILE.H"
 #include "ffactory.h"
 #else
 #include <io.h>

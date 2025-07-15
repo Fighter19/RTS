@@ -24,7 +24,7 @@
 #endif
 
 #include "mangler.h"
-#include "crc.h"
+#include "CRC.H"
 #include "endian.h"
 
 #include <configfile.h>

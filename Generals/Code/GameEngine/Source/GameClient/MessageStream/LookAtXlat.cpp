@@ -28,8 +28,6 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
-#include "windows.h"
-
 #include "Common/GameType.h"
 #include "Common/MessageStream.h"
 #include "Common/Player.h"
@@ -52,9 +50,13 @@
 
 #include "Common/GlobalData.h"			// for camera pitch angle only
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 LookAtTranslator *TheLookAtTranslator = NULL;
 
-static enum
+enum ScrollDirection
 {
 	DIR_UP = 0,
 	DIR_DOWN,

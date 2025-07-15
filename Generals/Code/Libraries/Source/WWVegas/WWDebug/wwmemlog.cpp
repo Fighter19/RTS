@@ -41,8 +41,12 @@
 
 #include "wwmemlog.h"
 #include "wwdebug.h"
-#include "vector.h"
+#include "Vector.H"
+#ifdef _UNIX
+#include <pthread.h>
+#else
 #include <windows.h>
+#endif
 
 #if (STEVES_NEW_CATCHER || PARAM_EDITING_ON)
 	#define DISABLE_MEMLOG	1
@@ -57,7 +61,7 @@ static unsigned FreeCount;
 ** Name for each memory category.  I'm padding the array with some "undefined" strings in case
 ** someone forgets to set the name when adding a new category.
 */
-static char * _MemoryCategoryNames[] =
+static const char * _MemoryCategoryNames[] =
 {
 	"UNKNOWN",
 	"Geometry",
@@ -215,8 +219,12 @@ static bool							_MemLogAllocated = false;
 void * Get_Mem_Log_Mutex(void)
 {
 	if (_MemLogMutex == NULL) {
+#ifdef _UNIX
+		// TODO: Implement mutex for UNIX
+#else
 		_MemLogMutex=CreateMutex(NULL,false,NULL);
 		WWASSERT(_MemLogMutex);
+#endif
 	}
 	return _MemLogMutex;
 }
@@ -227,8 +235,12 @@ void Lock_Mem_Log_Mutex(void)
 #ifdef DEBUG_CRASHING
 	int res =
 #endif
+#ifdef _UNIX
+		0;
+#else
 		WaitForSingleObject(mutex,INFINITE);
 	WWASSERT(res==WAIT_OBJECT_0);
+#endif
 	_MemLogLockCounter++;
 }
 
@@ -239,7 +251,11 @@ void Unlock_Mem_Log_Mutex(void)
 #ifdef DEBUG_CRASHING
 	int res=
 #endif
+#ifdef _UNIX
+		0;
+#else
 		ReleaseMutex(mutex);
+#endif
 	WWASSERT(res);
 }
 
@@ -276,7 +292,11 @@ ActiveCategoryStackClass::operator = (const ActiveCategoryStackClass & that)
 ***************************************************************************************************/
 ActiveCategoryStackClass & ActiveCategoryClass::Get_Active_Stack(void)
 {
-	int current_thread = ::GetCurrentThreadId();
+	#ifdef _UNIX
+		int current_thread = (int)(intptr_t)::pthread_self();
+	#else
+		int current_thread = ::GetCurrentThreadId();
+	#endif
 
 	/*
 	** If we already have an allocated category stack for the current thread,

@@ -40,12 +40,13 @@
 #include "htree.h"
 #include "vp.h"
 #include "visrasterizer.h"
-#include "dx8polygonrenderer.h"
 #include "bwrender.h"
 #include "camera.h"
-#include "dx8renderer.h"
 #include "hashtemplate.h"
-
+#ifdef _WIN32
+#include "dx8polygonrenderer.h"
+#include "dx8renderer.h"
+#endif
 
 /*
 ** Temporary Buffers
@@ -102,8 +103,9 @@ MeshModelClass::MeshModelClass(const MeshModelClass & that) :
 
 MeshModelClass::~MeshModelClass(void)
 {
+#ifdef _WIN32
 	TheDX8MeshRenderer.Unregister_Mesh_Type(this);
-
+#endif
 	Reset(0,0,0);
 	REF_PTR_RELEASE(MatInfo);
 
@@ -121,8 +123,9 @@ MeshModelClass & MeshModelClass::operator = (const MeshModelClass & that)
 	if (this != &that) {
 		// Remove all polygon renderers, this will remove the mesh from the rendering system.
 		// The mesh will be initialized to rendering system the next time it is rendered.
+#ifdef _WIN32
 		TheDX8MeshRenderer.Unregister_Mesh_Type(this);
-
+#endif
 		MeshGeometryClass::operator = (that);
 
 		*DefMatDesc = *(that.DefMatDesc);
@@ -153,9 +156,9 @@ void MeshModelClass::Reset(int polycount,int vertcount,int passcount)
 	Reset_Geometry(polycount,vertcount);
 
 	// Release everything we have and reset to initial state
-
+#ifdef _WIN32
 	TheDX8MeshRenderer.Unregister_Mesh_Type(this);
-
+#endif
 	MatInfo->Reset();
 	DefMatDesc->Reset(polycount,vertcount,passcount);
 	if (AlternateMatDesc != NULL) {
@@ -191,8 +194,9 @@ void MeshModelClass::Register_For_Rendering()
 			GapFiller=NULL;
 		}
 	}
-
+#ifdef _WIN32
 	TheDX8MeshRenderer.Register_Mesh_Type(this);
+#endif
 }
 
 void MeshModelClass::Replace_Texture(TextureClass* texture,TextureClass* new_texture)
@@ -215,10 +219,12 @@ void MeshModelClass::Replace_Texture(TextureClass* texture,TextureClass* new_tex
 			}
 			// If this mesh model has been initialized for rendering we need to tell the rendering
 			// system to change texturing as well.
+#ifdef _WIN32
 			DX8FVFCategoryContainer* fvf_category=Peek_FVF_Category_Container();
 			if (fvf_category) {
 				fvf_category->Change_Polygon_Renderer_Texture(PolygonRendererList,texture,new_texture,pass,stage);
 			}
+#endif
 		}
 	}
 }
@@ -243,10 +249,12 @@ void MeshModelClass::Replace_VertexMaterial(VertexMaterialClass* vmat,VertexMate
 		}
 		// If this mesh model has been initialized for rendering we need to tell the rendering
 		// system to change texturing as well.
+#ifdef _WIN32
 		DX8FVFCategoryContainer* fvf_category=Peek_FVF_Category_Container();
 		if (fvf_category) {
 			fvf_category->Change_Polygon_Renderer_Material(PolygonRendererList,vmat,new_vmat,pass);
 		}
+#endif
 	}	
 }
 
@@ -255,11 +263,15 @@ DX8FVFCategoryContainer* MeshModelClass::Peek_FVF_Category_Container()
 	if (PolygonRendererList.Is_Empty()) return NULL;
 	DX8PolygonRendererClass* polygon_renderer=PolygonRendererList.Get_Head();
 	WWASSERT(polygon_renderer);
+#ifdef _WIN32
 	DX8TextureCategoryClass* texture_category=polygon_renderer->Get_Texture_Category();
 	WWASSERT(texture_category);
 	DX8FVFCategoryContainer* fvf_category=texture_category->Get_Container();
 	WWASSERT(fvf_category);
 	return fvf_category;
+#else
+	return NULL; // Not supported on this platform
+#endif
 }
 
 void MeshModelClass::Shadow_Render(SpecialRenderInfoClass & rinfo,const Matrix3D & tm,const HTreeClass * htree)
@@ -359,6 +371,7 @@ void MeshModelClass::compose_deformed_vertex_buffer(
 
 		for (int pidx=0;pidx<cnt-vi;++pidx) {
 			const Matrix3D& A=mytm;
+#ifdef _WIN32
 			VertexFormatXYZNDUV2* out=verts+vi+pidx;
 			const Vector3& v=*(src_vert+vi+pidx);
 			out->x = (A[0][0] * v.X + A[0][1] * v.Y + A[0][2] * v.Z + A[0][3]);
@@ -374,6 +387,7 @@ void MeshModelClass::compose_deformed_vertex_buffer(
 			else out->diffuse=0;
 			if (uv0) reinterpret_cast<Vector2&>(verts[vi+pidx].u1)=uv0[vi+pidx];
 			else reinterpret_cast<Vector2&>(verts[vi+pidx].u2)=Vector2(0.0f,0.0f);
+#endif
 		}
 
 		vi=cnt;
@@ -397,7 +411,8 @@ void MeshModelClass::get_deformed_screenspace_vertices(Vector4 *dst_vert,const R
 			Matrix4 tm = prj * htree->Get_Transform(idx);
 
 			// Count equal matrices (the vertices should be pre-sorted by matrices they use)
-			for (int cnt = vi; cnt < vertex_count; cnt++) if (idx!=bonelink[cnt]) break;
+			int cnt;
+			for (cnt = vi; cnt < vertex_count; cnt++) if (idx!=bonelink[cnt]) break;
 
 			// Transform to screenspace (x,y,z,w)
 			VectorProcessorClass::Transform(
@@ -456,7 +471,9 @@ void MeshModelClass::Enable_Alternate_Material_Description(bool onoff)
 				compute_static_sort_levels();
 			
 			// TODO: Invalidate just this meshes DX8 data!!!
+#ifdef _WIN32
 			TheDX8MeshRenderer.Invalidate();
+#endif
 		}
 	} else {
 		if (CurMatDesc != DefMatDesc) {
@@ -466,7 +483,9 @@ void MeshModelClass::Enable_Alternate_Material_Description(bool onoff)
 				compute_static_sort_levels();
 
 			// TODO: Invalidate this meshes DX8 data!!!
+#ifdef _WIN32
 			TheDX8MeshRenderer.Invalidate();
+#endif
 		}
 	}
 }
@@ -793,7 +812,7 @@ void MeshModelClass::Init_For_NPatch_Rendering()
 		}
 	}
 
-	for (i=0;i<polygon_count;++i) {
+	for (unsigned i=0;i<polygon_count;++i) {
 		bool duplicates[3];
 		duplicates[0]=DuplicateLocationHash.Exists(locations[polygon_indices[i][0]]);
 		duplicates[1]=DuplicateLocationHash.Exists(locations[polygon_indices[i][1]]);

@@ -48,7 +48,6 @@
 #include "w3derr.h"
 #include "audiblesound.h"
 
-
 //////////////////////////////////////////////////////////////////////////////////
 //	Forward declarations
 //////////////////////////////////////////////////////////////////////////////////
@@ -118,10 +117,11 @@ public:
 	//
 	//	SoundRenderObjClass specific
 	//
+#ifdef WW_USE_MILES
 	virtual void						Set_Sound (AudibleSoundDefinitionClass *definition);
 	virtual AudibleSoundClass *	Get_Sound (void) const;
 	virtual AudibleSoundClass *	Peek_Sound (void) const			{ return Sound; }
-
+#endif
 	//
 	//	Flag support
 	//

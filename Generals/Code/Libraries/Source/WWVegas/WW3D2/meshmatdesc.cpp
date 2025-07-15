@@ -40,9 +40,10 @@
 #include "texture.h"
 #include "vertmaterial.h"
 #include "realcrc.h"
-#include	"dx8wrapper.h"
+#ifdef _WIN32
+#include "dx8wrapper.h"
 #include "dx8caps.h"
-
+#endif
 
 /**************************************************************************************************
 **
@@ -759,12 +760,14 @@ void MeshMatDescClass::Post_Load_Process(bool lighting_enabled)
 			unsigned * emissive_array = ColorArray[1]->Get_Array();
 
 			for (int vidx=0; vidx<VertexCount; vidx++) {
+#ifdef _WIN32
 				Vector4 diffuse=DX8Wrapper::Convert_Color(diffuse_array[vidx]);
 				Vector4 emissive=DX8Wrapper::Convert_Color(emissive_array[vidx]);
 				diffuse.X *= emissive.X;
 				diffuse.Y *= emissive.Y;
 				diffuse.Z *= emissive.Z;
 				diffuse_array[vidx]=DX8Wrapper::Convert_Color(diffuse);
+#endif
 			}
 		}
 		DIGSource[pass]=VertexMaterialClass::MATERIAL;	// DIG channel no more
@@ -786,6 +789,7 @@ void MeshMatDescClass::Post_Load_Process(bool lighting_enabled)
 					mtl_opacity = mtl->Get_Opacity();
 				}
 
+#ifdef _WIN32
 				// If only diffuse is used apply diffuse to color channel and set diffuse source to color 1
 				if (diffuse_used && !ambient_used && !emissive_used) {
 					Vector4 diffuse=DX8Wrapper::Convert_Color(diffuse_array[vidx]);
@@ -846,7 +850,7 @@ void MeshMatDescClass::Post_Load_Process(bool lighting_enabled)
 //MW:  Vegas guys asked me to disable this because it can cause z-fighting if lighting is disabled in multi-pass
 //					mtl->Set_Lighting(false);
 				}
-
+#endif
 			}
 		}
 
@@ -936,8 +940,9 @@ void MeshMatDescClass::Configure_Material(VertexMaterialClass * mtl,int pass,boo
 
 bool MeshMatDescClass::Do_Mappers_Need_Normals(void)
 {
+#ifdef _WIN32
 	if (DX8Caps::Support_NPatches() && WW3D::Get_NPatches_Level()>1) return true;
-
+#endif
 	for (int pass=0; pass<PassCount; pass++) {
 		/*
 		** Check the materials on this pass to see if any have mappers which require normals

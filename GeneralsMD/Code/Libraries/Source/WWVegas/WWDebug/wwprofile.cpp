@@ -56,7 +56,7 @@
 #include <windows.h>
 //#include "systimer.h"
 #include "systimer.h"
-#include "rawfile.h"
+#include "RAWFILE.H"
 #include "ffactory.h"
 #include "simplevec.h"
 #include "cpudetect.h"

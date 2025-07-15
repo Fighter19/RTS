@@ -32,6 +32,7 @@
 #ifndef _BASE_TYPE_H_
 #define _BASE_TYPE_H_
 
+#include <compat.h>
 #include <math.h>
 #include <string.h>
 
@@ -133,6 +134,7 @@ typedef bool							Bool;							//
 // note, the types below should use "long long", but MSVC doesn't support it yet
 typedef __int64						Int64;							// 8 bytes 
 typedef unsigned __int64	UnsignedInt64;	  	// 8 bytes 
+typedef uintptr_t 				UnsignedIntPtr;			// 4 or 8 bytes, depending on platform
 
 #include "Lib/Trig.h"
 

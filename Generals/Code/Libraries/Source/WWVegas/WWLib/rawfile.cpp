@@ -22,13 +22,13 @@
  *                                                                                             * 
  *                 Project Name : Command & Conquer                                            * 
  *                                                                                             * 
- *                     $Archive:: /VSS_Sync/wwlib/rawfile.cpp                                 $* 
+ *                     $Archive:: /Commando/Code/wwlib/rawfile.cpp                            $* 
  *                                                                                             * 
- *                      $Author:: Vss_sync                                                    $*
+ *                      $Author:: Jani_p                                                      $*
  *                                                                                             * 
- *                     $Modtime:: 8/29/01 10:24p                                              $*
+ *                     $Modtime:: 11/25/01 1:26p                                              $*
  *                                                                                             * 
- *                    $Revision:: 12                                                          $*
+ *                    $Revision:: 13                                                          $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------* 
  * Functions:                                                                                  * 
@@ -51,23 +51,20 @@
  *   RawFileClass::Write -- Writes the specified data to the buffer specified.                 *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
+// @SV - 2025/04/11: We removed Win32 API here and use plain C
 #include	"always.h"
-#include	"rawfile.h"
-#include	<direct.h>
-//#include	<share.h>
+#include	"RAWFILE.H"
 #include	<stddef.h>
 #include	<stdio.h>
 #include	<stdlib.h>
 #include	<string.h>
-#include "win.h"
 #include	<limits.h>
 #include	<errno.h>
-#ifdef _UNIX
 #include <sys/types.h>
 #include <sys/stat.h>
+#ifdef _UNIX
+#include <unistd.h>
 #endif
-
 
 #if 0		//#ifdef NEVER    (gth) the MAX sdk must #define NEVER! yikes :-)
 	/*
@@ -438,32 +435,20 @@ int RawFileClass::Open(int rights)
 				break;
 
 			case READ:
-				#ifdef _UNIX
-					Handle = fopen(Filename, "r");
-				#else
-					Handle = CreateFileA(Filename, GENERIC_READ, FILE_SHARE_READ,
-												NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-				#endif
+				Handle = fopen(Filename, "rb");
 				break;
 
 			case WRITE:
-				#ifdef _UNIX
-					Handle = fopen(Filename, "w");
-				#else
-					Handle = CreateFileA(Filename, GENERIC_WRITE, 0,
-												NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-				#endif
+				Handle = fopen(Filename, "wb");
 				break;
 
 			case READ|WRITE:
-				#ifdef _UNIX
-					Handle = fopen(Filename, "w");
-				#else
-					// SKB 5/13/99 use OPEN_ALWAYS instead of CREATE_ALWAYS so that files
-					//					does not get destroyed.
-					Handle = CreateFileA(Filename, GENERIC_READ | GENERIC_WRITE, 0,
-												NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-				#endif
+				// First try to open an existing file in read/write mode.
+				Handle = fopen(Filename, "rb+");
+				// If that fails, try to create a new file in read/write mode.
+				if(Handle == NULL_HANDLE) {
+					Handle = fopen(Filename, "wb+");
+				}
 				break;
 		}
 
@@ -482,7 +467,7 @@ int RawFileClass::Open(int rights)
 		if (Handle == NULL_HANDLE) {
 			return(false);
 
-//			Error(GetLastError(), false, Filename);
+//			Error(errno, false, Filename);
 //			continue;
 		}
 		break;
@@ -536,12 +521,7 @@ bool RawFileClass::Is_Available(int forced)
 	*/
 	for (;;) {
 
-		#ifdef _UNIX
-			Handle=fopen(Filename,"r");
-		#else
-			Handle = CreateFileA(Filename, GENERIC_READ, FILE_SHARE_READ,
-											NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-		#endif
+		Handle=fopen(Filename,"r");
 
 		if (Handle == NULL_HANDLE) {
 			return(false);
@@ -553,13 +533,9 @@ bool RawFileClass::Is_Available(int forced)
 	**	Since the file could be opened, then close it and return that the file exists.
 	*/
 	int closeok;
-	#ifdef _UNIX
-		closeok=((fclose(Handle)==0)?TRUE:FALSE);
-	#else
-		closeok=CloseHandle(Handle);
-	#endif
+	closeok=((fclose(Handle)==0)?true:false);
 	if (! closeok) {
-		Error(GetLastError(), false, Filename);
+		Error(errno, false, Filename);
 	}
 	Handle = NULL_HANDLE;
 
@@ -593,15 +569,10 @@ void RawFileClass::Close(void)
 		**	Try to close the file. If there was an error (who knows what that could be), then
 		**	call the error routine.
 		*/
-		int closeok;
-		#ifdef _UNIX
-			closeok=(fclose(Handle)==0)?TRUE:FALSE;	
-		#else
-			closeok=CloseHandle(Handle);
-		#endif
+		int closeok=(fclose(Handle)==0)?true:false;	
 
 		if (!closeok) {
-			Error(GetLastError(), false, Filename);
+			Error(errno, false, Filename);
 		}
 
 		/*
@@ -667,22 +638,15 @@ int RawFileClass::Read(void * buffer, int size)
 	while (size > 0) {
 		bytesread = 0;
 
-		int readok=TRUE;
-
-		#ifdef _UNIX
-			readok=TRUE;
-			bytesread=fread(buffer,1,size,Handle);
-			if ((bytesread == 0)&&( ! feof(Handle)))
-				readok=ferror(Handle);
-		#else
-			readok=ReadFile(Handle, buffer, size, &(unsigned long&)bytesread, NULL);
-		#endif
-			
+		int readok=true;
+		bytesread=fread(buffer,1,size,Handle);
+		if ((bytesread == 0)&&( ! feof(Handle)))
+			readok=ferror(Handle);
 
 		if (! readok) {
 			size -= bytesread;
 			total += bytesread;
-			Error(GetLastError(), true, Filename);
+			Error(errno, true, Filename);
 			continue;
 		}
 		size -= bytesread;
@@ -735,17 +699,13 @@ int RawFileClass::Write(void const * buffer, int size)
 		opened = true;
 	}
 
-   int writeok=TRUE;
-   #ifdef _UNIX
-		byteswritten = fwrite(buffer, 1, size, Handle);
-		if (byteswritten != size)
-			writeok = FALSE;
-	#else
-		writeok=WriteFile(Handle, buffer, size, &(unsigned long&)byteswritten, NULL);
-	#endif
+	int writeok=true;
+	byteswritten = fwrite(buffer, 1, size, Handle);
+	if (byteswritten != size)
+		writeok = false;
 
 	if (! writeok) {
-		Error(GetLastError(), false, Filename);
+		Error(errno, false, Filename);
 	}
 
 	/*
@@ -878,27 +838,19 @@ int RawFileClass::Size(void)
 	*/
 	if (Is_Open()) {
 
-      #ifdef _UNIX
-			fpos_t curpos,startpos,endpos;
-			fgetpos(Handle,&curpos);	
+		size_t curpos;
+		curpos = ftell(Handle);	
 
-			fseek(Handle,0,SEEK_SET);
-			fgetpos(Handle,&startpos);	
+		fseek(Handle,0,SEEK_END);
+		size = ftell(Handle);	
 
-			fseek(Handle,0,SEEK_END);
-			fgetpos(Handle,&endpos);	
-
-			size=endpos-startpos;
-			fsetpos(Handle,&curpos);
-		#else
-			size = GetFileSize(Handle, NULL);
-		#endif
+		fseek(Handle,curpos,SEEK_SET);
 
 		/*
 		**	If there was in internal error, then call the error function.
 		*/
 		if (size == 0xFFFFFFFF) {
-			Error(GetLastError(), false, Filename);
+			Error(errno, false, Filename);
 		}
 
 	} else {
@@ -1008,15 +960,10 @@ int RawFileClass::Delete(void)
 			return(false);
 		}
 
-		int deleteok;
-		#ifdef _UNIX
-			deleteok=(unlink(Filename)==0)?TRUE:FALSE;
-		#else
-			deleteok=DeleteFile(Filename);
-		#endif
+		int deleteok=(unlink(Filename)==0)?true:false;
 
 		if (! deleteok) {
-			Error(GetLastError(), false, Filename);
+			Error(errno, false, Filename);
 			return(false);
 		}
 		break;
@@ -1027,7 +974,6 @@ int RawFileClass::Delete(void)
 	*/
 	return(true);
 }
-
 
 /***********************************************************************************************
  * RawFileClass::Get_Date_Time -- Gets the date and time the file was last modified.           *
@@ -1047,21 +993,28 @@ int RawFileClass::Delete(void)
  *=============================================================================================*/
 unsigned long RawFileClass::Get_Date_Time(void)
 {
-#ifdef _UNIX
-	struct stat statbuf;
-	lstat(Filename, &statbuf);
-	return(statbuf.st_mtime);
-#else
-	BY_HANDLE_FILE_INFORMATION info;
+	// Return value
+	unsigned long retval = 0;
 
-	if (GetFileInformationByHandle(Handle, &info)) {
-		WORD dosdate;
-		WORD dostime;
-		FileTimeToDosDateTime(&info.ftLastWriteTime, &dosdate, &dostime);
-		return((dosdate << 16) | dostime);
+	// Ensure we will work properly if the file is not open
+	if (Is_Open()) {
+		// If file is open proceed normally
+		struct stat statbuf;
+		stat(Filename, &statbuf);
+		retval = statbuf.st_mtime;
+	} else {
+		// If file not open open it, if open succeeded proceed normally and then close to put
+		// everything back the way we found it.
+		if (Open()) {
+			struct stat statbuf;
+			stat(Filename, &statbuf);
+			retval = statbuf.st_mtime;
+			Close();
+
+		}
 	}
-	return(0);
-#endif
+
+	return retval;
 }
 
 
@@ -1082,22 +1035,8 @@ unsigned long RawFileClass::Get_Date_Time(void)
  *=============================================================================================*/
 bool RawFileClass::Set_Date_Time(unsigned long datetime)
 {
-#ifdef _UNIX
-	assert(0);
+	assert(0);//DEBUG_ASSERTLOG(false, ("Set_Date_Time is not implemented"));
 	return(false);
-#else
-	if (RawFileClass::Is_Open()) {
-		BY_HANDLE_FILE_INFORMATION info;
-
-		if (GetFileInformationByHandle(Handle, &info)) {
-			FILETIME filetime;
-			if (DosDateTimeToFileTime((WORD)(datetime >> 16), (WORD)(datetime & 0x0FFFF), &filetime)) {
-				return(SetFileTime(Handle, &info.ftCreationTime, &filetime, &filetime) != 0);
-			}
-		}
-	}
-	return(false);
-#endif
 }
 
 
@@ -1174,30 +1113,13 @@ int RawFileClass::Raw_Seek(int pos, int dir)
 		Error(EBADF, false, Filename);
 	}
 
-   #ifdef _UNIX
-      pos=fseek(Handle, pos, dir);
-   #else
-		switch (dir) {
-			case SEEK_SET:
-				dir = FILE_BEGIN;
-				break;
-
-			case SEEK_CUR:
-				dir = FILE_CURRENT;
-				break;
-
-			case SEEK_END:
-				dir = FILE_END;
-				break;
-		}
-		pos = SetFilePointer(Handle, pos, NULL, dir);
-	#endif
+	pos=fseek(Handle, pos, dir);
 
 	/*
 	**	If there was an error in the seek, then bail with an error condition.
 	*/
 	if (pos == 0xFFFFFFFF) {
-		Error(GetLastError(), false, Filename);
+		Error(errno, false, Filename);
 	}
 
 	/*
@@ -1228,13 +1150,8 @@ void RawFileClass::Attach (void *handle, int rights)
 	BiasLength = -1;
 	Date = 0;
 	Time = 0;
-	Allocated = false;
 
-	#ifdef _UNIX
-	  Handle = (FILE *)handle;
-	#else
-	  Handle = handle;
-	#endif
+	Handle = (FILE *)handle;
 }
 
 /***********************************************************************************************
@@ -1256,7 +1173,5 @@ void RawFileClass::Detach (void)
 	BiasLength = -1;
 	Date = 0;
 	Time = 0;
-	Allocated = false;
 	Handle = NULL_HANDLE;	
 }
-

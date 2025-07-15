@@ -1,0 +1,29 @@
+{
+  "version": 6,
+  "configurePresets": [
+    {
+      "name": "default",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "default",
+      "configurePreset": "default",
+      "configuration": "Release"
+    }
+  ],
+  "packagePresets": [
+    {
+      "name": "zip",
+      "configurePreset": "default",
+      "generators": [
+        "ZIP"
+      ]
+    }
+  ]
+}

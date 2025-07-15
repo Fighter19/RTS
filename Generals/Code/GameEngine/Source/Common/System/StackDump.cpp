@@ -33,6 +33,7 @@
 #include "Common/StackDump.h"
 #include "Common/Debug.h"
 
+#ifdef _WIN32
 
 //*****************************************************************************
 //	Prototypes
@@ -49,13 +50,16 @@ void WriteStackLine(void*address, void (*callback)(const char*));
 static CONTEXT gsContext;
 static Bool gsInit=FALSE;
 
+#ifdef _WIN64
+BOOL (__stdcall *gsSymGetLineFromAddr)(IN  HANDLE,IN  DWORD64,OUT PDWORD64,OUT PIMAGEHLP_LINE);
+#else
 BOOL (__stdcall *gsSymGetLineFromAddr)(
 		IN  HANDLE                  hProcess,
 		IN  DWORD                   dwAddr,
 		OUT PDWORD                  pdwDisplacement,
 		OUT PIMAGEHLP_LINE          Line
 			);
-
+#endif
 
 //*****************************************************************************
 //*****************************************************************************
@@ -75,7 +79,7 @@ void StackDump(void (*callback)(const char*))
 	}
 
 	InitSymbolInfo();
-
+#ifndef _WIN64
 	DWORD myeip,myesp,myebp;
 
 _asm
@@ -91,6 +95,7 @@ MYEIP1:
 
 
 	MakeStackTrace(myeip,myesp,myebp, 2, callback);
+#endif
 }
 
 
@@ -124,8 +129,13 @@ BOOL InitSymbolInfo()
 	// We use GetProcAddress to stop link failures at dll loadup
 	HINSTANCE hInstDebugHlp = GetModuleHandle("dbghelp.dll");
 
+#ifdef _WIN64
+	gsSymGetLineFromAddr = (BOOL (__stdcall *)(	IN  HANDLE,IN  DWORD64,OUT PDWORD64,OUT PIMAGEHLP_LINE))
+							GetProcAddress(hInstDebugHlp , "SymGetLineFromAddr64");
+#else
 	gsSymGetLineFromAddr = (BOOL (__stdcall *)(	IN  HANDLE,IN  DWORD,OUT PDWORD,OUT PIMAGEHLP_LINE))
 							GetProcAddress(hInstDebugHlp , "SymGetLineFromAddr");
+#endif
 
 	char pathname[_MAX_PATH+1];
 	char drive[10];
@@ -276,7 +286,11 @@ void GetFunctionDetails(void *pointer, char*name, char*filename, unsigned int* l
 		*address = 0xFFFFFFFF;
 	}
 
+#ifdef _WIN64
+	DWORD64 displacement = 0;
+#else
 	ULONG displacement = 0;
+#endif
 
     HANDLE process = ::GetCurrentProcess();
 
@@ -342,6 +356,7 @@ void FillStackAddresses(void**addresses, unsigned int count, unsigned int skip)
     gsContext.ContextFlags = CONTEXT_FULL;
 
 	DWORD myeip,myesp,myebp;
+#ifndef _WIN64
 _asm
 {
 MYEIP2:
@@ -353,6 +368,7 @@ MYEIP2:
  mov dword ptr [myebp] , eax
  xor eax,eax
 }
+#endif
 memset(&stack_frame, 0, sizeof(STACKFRAME));
 stack_frame.AddrPC.Mode = AddrModeFlat;
 stack_frame.AddrPC.Offset = myeip;
@@ -533,7 +549,6 @@ void DumpExceptionInfo( unsigned int u, EXCEPTION_POINTERS* e_info )
 	};
 
 	DEBUG_LOG( ("Dump exception info\n") );
-	CONTEXT *context = e_info->ContextRecord;
 	/*
 	** The following are set for access violation only
 	*/
@@ -559,7 +574,8 @@ void DumpExceptionInfo( unsigned int u, EXCEPTION_POINTERS* e_info )
 	/*
 	** Match the exception type with the error string and print it out
 	*/
-	for ( int i=0 ; _codes[i] != 0xffffffff ; i++ )
+	int i;
+	for ( i=0 ; _codes[i] != 0xffffffff ; i++ )
 	{
 		if ( _codes[i] == e_info->ExceptionRecord->ExceptionCode )
 		{
@@ -582,7 +598,9 @@ void DumpExceptionInfo( unsigned int u, EXCEPTION_POINTERS* e_info )
 		}
 	}
 
+#ifndef _WIN64
 	DOUBLE_DEBUG (("\nStack Dump:\n"));
+	CONTEXT *context = e_info->ContextRecord;
 	StackDumpFromContext(context->Eip, context->Esp, context->Ebp, NULL);
 
 	DOUBLE_DEBUG (("\nDetails:\n"));
@@ -624,11 +642,14 @@ void DumpExceptionInfo( unsigned int u, EXCEPTION_POINTERS* e_info )
 
 	strcat (scrap, "\n");
 	DOUBLE_DEBUG ( ( (scrap)));
+#endif
   DEBUG_LOG(( "********** END EXCEPTION DUMP ****************\n\n" ));
 }																									 
 
 
 #pragma pack(pop)
+
+#endif // _WIN32
 
 #endif
 

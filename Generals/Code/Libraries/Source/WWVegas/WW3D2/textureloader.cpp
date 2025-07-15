@@ -27,11 +27,8 @@
 #include "ww3d.h"
 #include "texfcach.h"
 #include "assetmgr.h"
-#include "dx8wrapper.h"
-#include "dx8caps.h"
 #include "missingtexture.h"
-#include "targa.h"
-#include <D3dx8tex.h>
+#include "TARGA.H"
 #include <cstdio>
 #include "wwmemlog.h"
 #include "texture.h"
@@ -39,6 +36,12 @@
 #include "texturethumbnail.h"
 #include "ddsfile.h"
 #include "bitmaphandler.h"
+
+#ifdef _WIN32
+#include "dx8wrapper.h"
+#include "dx8caps.h"
+#include <D3dx8tex.h>
+#endif
 
 static TextureLoadTaskClass* LoadListHead;
 static TextureLoadTaskClass* DeferredListHead;
@@ -54,6 +57,7 @@ static bool Is_Format_Compressed(WW3DFormat texture_format,bool allow_compressio
 
 	bool compressed=false;
 	if (texture_format!=WW3D_FORMAT_UNKNOWN) {
+#ifdef _WIN32
 		if (!DX8Caps::Support_DXTC() || !allow_compression) {
 			WWASSERT(texture_format!=WW3D_FORMAT_DXT1);
 			WWASSERT(texture_format!=WW3D_FORMAT_DXT2);
@@ -61,6 +65,7 @@ static bool Is_Format_Compressed(WW3DFormat texture_format,bool allow_compressio
 			WWASSERT(texture_format!=WW3D_FORMAT_DXT4);
 			WWASSERT(texture_format!=WW3D_FORMAT_DXT5);
 		}
+#endif
 		if (texture_format==WW3D_FORMAT_DXT1 ||
 			texture_format==WW3D_FORMAT_DXT2 ||
 			texture_format==WW3D_FORMAT_DXT3 ||
@@ -74,7 +79,9 @@ static bool Is_Format_Compressed(WW3DFormat texture_format,bool allow_compressio
 	// defined as non-compressed.
 	compressed|=(
 		texture_format==WW3D_FORMAT_UNKNOWN && 
+#ifdef _WIN32
 		DX8Caps::Support_DXTC() && 
+#endif
 		WW3D::Get_Texture_Compression_Mode()==WW3D::TEXTURE_COMPRESSION_ENABLE &&
 		allow_compression);
 
@@ -91,7 +98,7 @@ static class LoaderThreadClass : public ThreadClass
 	static void Add_Task_To_Finished_List(TextureLoadTaskClass* task);
 
 public:
-	LoaderThreadClass::LoaderThreadClass() : ThreadClass() {}
+	LoaderThreadClass() : ThreadClass() {}
 
 	void Thread_Function();
 
@@ -129,6 +136,7 @@ void TextureLoader::Deinit()
 
 void TextureLoader::Validate_Texture_Size(unsigned& width, unsigned& height)
 {
+#ifdef _WIN32
 	const D3DCAPS8& dx8caps=DX8Caps::Get_Default_Caps();
 
 	unsigned poweroftwowidth = 1;
@@ -168,6 +176,7 @@ void TextureLoader::Validate_Texture_Size(unsigned& width, unsigned& height)
 //	width = height = poweroftwosize;
 	width=poweroftwowidth;
 	height=poweroftwoheight;
+#endif
 }
 
 
@@ -193,7 +202,7 @@ IDirect3DTexture8* TextureLoader::Load_Thumbnail(const StringClass& filename,WW3
 		dest_format=Get_Valid_Texture_Format(texture_format,false);	// no compressed formats please
 		WWASSERT(dest_format==texture_format);
 	}
-
+#ifdef _WIN32
 	IDirect3DTexture8* d3d_texture = DX8Wrapper::_Create_DX8_Texture(
 		thumb->Get_Width(),
 		thumb->Get_Height(),
@@ -245,6 +254,9 @@ IDirect3DTexture8* TextureLoader::Load_Thumbnail(const StringClass& filename,WW3
 	}
 
 	return d3d_texture;
+#else
+	return NULL;
+#endif
 }
 
 static bool Is_Power_Of_Two(unsigned i)
@@ -282,6 +294,7 @@ IDirect3DTexture8* Load_Compressed_Texture(
 	// Note that the nearest valid format could be anything, even uncompressed.
 	if (dest_format==WW3D_FORMAT_UNKNOWN) dest_format=Get_Valid_Texture_Format(dds_file.Get_Format(),true);
 
+#ifdef _WIN32
 	IDirect3DTexture8* d3d_texture = DX8Wrapper::_Create_DX8_Texture(
 		width,
 		height,
@@ -296,6 +309,9 @@ IDirect3DTexture8* Load_Compressed_Texture(
 		d3d_surface->Release();
 	}
 	return d3d_texture;
+#else
+	return NULL;
+#endif
 }
 
 // ----------------------------------------------------------------------------
@@ -313,6 +329,7 @@ IDirect3DSurface8* TextureLoader::Load_Surface_Immediate(
 	bool compressed=Is_Format_Compressed(texture_format,allow_compression);
 
 	if (compressed) {
+#ifdef _WIN32
 		IDirect3DTexture8* comp_tex=Load_Compressed_Texture(filename,0,TextureClass::MIP_LEVELS_1,WW3D_FORMAT_UNKNOWN);
 		if (comp_tex) {
 			IDirect3DSurface8* d3d_surface=NULL;
@@ -320,6 +337,7 @@ IDirect3DSurface8* TextureLoader::Load_Surface_Immediate(
 			comp_tex->Release();
 			return d3d_surface;
 		}
+#endif
 	}
 
 	// Make sure the file can be opened. If not, return missing texture.
@@ -379,7 +397,7 @@ IDirect3DSurface8* TextureLoader::Load_Surface_Immediate(
 	}
 
 	unsigned src_pitch=src_width*src_bpp;
-
+#ifdef _WIN32
 	IDirect3DSurface8* d3d_surface = DX8Wrapper::_Create_DX8_Surface(width,height,dest_format);
 	WWASSERT(d3d_surface);
 	D3DLOCKED_RECT locked_rect;
@@ -409,6 +427,9 @@ IDirect3DSurface8* TextureLoader::Load_Surface_Immediate(
 	if (converted_surface) delete[] converted_surface;
 
 	return d3d_surface;
+#else
+	return NULL;
+#endif
 }
 
 
@@ -685,8 +706,9 @@ void Add_Thumbnail_Task(TextureLoadTaskClass* task)
 
 TextureLoadTaskClass* Get_Task_From_Delete_List()
 {
+#ifdef _WIN32
 	WWASSERT(ThreadClass::_Get_Current_Thread_ID()==DX8Wrapper::_Get_Main_Thread_ID());
-
+#endif
 	TextureLoadTaskClass* task=DeleteTaskListHead;
 	if (task) {
 		DeleteTaskListHead=task->Peek_Succ();
@@ -704,8 +726,9 @@ TextureLoadTaskClass* Get_Task_From_Delete_List()
 
 void Add_Task_To_Delete_List(TextureLoadTaskClass* task)
 {
+#ifdef _WIN32
 	WWASSERT(ThreadClass::_Get_Current_Thread_ID()==DX8Wrapper::_Get_Main_Thread_ID());
-
+#endif
 	WWASSERT(task->Peek_Succ()==NULL);
 
 	task->Set_Succ(DeleteTaskListHead);
@@ -743,8 +766,9 @@ void TextureLoader::Flush_Pending_Load_Tasks()
 
 void TextureLoader::Update()
 {
+#ifdef _WIN32
 	WWASSERT_PRINT(DX8Wrapper::_Get_Main_Thread_ID()==ThreadClass::_Get_Current_Thread_ID(),"TextureLoader::Update must be called from the main thread!");
-
+#endif
 	while (TextureLoadTaskClass* task=Get_Deferred_Task()) {
 		task->Begin_Texture_Load();	// This will add the task to load list
 	}
@@ -767,19 +791,10 @@ void TextureLoader::Update()
 
 // ----------------------------------------------------------------------------
 
-static DWORD VectortoRGBA( D3DXVECTOR3* v, FLOAT fHeight )
-{
-    DWORD r = (DWORD)( 127.0f * v->x + 128.0f );
-    DWORD g = (DWORD)( 127.0f * v->y + 128.0f );
-    DWORD b = (DWORD)( 127.0f * v->z + 128.0f );
-    DWORD a = (DWORD)( 255.0f * fHeight );
-    
-    return( (a<<24L) + (r<<16L) + (g<<8L) + (b<<0L) );
-}
-
 IDirect3DTexture8* TextureLoader::Generate_Bumpmap(TextureClass* texture)
 {
 	WW3DFormat bump_format=WW3D_FORMAT_U8V8;
+#ifdef _WIN32
 	if (!DX8Caps::Support_Texture_Format(bump_format)) {
 		return MissingTexture::_Get_Missing_Texture();
 	}
@@ -902,6 +917,9 @@ IDirect3DTexture8* TextureLoader::Generate_Bumpmap(TextureClass* texture)
 	DX8_ErrorCode(d3d_texture->UnlockRect(0));
 	DX8_ErrorCode(texture->Peek_DX8_Texture()->UnlockRect(0));
 	return d3d_texture;
+#else
+	return NULL;
+#endif
 }
 
 // ----------------------------------------------------------------------------
@@ -1025,6 +1043,7 @@ void TextureLoadTaskClass::Deinit()
 
 void TextureLoadTaskClass::Begin_Texture_Load()
 {
+#ifdef _WIN32
 	// If we're in main thread, init for loading and add to the load list
 	if (ThreadClass::_Get_Current_Thread_ID()==DX8Wrapper::_Get_Main_Thread_ID()) {
 
@@ -1174,6 +1193,7 @@ void TextureLoadTaskClass::Begin_Texture_Load()
 	else {
 		Add_Deferred_Task(this);
 	}
+#endif
 }
 
 /*	file_auto_ptr my_tga_file(_TheFileFactory,Texture->Get_Full_Path());	
@@ -1206,6 +1226,7 @@ void TextureLoadTaskClass::Begin_Thumbnail_Load()
 //	CriticalSectionClass::LockClass m(mutex);
 
 	unsigned thread_id=ThreadClass::_Get_Current_Thread_ID();
+#ifdef _WIN32
 	if (thread_id==DX8Wrapper::_Get_Main_Thread_ID()) {
 		WW3DFormat format=Texture->Get_Texture_Format();
 		// No compressed thumbnails
@@ -1230,6 +1251,7 @@ void TextureLoadTaskClass::Begin_Thumbnail_Load()
 	else {
 		Add_Thumbnail_Task(this);
 	}
+#endif
 }
 
 // ----------------------------------------------------------------------------
@@ -1243,8 +1265,10 @@ void TextureLoadTaskClass::End_Load()
 {
 	for (unsigned i=0;i<MipLevelCount;++i) {
 		if (LockedSurfacePtr[i]) {
+#ifdef _WIN32
 			WWASSERT(ThreadClass::_Get_Current_Thread_ID()==DX8Wrapper::_Get_Main_Thread_ID());
 			DX8_ErrorCode(D3DTexture->UnlockRect(i));
+#endif
 		}
 		LockedSurfacePtr[i]=NULL;
 	}
@@ -1297,8 +1321,9 @@ void TextureLoadTaskClass::Apply(bool initialize)
 	}
 
 	Texture->Apply_New_Surface(initialize);
-
+#ifdef _WIN32
 	D3DTexture->Release();
+#endif
 	D3DTexture=NULL;
 }
 

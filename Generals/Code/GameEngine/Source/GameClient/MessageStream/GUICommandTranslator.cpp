@@ -54,7 +54,7 @@
 #endif
 
 // PRIVATE ////////////////////////////////////////////////////////////////////////////////////////
-static enum CommandStatus
+enum CommandStatus : int
 {
 	COMMAND_INCOMPLETE = 0,
 	COMMAND_COMPLETE

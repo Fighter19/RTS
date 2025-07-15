@@ -43,7 +43,12 @@
 
 
 #include "wwdebug.h"
+#ifdef _UNIX
+#include <errno.h>
+#include <pthread.h>
+#else
 #include <windows.h>
+#endif
 //#include "win.h" can use this if allowed to see wwlib
 #include <stdlib.h>
 #include <stdarg.h>
@@ -77,7 +82,11 @@ void Convert_System_Error_To_String(int id, char* buffer, int buf_len)
 
 int Get_Last_System_Error()
 {
+#ifdef _UNIX
+	return errno;
+#else
 	return GetLastError();
+#endif
 }
 
 /***********************************************************************************************

@@ -50,8 +50,9 @@
 #include "shader.h"
 #include "texture.h"
 #include "statistics.h"
+#ifdef _WIN32
 #include "dx8wrapper.h"
-
+#endif
 
 bool MaterialPassClass::EnablePerPolygonCulling = true;
 
@@ -115,11 +116,13 @@ MaterialPassClass::~MaterialPassClass(void)
  *=============================================================================================*/
 void MaterialPassClass::Install_Materials(void) const
 {
+#ifdef _WIN32
 	DX8Wrapper::Set_Material(Peek_Material());
 	DX8Wrapper::Set_Shader(Peek_Shader());
 	for (unsigned i=0;i<MAX_TEXTURE_STAGES;++i) {
 		DX8Wrapper::Set_Texture(i,Peek_Texture(i));
 	}
+#endif
 }
 
 

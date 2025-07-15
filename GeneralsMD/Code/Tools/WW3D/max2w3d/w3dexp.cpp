@@ -49,7 +49,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-#include "rawfile.h"		
+#include "RAWFILE.H"		
 #include "chunkio.h"
 #include "w3dexp.h"
 #include "w3dutil.h"
@@ -75,7 +75,7 @@
 #include "geometryexportcontext.h"
 
 #include <direct.h>
-#include "targa.h"
+#include "TARGA.H"
 
 // Used to communicate from the exporter to the dialog.
 char W3dExportClass::CurrentExportPath[_MAX_DRIVE + _MAX_DIR + 1] = { '\000' };

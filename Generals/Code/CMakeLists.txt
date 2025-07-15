@@ -1,0 +1,7 @@
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/gen/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/gen/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/gen/bin)
+
+add_subdirectory(Libraries)
+add_subdirectory(GameEngine)
+add_subdirectory(Tools)

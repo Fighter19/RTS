@@ -43,7 +43,7 @@
 
 #include "GameClient/ShellHooks.h"
 
-#include "GameSpy/ghttp/ghttp.h"
+#include <gamespy/ghttp/ghttp.h>
 
 #include "GameNetwork/DownloadManager.h"
 #include "GameNetwork/GameSpy/BuddyThread.h"
@@ -52,7 +52,7 @@
 #include "GameNetwork/GameSpy/PeerThread.h"
 
 #include "WWDownload/Registry.h"
-#include "WWDownload/URLBuilder.h"
+#include "WWDownload/urlBuilder.h"
 
 #ifdef _INTERNAL
 // for occasional debugging...
@@ -153,13 +153,13 @@ static Bool hasWriteAccess()
 
 	remove(filename);
 
-	int handle = _open( filename, _O_CREAT | _O_RDWR, _S_IREAD | _S_IWRITE);
+	int handle = open( filename, O_CREAT | O_RDWR, S_IREAD | S_IWRITE);
 	if (handle == -1)
 	{
 		return false;
 	}
 
-	_close(handle);
+	close(handle);
 	remove(filename);
 	
 	unsigned int val;
@@ -316,9 +316,9 @@ static void queuePatch(Bool mandatory, AsciiString downloadURL)
 ///////////////////////////////////////////////////////////////////////////////////////
 
 static GHTTPBool motdCallback( GHTTPRequest request, GHTTPResult result,
-															char * buffer, int bufferLen, void * param )
+															char * buffer, GHTTPByteCount bufferLen, void * param )
 {
-	Int run = (Int)param;
+	Int run = (IntPtr)param;
 	if (run != timeThroughOnline)
 	{
 		DEBUG_CRASH(("Old callback being called!"));
@@ -356,9 +356,9 @@ static GHTTPBool motdCallback( GHTTPRequest request, GHTTPResult result,
 ///////////////////////////////////////////////////////////////////////////////////////
 
 static GHTTPBool configCallback( GHTTPRequest request, GHTTPResult result,
-																char * buffer, int bufferLen, void * param )
+																char * buffer, GHTTPByteCount bufferLen, void * param )
 {
-	Int run = (Int)param;
+	Int run = (IntPtr)param;
 	if (run != timeThroughOnline)
 	{
 		DEBUG_CRASH(("Old callback being called!"));
@@ -421,9 +421,9 @@ static GHTTPBool configCallback( GHTTPRequest request, GHTTPResult result,
 ///////////////////////////////////////////////////////////////////////////////////////
 
 static GHTTPBool configHeadCallback( GHTTPRequest request, GHTTPResult result,
-																		char * buffer, int bufferLen, void * param )
+																		char * buffer, GHTTPByteCount bufferLen, void * param )
 {
-	Int run = (Int)param;
+	Int run = (IntPtr)param;
 	if (run != timeThroughOnline)
 	{
 		DEBUG_CRASH(("Old callback being called!"));
@@ -508,9 +508,9 @@ static GHTTPBool configHeadCallback( GHTTPRequest request, GHTTPResult result,
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-static GHTTPBool gamePatchCheckCallback( GHTTPRequest request, GHTTPResult result, char * buffer, int bufferLen, void * param )
+static GHTTPBool gamePatchCheckCallback( GHTTPRequest request, GHTTPResult result, char * buffer, GHTTPByteCount bufferLen, void * param )
 {
-	Int run = (Int)param;
+	Int run = (IntPtr)param;
 	if (run != timeThroughOnline)
 	{
 		DEBUG_CRASH(("Old callback being called!"));
@@ -598,7 +598,7 @@ void CancelPatchCheckCallback( void )
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-static GHTTPBool overallStatsCallback( GHTTPRequest request, GHTTPResult result, char * buffer, int bufferLen, void * param )
+static GHTTPBool overallStatsCallback( GHTTPRequest request, GHTTPResult result, char * buffer, GHTTPByteCount bufferLen, void * param )
 {
 	DEBUG_LOG(("overallStatsCallback() - Result=%d, len=%d\n", result, bufferLen));
 	if (result != GHTTPSuccess)
@@ -680,7 +680,7 @@ static GHTTPBool overallStatsCallback( GHTTPRequest request, GHTTPResult result,
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-static GHTTPBool numPlayersOnlineCallback( GHTTPRequest request, GHTTPResult result, char * buffer, int bufferLen, void * param )
+static GHTTPBool numPlayersOnlineCallback( GHTTPRequest request, GHTTPResult result, char * buffer, GHTTPByteCount bufferLen, void * param )
 {
 	DEBUG_LOG(("numPlayersOnlineCallback() - Result=%d, buffer=[%s], len=%d\n", result, buffer, bufferLen));
 	if (result != GHTTPSuccess)
@@ -722,7 +722,7 @@ void CheckNumPlayersOnline( void )
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
-
+#ifdef _WIN32
 DWORD WINAPI asyncGethostbynameThreadFunc( void * szName )
 {
 	HOSTENT *he = gethostbyname( (const char *)szName );
@@ -739,6 +739,7 @@ DWORD WINAPI asyncGethostbynameThreadFunc( void * szName )
 	s_asyncDNSThreadDone = TRUE;
 	return 0;
 }
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -751,8 +752,9 @@ int asyncGethostbyname(char * szName)
 	{
 		/* Kick off gethostname thread */
 		s_asyncDNSThreadDone = FALSE;
+#ifdef _WIN32
 		s_asyncDNSThreadHandle = CreateThread( NULL, 0, asyncGethostbynameThreadFunc, szName, 0, &threadid );
-
+#endif
 		if( s_asyncDNSThreadHandle == NULL )
 		{
 			return( LOOKUP_FAILED );
@@ -819,11 +821,13 @@ void StopAsyncDNSCheck( void )
 {
 	if (s_asyncDNSThreadHandle)
 	{
+#ifdef _WIN32
 #ifdef DEBUG_CRASHING
 		Int res =
 #endif
 			TerminateThread(s_asyncDNSThreadHandle,0);
 		DEBUG_ASSERTCRASH(res, ("Could not terminate the Async DNS Lookup thread!"));	// Thread still not killed!
+#endif
 	}
 	s_asyncDNSThreadHandle = NULL;
 	s_asyncDNSLookupInProgress = FALSE;

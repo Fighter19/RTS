@@ -20,10 +20,12 @@
 #include "wwstring.h"
 #include "wwdebug.h"
 #include "thread.h"
-#include "mpu.h"
 #pragma warning (disable : 4201)	// Nonstandard extension - nameless struct
-#include <windows.h>
 #include "systimer.h"
+
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 #ifdef _UNIX
 # include <time.h>  // for time(), localtime() and timezone variable.
@@ -57,7 +59,7 @@ int CPUDetectClass::ProcessorFamily;
 int CPUDetectClass::ProcessorModel;
 int CPUDetectClass::ProcessorRevision;
 int CPUDetectClass::ProcessorSpeed;
-__int64 CPUDetectClass::ProcessorTicksPerSecond;	// Ticks per second
+sint64 CPUDetectClass::ProcessorTicksPerSecond;	// Ticks per second
 double CPUDetectClass::InvProcessorTicksPerSecond;	// 1.0 / Ticks per second
 
 unsigned CPUDetectClass::FeatureBits;
@@ -125,45 +127,21 @@ const char* CPUDetectClass::Get_Processor_Manufacturer_Name()
 
 #define ASM_RDTSC _asm _emit 0x0f _asm _emit 0x31
 
-static unsigned Calculate_Processor_Speed(__int64& ticks_per_second)
+static unsigned Calculate_Processor_Speed(sint64& ticks_per_second)
 {
-	struct {
-		unsigned timer0_h;
-		unsigned timer0_l;
-		unsigned timer1_h;
-		unsigned timer1_l;
-	} Time;
+	sint64 timer0=0;
+	sint64 timer1=0;
 
-#ifdef WIN32
-   __asm {
-      ASM_RDTSC;
-      mov Time.timer0_h, eax
-      mov Time.timer0_l, edx
-   }
-#elif defined(_UNIX)
-      __asm__("rdtsc");
-      __asm__("mov %eax, __Time.timer1_h");
-      __asm__("mov %edx, __Time.timer1_l");
-#endif
+	timer0=_rdtsc();
 
 	unsigned start=TIMEGETTIME();
 	unsigned elapsed;
 	while ((elapsed=TIMEGETTIME()-start)<200) {
-#ifdef WIN32
-      __asm {
-         ASM_RDTSC;
-         mov Time.timer1_h, eax
-         mov Time.timer1_l, edx
-      }
-#elif defined(_UNIX)
-      __asm__ ("rdtsc");
-      __asm__("mov %eax, __Time.timer1_h");
-      __asm__("mov %edx, __Time.timer1_l");
-#endif
+		timer1=_rdtsc();
 	}
 
-	__int64 t=*(__int64*)&Time.timer1_h-*(__int64*)&Time.timer0_h;
-	ticks_per_second=(__int64)((1000.0/(double)elapsed)*(double)t);	// Ticks per second
+	sint64 t=timer1-timer0;
+	ticks_per_second=(sint64)((1000.0/(double)elapsed)*(double)t);	// Ticks per second
 	return unsigned((double)t/(double)(elapsed*1000));
 }
 
@@ -826,6 +804,7 @@ void CPUDetectClass::Init_CPUID_Instruction()
    // because CodeWarrior seems to have problems with
    // the command (huh?)
 
+#if defined(_MSC_VER) && _MSC_VER < 1300
 #ifdef WIN32
    __asm
    {
@@ -868,6 +847,10 @@ void CPUDetectClass::Init_CPUID_Instruction()
      __asm__(" pop %ebx");
 #endif
 	HasCPUIDInstruction=!!cpuid_available;
+#else
+	// TheSuperHackers @info Mauller 30/3/2020 All modern CPUs have the CPUID instruction, VS22 code will not run on a cpu that doesn't.
+	HasCPUIDInstruction = true;
+#endif	// defined(_MSC_VER) && _MSC_VER < 1300
 }
 
 void CPUDetectClass::Init_Processor_Features()
@@ -917,8 +900,8 @@ void CPUDetectClass::Init_Memory()
 
 void CPUDetectClass::Init_OS()
 {
-	OSVERSIONINFO os;
 #ifdef WIN32
+	OSVERSIONINFO os;
    os.dwOSVersionInfoSize = sizeof(os);
 	GetVersionEx(&os);
 
@@ -941,44 +924,12 @@ bool CPUDetectClass::CPUID(
 {
 	if (!Has_CPUID_Instruction()) return false;	// Most processors since 486 have CPUID...
 
-	unsigned u_eax;
-	unsigned u_ebx;
-	unsigned u_ecx;
-	unsigned u_edx;
-
-#ifdef WIN32
-   __asm
-   {
-      pushad
-      mov	eax, [cpuid_type]
-      xor	ebx, ebx
-      xor	ecx, ecx
-      xor	edx, edx
-      cpuid
-      mov	[u_eax], eax
-      mov	[u_ebx], ebx
-      mov	[u_ecx], ecx
-      mov	[u_edx], edx
-      popad
-   }
-#elif defined(_UNIX)
-   __asm__("pusha");
-   __asm__("mov	__cpuid_type, %eax");
-   __asm__("xor	%ebx, %ebx");
-   __asm__("xor	%ecx, %ecx");
-   __asm__("xor	%edx, %edx");
-   __asm__("cpuid");
-   __asm__("mov	%eax, __u_eax");
-   __asm__("mov	%ebx, __u_ebx");
-   __asm__("mov	%ecx, __u_ecx");
-   __asm__("mov	%edx, __u_edx");
-   __asm__("popa");
-#endif
-
-	u_eax_=u_eax;
-	u_ebx_=u_ebx;
-	u_ecx_=u_ecx;
-	u_edx_=u_edx;
+	unsigned int regs[4];
+	cpuid(regs, cpuid_type);
+	u_eax_ = regs[0];
+	u_ebx_ = regs[1];
+	u_ecx_ = regs[2];
+	u_edx_ = regs[3];
 
 	return true;
 }
@@ -991,9 +942,11 @@ void CPUDetectClass::Init_Processor_Log()
 
 	SYSLOG(("Operating System: "));
 	switch (OSVersionPlatformId) {
+#ifdef _WIN32
 	case VER_PLATFORM_WIN32s: SYSLOG(("Windows 3.1")); break;
 	case VER_PLATFORM_WIN32_WINDOWS: SYSLOG(("Windows 9x")); break;
 	case VER_PLATFORM_WIN32_NT: SYSLOG(("Windows NT")); break;
+#endif
 	}
 	SYSLOG(("\r\n"));
 
@@ -1002,11 +955,7 @@ void CPUDetectClass::Init_Processor_Log()
 		(OSVersionBuildNumber&0xff000000)>>24,
 		(OSVersionBuildNumber&0xff0000)>>16,
 		(OSVersionBuildNumber&0xffff)));
-#ifdef WIN32
-   SYSLOG(("OS-Info: %s\r\n", OSVersionExtraInfo));
-#elif defined(_UNIX)
-   SYSLOG(("OS-Info: %s\r\n", OSVersionExtraInfo.Peek_Buffer()));
-#endif
+	SYSLOG(("OS-Info: %s\r\n", OSVersionExtraInfo.Peek_Buffer()));
 
 	SYSLOG(("Processor: %s\r\n",CPUDetectClass::Get_Processor_String()));
 	SYSLOG(("Clock speed: ~%dMHz\r\n",CPUDetectClass::Get_Processor_Speed()));
@@ -1017,11 +966,7 @@ void CPUDetectClass::Init_Processor_Log()
 	case 2: cpu_type="Dual"; break;
 	case 3: cpu_type="*Intel Reserved*"; break;
 	}
-#ifdef WIN32
-   SYSLOG(("Processor type: %s\r\n", cpu_type));
-#elif defined(_UNIX)
-   SYSLOG(("Processor type: %s\r\n", cpu_type.Peek_Buffer()));
-#endif
+	SYSLOG(("Processor type: %s\r\n", cpu_type.Peek_Buffer()));
 
 	SYSLOG(("\r\n"));
 
@@ -1068,7 +1013,7 @@ void CPUDetectClass::Init_Processor_Log()
 	}
 
 	if (CPUDetectClass::Get_L1_Instruction_Trace_Cache_Size()) {
-		SYSLOG(("L1 Instruction Trace Cache: %d way set associative, %dk µOPs\r\n",
+		SYSLOG(("L1 Instruction Trace Cache: %d way set associative, %dk micro-OPs\r\n",
 			CPUDetectClass::Get_L1_Instruction_Cache_Set_Associative(),
 			CPUDetectClass::Get_L1_Instruction_Cache_Size()/1024));
 	}
@@ -1129,7 +1074,7 @@ void CPUDetectClass::Init_Compact_Log()
 static class CPUDetectInitClass
 {
 public:
-	CPUDetectInitClass::CPUDetectInitClass()
+	CPUDetectInitClass()
 	{
 		CPUDetectClass::Init_CPUID_Instruction();
 		// We pretty much need CPUID, but let's not crash if it doesn't exist.
@@ -1265,13 +1210,16 @@ void Get_OS_Info(
 	unsigned build_minor=(OSVersionBuildNumber&0xff0000)>>16;
 	unsigned build_sub=(OSVersionBuildNumber&0xffff);
 
+	// TheSuperHackers @bugfix JAJames 17/03/2025 Fix uninitialized memory access and add more Windows versions.
+	memset(&os_info,0,sizeof(os_info));
+	os_info.Code="UNKNOWN";
+	os_info.SubCode="UNKNOWN";
+	os_info.VersionString="UNKNOWN";
+
 	switch (OSVersionPlatformId) {
 	default:
-		memset(&os_info,0,sizeof(os_info));
-		os_info.Code="UNKNOWN";
-		os_info.SubCode="UNKNOWN";
-		os_info.VersionString="UNKNOWN";
 		break;
+#ifdef _WIN32
 	case VER_PLATFORM_WIN32_WINDOWS:
 		{
 			for(int i=0;i<sizeof(Windows9xVersionTable)/sizeof(os_info);++i) {
@@ -1325,8 +1273,34 @@ void Get_OS_Info(
 				os_info.Code="WINXP";
 				return;
 			}
-			os_info.Code="WINXX";
+		}
+		if (OSVersionNumberMajor==6) {
+			if (OSVersionNumberMinor==0) {
+				os_info.Code="WINVS"; // Vista
+				return;
+			}
+			if (OSVersionNumberMinor==1) {
+				os_info.Code="WIN70"; // Win 7
+				return;
+			}
+			if (OSVersionNumberMinor==2) {
+				os_info.Code="WIN80"; // Win 8.0
+				return;
+			}
+			if (OSVersionNumberMinor==3) {
+				os_info.Code="WIN81"; // Win 8.1
+				return;
+			}
+		}
+		if (OSVersionNumberMinor==10) {
+			os_info.Code="WIN1X"; // Win 10, Win 11, Server 2016, Server 2019, Server 2022
 			return;
 		}
+		// Reference 1: https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-osversioninfoa#remarks
+		// Reference 2: https://learn.microsoft.com/en-us/windows/win32/sysinfo/operating-system-version
+
+		// No more-specific version detected; fallback to XX
+		os_info.Code="WINXX";
+#endif
 	}
 }

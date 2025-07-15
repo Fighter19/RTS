@@ -1024,8 +1024,12 @@ GlobalData::GlobalData()
 	m_shouldUpdateTGAToDDS = FALSE;
 	
 	// Default DoubleClickTime to System double click time.
+#ifdef _WIN32
 	m_doubleClickTimeMS = GetDoubleClickTime(); // Note: This is actual MS, not frames.
-	
+#else
+	m_doubleClickTimeMS = 500; // Default to 500ms, which is the default in Windows.
+#endif
+
 #ifdef DUMP_PERF_STATS
 	m_dumpPerformanceStatistics = FALSE;
 #endif
@@ -1174,6 +1178,7 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 
 	TheWritableGlobalData->m_userDataDir.clear();
 
+#ifdef _WIN32
 	char temp[_MAX_PATH];
 	if (::SHGetSpecialFolderPath(NULL, temp, CSIDL_PERSONAL, true))
 	{
@@ -1184,6 +1189,7 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 		CreateDirectory(temp, NULL);
 		TheWritableGlobalData->m_userDataDir = temp;
 	}
+#endif
 
 	// override INI values with user preferences
 	OptionPreferences optionPref;

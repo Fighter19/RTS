@@ -103,7 +103,7 @@ WindowMsgHandledType GadgetTextEntryInput( GameWindow *window, UnsignedInt msg,
 			WideChar ch = (WideChar) mData1;
 
 			// --------------------------------------------------------------------
-			if ( ch == VK_RETURN )
+			if ( ch == 0x0D ) // VK_RETURN
 			{
 				// Done with this edit
 			 		TheWindowManager->winSendSystemMsg( window->winGetOwner(), 

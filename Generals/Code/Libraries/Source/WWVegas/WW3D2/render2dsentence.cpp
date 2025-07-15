@@ -39,7 +39,10 @@
 #include "texture.h"
 #include "wwprofile.h"
 #include "wwmemlog.h"
+
+#ifdef _WIN32
 #include "dx8wrapper.h"
+#endif
 
 #ifdef _INTERNAL
 // for occasional debugging...
@@ -391,7 +394,9 @@ Render2DSentenceClass::Build_Textures (void)
 		//
 		//	Copy the contents of the texture from the surface
 		//
+#ifdef _WIN32
 		DX8Wrapper::_Copy_DX8_Rects (curr_surface->Peek_D3D_Surface (), NULL, 0, texture_surface->Peek_D3D_Surface (), NULL);
+#endif
 		REF_PTR_RELEASE (texture_surface);
 	
 		//
@@ -1192,10 +1197,12 @@ Render2DSentenceClass::Build_Sentence (const WCHAR *text, int *hkX, int *hkY)
 //
 ////////////////////////////////////////////////////////////////////////////////////
 FontCharsClass::FontCharsClass (void) :
+#ifdef _WIN32
 	OldGDIFont(	NULL ),
 	OldGDIBitmap( NULL ),
 	GDIFont( NULL ),
 	GDIBitmap( NULL ),
+#endif
 	GDIBitmapBits ( NULL ),
 	MemDC( NULL ),
 	CurrPixelOffset( 0 ),
@@ -1339,7 +1346,42 @@ FontCharsClass::Blit_Char (WCHAR ch, uint16 *dest_ptr, int dest_stride, int x, i
 	return ;
 }
 
+////////////////////////////////////////////////////////////////////////////////////
+//
+//	Update_Current_Buffer
+//
+////////////////////////////////////////////////////////////////////////////////////
+void
+FontCharsClass::Update_Current_Buffer (int char_width)
+{
+	//
+	//	Check to see if we need to allocate a new buffer
+	//
+	bool needs_new_buffer = (BufferList.Count () == 0);
+	if (needs_new_buffer == false) {
+		
+		//
+		//	Would we extend past this buffer?
+		//
+		if ( (CurrPixelOffset + (char_width * CharHeight)) > CHAR_BUFFER_LEN ) {
+			needs_new_buffer = true;
+		}
+	}
 
+	//
+	//	Do we need to create a new surface?
+	//
+	if (needs_new_buffer) 
+	{
+		FontCharsBuffer* new_buffer = W3DNEW FontCharsBuffer;
+		BufferList.Add( new_buffer );
+		CurrPixelOffset = 0;
+	}
+
+	return ;
+}
+
+#ifdef _WIN32
 ////////////////////////////////////////////////////////////////////////////////////
 //
 //	Store_GDI_Char
@@ -1466,43 +1508,6 @@ FontCharsClass::Store_GDI_Char (WCHAR ch)
 	//
 	return char_data;
 }
-
-
-////////////////////////////////////////////////////////////////////////////////////
-//
-//	Update_Current_Buffer
-//
-////////////////////////////////////////////////////////////////////////////////////
-void
-FontCharsClass::Update_Current_Buffer (int char_width)
-{
-	//
-	//	Check to see if we need to allocate a new buffer
-	//
-	bool needs_new_buffer = (BufferList.Count () == 0);
-	if (needs_new_buffer == false) {
-		
-		//
-		//	Would we extend past this buffer?
-		//
-		if ( (CurrPixelOffset + (char_width * CharHeight)) > CHAR_BUFFER_LEN ) {
-			needs_new_buffer = true;
-		}
-	}
-
-	//
-	//	Do we need to create a new surface?
-	//
-	if (needs_new_buffer) 
-	{
-		FontCharsBuffer* new_buffer = W3DNEW FontCharsBuffer;
-		BufferList.Add( new_buffer );
-		CurrPixelOffset = 0;
-	}
-
-	return ;
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////////
 //
@@ -1644,7 +1649,7 @@ FontCharsClass::Free_GDI_Font (void)
 
 	return ;
 }
-
+#endif // _WIN32
 
 ////////////////////////////////////////////////////////////////////////////////////
 //

@@ -97,6 +97,7 @@ public:
 		ALPHATEST_MAX			// end of enumeration
 	};
 
+	#undef PASS_MAX
 	enum DepthCompareType
 	{
 		PASS_NEVER=0,        	// pass never

@@ -40,8 +40,9 @@
 
 
 #include "refcount.h"
+#ifdef _WIN32
 #include <windows.h>
-
+#endif
 
 #ifndef NDEBUG
 
@@ -87,7 +88,7 @@ RefCountClass *	RefCountClass::Add_Active_Ref(RefCountClass *obj)
  * HISTORY:                                                                                    *
  *   3/16/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-RefCountClass *	RefCountClass::Set_Ref_Owner(RefCountClass *obj,char * file,int line) 
+RefCountClass *	RefCountClass::Set_Ref_Owner(RefCountClass *obj,const char * file,int line) 
 { 
 //	static RefCountClass *hunt = (RefCountClass *)0x06558890;
 	static RefCountClass *hunt = (RefCountClass *)0x0;
@@ -174,7 +175,7 @@ void RefCountClass::Add_Ref(void)
 
 	// See if programmer set break on for a specific address.
 	if (this == BreakOnReference) {
-		DebugBreak();  // trigger the debugger
+		__debugbreak();  // trigger the debugger
 	}
 	Inc_Total_Refs(this);
 }
@@ -201,7 +202,7 @@ void	RefCountClass::Dec_Total_Refs(RefCountClass * obj)
 
 	// See if programmer set break on for a specific address.
 	if (obj == BreakOnReference) {
-		 DebugBreak();  // trigger the debugger
+		 __debugbreak();  // trigger the debugger
 	}
 }
 

@@ -22,7 +22,7 @@
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
  *                                                                                             *
- *                     $Archive:: /Commando/Code/wwlib/listnode.h                             $*
+ *                     $Archive:: /Commando/Code/wwlib/LISTNODE.H                             $*
  *                                                                                             *
  *                      $Author:: Ian_l                                                       $*
  *                                                                                             *

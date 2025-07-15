@@ -47,6 +47,7 @@ DownloadManager::DownloadManager()
 
 	m_statusString = TheGameText->fetch("FTP:StatusIdle");
 
+#ifdef _WIN32
 	// ----- Initialize Winsock -----
 	m_winsockInit = true;
 	WORD verReq = MAKEWORD(2, 2);
@@ -65,17 +66,19 @@ DownloadManager::DownloadManager()
 			m_winsockInit = false;
 		}
 	}
-
+#endif
 }
 
 DownloadManager::~DownloadManager()
 {
 	delete m_download;
+#ifdef _WIN32
 	if (m_winsockInit)
 	{
 		WSACleanup();
 		m_winsockInit = false;
 	}
+#endif
 }
 
 void DownloadManager::init( void )

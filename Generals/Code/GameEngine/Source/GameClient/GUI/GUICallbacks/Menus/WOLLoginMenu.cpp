@@ -117,13 +117,13 @@ static AsciiString obfuscate( AsciiString in )
 {
 	char *buf = NEW char[in.getLength() + 1];
 	strcpy(buf, in.str());
-	static const char *xor = "1337Munkee";
+	static const char *pszXor = "1337Munkee";
 	char *c = buf;
-	const char *c2 = xor;
+	const char *c2 = pszXor;
 	while (*c)
 	{
 		if (!*c2)
-			c2 = xor;
+			c2 = pszXor;
 		if (*c != *c2)
 			*c = *c++ ^ *c2++;
 		else
@@ -589,7 +589,7 @@ void WOLLoginMenuInit( WindowLayout *layout, void *userData )
 #endif // ALLOW_NON_PROFILED_LOGIN
 		// Read login names from registry...
 		GadgetComboBoxReset(comboBoxEmail);
-		GadgetTextEntrySetText(textEntryPassword, UnicodeString.TheEmptyString);
+		GadgetTextEntrySetText(textEntryPassword, UnicodeString::TheEmptyString);
 
 		// look for cached nicks to add
 		AsciiString lastName;
@@ -967,21 +967,31 @@ static Bool isAgeOkay(AsciiString &month, AsciiString &day, AsciiString year)
 	// test the year first
 	#define DATE_BUFFER_SIZE 256
 	char dateBuffer[ DATE_BUFFER_SIZE ];
+#ifdef _WIN32
 	GetDateFormat( LOCALE_SYSTEM_DEFAULT,
 								 0, NULL,
 								 "yyyy",
 								 dateBuffer, DATE_BUFFER_SIZE );
+#else
+	// Get current time
+	time_t t = time(NULL);
+	struct tm *tm = localtime(&t);
+	strftime(dateBuffer, DATE_BUFFER_SIZE, "%Y", tm);
+#endif
 	Int sysVal = atoi(dateBuffer);
 	Int userVal = atoi(year.str());
 	if(sysVal - userVal >= 14)
 		return TRUE;
 	else if( sysVal - userVal <= 12)
 		return FALSE;
-
+#ifdef _WIN32
 	GetDateFormat( LOCALE_SYSTEM_DEFAULT,
 								 0, NULL,
 								 "MM",
 								 dateBuffer, DATE_BUFFER_SIZE );
+#else
+	strftime(dateBuffer, DATE_BUFFER_SIZE, "%m", tm);
+#endif
 	sysVal = atoi(dateBuffer);
 	userVal = atoi(month.str());
 	if(sysVal - userVal >0 )
@@ -989,10 +999,14 @@ static Bool isAgeOkay(AsciiString &month, AsciiString &day, AsciiString year)
 	else if( sysVal -userVal < 0 )
 		return FALSE;
 //	month.format("%02.2d",userVal);
+#ifdef _WIN32
 	GetDateFormat( LOCALE_SYSTEM_DEFAULT,
 								 0, NULL,
 								 "dd",
 								 dateBuffer, DATE_BUFFER_SIZE );
+#else
+	strftime(dateBuffer, DATE_BUFFER_SIZE, "%d", tm);
+#endif
 	sysVal = atoi(dateBuffer);
 	userVal = atoi(day.str());
 	if(sysVal - userVal< 0)

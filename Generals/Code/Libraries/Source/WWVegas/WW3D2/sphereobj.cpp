@@ -78,12 +78,14 @@
 #include "wwstring.h"
 #include "camera.h"
 #include "statistics.h"
-#include "dx8wrapper.h"
-#include "dx8vertexbuffer.h"
-#include "dx8indexbuffer.h"
 #include "sortingrenderer.h"
 #include "visrasterizer.h"
 
+#ifdef _WIN32
+#include "dx8wrapper.h"
+#include "dx8vertexbuffer.h"
+#include "dx8indexbuffer.h"
+#endif
 
 #define SPHERE_NUM_LOD		(6)
 #define SPHERE_LOWEST_LOD	(4)
@@ -437,6 +439,7 @@ void SphereRenderObjClass::render_sphere()
 	} else {
 		SphereShader.Set_Texturing (ShaderClass::TEXTURING_DISABLE);
 	}
+#ifdef _WIN32
 	DX8Wrapper::Set_Shader(SphereShader);
 	DX8Wrapper::Set_Texture(0,SphereTexture);
 	DX8Wrapper::Set_Material(SphereMaterial);	
@@ -495,7 +498,7 @@ void SphereRenderObjClass::render_sphere()
 		0,
 		mesh.Vertex_ct);
 #endif
-
+#endif // _WIN32
 } // render_sphere
 
 
@@ -647,6 +650,7 @@ void SphereRenderObjClass::Render(RenderInfoClass & rinfo)
 		}
 
 		// Camera Align
+#ifdef _WIN32
 		if (Flags & USE_CAMERA_ALIGN) {
 			Matrix4 view,ident(true);
 			DX8Wrapper::Get_Transform(D3DTS_VIEW,view);
@@ -667,7 +671,8 @@ void SphereRenderObjClass::Render(RenderInfoClass & rinfo)
 		} else {
 			DX8Wrapper::Set_Transform(D3DTS_WORLD,temp);	
 			render_sphere();
-		}		
+		}
+#endif
 	}
 }
 
@@ -1461,7 +1466,7 @@ void SphereMeshClass::Generate(float radius, int slices, int stacks)
 
 	// Do Fan #2
 	int vtx_idx = Vertex_ct - 1;
-	for (ct = fan_size; ct < (fan_size * 2); ct++) {
+	for (int ct = fan_size; ct < (fan_size * 2); ct++) {
 		fans[ct] = vtx_idx;
 		vtx_idx--;
 	}
@@ -1479,7 +1484,7 @@ void SphereMeshClass::Generate(float radius, int slices, int stacks)
 			int base_vtx  = 1 + (stacks * (Slices+1));
 			int cur_vtx = base_vtx;
 
-			for(ct = 0; ct <= Slices; ct++) {
+			for(int ct = 0; ct <= Slices; ct++) {
 
 				strips[store_idx]   = cur_vtx + (Slices+1);
 				strips[store_idx+1] = cur_vtx;
@@ -1552,7 +1557,7 @@ void SphereMeshClass::Generate(float radius, int slices, int stacks)
 	}
 
 	// Make Sure ptr is where I expect it to be
-	WWASSERT(((int)out) == ((int)(tri_poly + face_ct)));
+	WWASSERT(((intptr_t)out) == ((intptr_t)(tri_poly + face_ct)));
 
 	//
 	//	Fill in the DCG array

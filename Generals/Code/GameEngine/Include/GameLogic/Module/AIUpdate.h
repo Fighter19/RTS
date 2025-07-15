@@ -59,7 +59,7 @@ class HackInternetAIInterface;
 class AssaultTransportAIInterface;
 
 enum AIStateType;
-enum ObjectID;
+enum ObjectID : int;
 
 
 //-------------------------------------------------------------------------------------------------

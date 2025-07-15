@@ -382,7 +382,7 @@ SOURCE=.\PROGRESS.H
 # End Source File
 # Begin Source File
 
-SOURCE=.\rawfile.h
+SOURCE=.\RAWFILE.H
 # End Source File
 # Begin Source File
 
@@ -422,7 +422,7 @@ SOURCE=.\win.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\wwfile.h
+SOURCE=.\WWFILE.H
 # End Source File
 # Begin Source File
 

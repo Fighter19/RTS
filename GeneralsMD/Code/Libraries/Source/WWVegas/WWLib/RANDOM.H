@@ -22,7 +22,7 @@
  *                                                                                             * 
  *                 Project Name : Command & Conquer                                            * 
  *                                                                                             * 
- *                     $Archive:: /VSS_Sync/wwlib/random.h                                    $* 
+ *                     $Archive:: /VSS_Sync/wwlib/RANDOM.H                                    $* 
  *                                                                                             * 
  *                      $Author:: Vss_sync                                                    $*
  *                                                                                             * 

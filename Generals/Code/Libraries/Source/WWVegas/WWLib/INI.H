@@ -22,7 +22,7 @@
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
  *                                                                                             *
- *                     $Archive:: /VSS_Sync/wwlib/ini.h                                       $*
+ *                     $Archive:: /VSS_Sync/wwlib/INI.H                                       $*
  *                                                                                             *
  *                      $Author:: Vss_sync                                                    $*
  *                                                                                             *
@@ -40,14 +40,14 @@
 #ifndef INI_H
 #define INI_H
 
-//#include	"listnode.h"
+//#include	"LISTNODE.H"
 //#include	"trect.h"
-//#include	"index.h"
+//#include	"INDEX.H"
 
-//#include	"pipe.h"
-//#include	"pk.h"
-//#include	"straw.h"
-//#include	"wwfile.h"
+//#include	"PIPE.H"
+//#include	"PK.H"
+//#include	"STRAW.H"
+//#include	"WWFILE.H"
 
 class PKey;
 class FileClass;

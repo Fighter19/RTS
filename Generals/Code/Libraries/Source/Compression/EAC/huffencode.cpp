@@ -24,6 +24,7 @@
 #include <string.h>
 #include "codex.h"
 #include "huffcodex.h"
+#include <stdint.h>
 
 /****************************************************************/
 /*  Internal Functions                                          */
@@ -1050,8 +1051,8 @@ static void HUFF_pack(struct HuffEncodeContext *EC,
 		if (!i3)
 			HUFF_writecode(EC,dest,i);
 
-		if (((int) bptr1- (int) EC->buffer) >= (int)(EC->plen+curpc))
-			curpc = (int) bptr1 - (int) EC->buffer - EC->plen;
+		if (((intptr_t) bptr1- (intptr_t) EC->buffer) >= (intptr_t)(EC->plen+curpc))
+			curpc = (intptr_t) bptr1 - (intptr_t) EC->buffer - EC->plen;
 	}
 
 	/* write EOF ([clue] 0gn [10]) */

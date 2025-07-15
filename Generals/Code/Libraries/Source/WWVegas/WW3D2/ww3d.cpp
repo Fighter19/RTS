@@ -98,22 +98,25 @@
 #include "statistics.h"
 #include "pointgr.h"
 #include "ffactory.h"
-#include "ini.h"
+#include "INI.H"
 #include "dazzle.h"
 #include "meshmdl.h"
-#include "dx8renderer.h"
 #include "render2d.h"
 #include "bound.h"
 #include "rddesc.h"
 #include "vector3i.h"
 #include <cstdio>
-#include "dx8wrapper.h"
-#include "targa.h"
+#include "TARGA.H"
 #include "sortingrenderer.h"
 #include "thread.h"
 #include "cpudetect.h"
-#include "dx8texman.h"
 #include "formconv.h"
+
+#ifdef _WIN32
+#include "dx8renderer.h"
+#include "dx8wrapper.h"
+#include "dx8texman.h"
+#endif
 
 
 #ifndef _UNIX
@@ -219,6 +222,8 @@ static int												_TextureReduction = 0;
 static int												_TextureMinMipLevels = 1;
 int														WW3D::LastFrameMemoryAllocations;
 int														WW3D::LastFrameMemoryFrees;
+
+#ifdef _WIN32
 
 /**********************************************************************************
 **
@@ -1905,3 +1910,4 @@ void WW3D::Reset_Current_Static_Sort_Lists_To_Default(void)
 	MinStaticSortLevel = 1;	// The 0 list is not used
 	MaxStaticSortLevel = MAX_SORT_LEVEL;
 }
+#endif

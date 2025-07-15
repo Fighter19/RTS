@@ -51,7 +51,7 @@ public:
 	{
 		NameKeyType key;
 		const char *name;
-		void *func;
+		void* func;
 	};
 
 	enum TableIndex

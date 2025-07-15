@@ -47,18 +47,20 @@
 #include "assetmgr.h"
 #include "vector3i.h"
 #include "quat.h"
-#include "ini.h"
-#include "point.h"
+#include "INI.H"
+#include "Point.h"
 #include "rinfo.h"
 #include "vertmaterial.h"
 #include "chunkio.h"
-#include "wwfile.h"
+#include "WWFILE.H"
 #include "inisup.h"
 #include "persistfactory.h"
 #include "ww3dids.h"
+#ifdef _WIN32
 #include "dx8wrapper.h"
 #include "dx8vertexbuffer.h"
 #include "dx8indexbuffer.h"
+#endif
 #include "sortingrenderer.h"
 #include "texture.h"
 #include "scene.h"
@@ -388,6 +390,7 @@ void LensflareTypeClass::Generate_Vertex_Buffers(
 		if (col[0]>1.0f) col[0]=1.0f;
 		if (col[1]>1.0f) col[1]=1.0f;
 		if (col[2]>1.0f) col[2]=1.0f;
+#ifdef _WIN32
 		unsigned color=DX8Wrapper::Convert_Color(col,1.0f);
 
 		vertex->x=x+ix;
@@ -421,7 +424,7 @@ void LensflareTypeClass::Generate_Vertex_Buffers(
 		vertex->v1=lic.flare_uv[a][3];
 		vertex->diffuse=color;
 		vertex++;
-
+#endif // _WIN32
 		vertex_count+=4;
 	}
 }
@@ -667,7 +670,8 @@ void DazzleRenderObjClass::Init_Type(const DazzleInitClass& i)
 	if (i.type>=type_count) {
 		unsigned new_count=i.type+1;
 		DazzleTypeClass** new_types=W3DNEWARRAY DazzleTypeClass*[new_count];
-		for (unsigned a=0;a<type_count;++a) {
+		unsigned a;
+		for (a=0;a<type_count;++a) {
 			new_types[a]=types[a];
 		}
 		for (;a<new_count;++a) {
@@ -690,7 +694,8 @@ void DazzleRenderObjClass::Init_Lensflare(const LensflareInitClass& i)
 	if (i.type>=lensflare_count) {
 		unsigned new_count=i.type+1;
 		LensflareTypeClass** new_lensflares=W3DNEWARRAY LensflareTypeClass*[new_count];
-		for (unsigned a=0;a<lensflare_count;++a) {
+		unsigned a;
+		for (a=0;a<lensflare_count;++a) {
 			new_lensflares[a]=lensflares[a];
 		}
 		for (;a<new_count;++a) {
@@ -908,8 +913,10 @@ void DazzleRenderObjClass::Render(RenderInfoClass & rinfo)
 //			visibility = _VisibilityHandler->Compute_Dazzle_Visibility(rinfo,this,position);
 
 			Matrix4 view_transform,projection_transform;
+		#ifdef _WIN32
 			DX8Wrapper::Get_Transform(D3DTS_VIEW,view_transform);
 			DX8Wrapper::Get_Transform(D3DTS_PROJECTION,projection_transform);
+		#endif
 			Vector3 camera_loc(rinfo.Camera.Get_Position());
 			Vector3 camera_dir(-view_transform[2][0],-view_transform[2][1],-view_transform[2][2]);
 
@@ -984,9 +991,11 @@ void DazzleRenderObjClass::Render_Dazzle(CameraClass* camera)
 	Matrix4 view_transform;
 	Matrix4 world_transform;
 	Matrix4 projection_transform;
+#ifdef _WIN32
 	DX8Wrapper::Get_Transform(D3DTS_VIEW,view_transform);
 	DX8Wrapper::Get_Transform(D3DTS_WORLD,world_transform);
 	DX8Wrapper::Get_Transform(D3DTS_PROJECTION,projection_transform);
+#endif
 	old_view_transform=view_transform;
 	old_world_transform=world_transform;
 	old_projection_transform=projection_transform;
@@ -1032,6 +1041,7 @@ void DazzleRenderObjClass::Render_Dazzle(CameraClass* camera)
 		lens_max_verts=4*lensflare->lic.flare_count;
 	}
 
+#ifdef _WIN32
 	DynamicVBAccessClass vb_access(BUFFER_TYPE_DYNAMIC_DX8,dynamic_fvf_type,vertex_count*2+lens_max_verts);
 	{
 		DynamicVBAccessClass::WriteLockClass lock(&vb_access);
@@ -1146,7 +1156,7 @@ void DazzleRenderObjClass::Render_Dazzle(CameraClass* camera)
 			vertex_count+=lensflare_vertex_count;
 		}
 	}
-
+#endif // _WIN32
 	int dazzle_poly_count=dazzle_vertex_count>>1;
 	int halo_poly_count=halo_vertex_count>>1;
 	int lensflare_poly_count=lensflare_vertex_count>>1;
@@ -1156,6 +1166,7 @@ void DazzleRenderObjClass::Render_Dazzle(CameraClass* camera)
 		return;
 	}
 
+#ifdef _WIN32
 	DX8Wrapper::Set_Vertex_Buffer(vb_access);
 
 	DynamicIBAccessClass ib_access(BUFFER_TYPE_DYNAMIC_DX8,poly_count*3);
@@ -1206,6 +1217,7 @@ void DazzleRenderObjClass::Render_Dazzle(CameraClass* camera)
 	DX8Wrapper::Set_Transform(D3DTS_PROJECTION,old_projection_transform);
 	DX8Wrapper::Set_Transform(D3DTS_VIEW,old_view_transform);
 	DX8Wrapper::Set_Transform(D3DTS_WORLD,old_world_transform);
+#endif // _WIN32
 }
 
 // ----------------------------------------------------------------------------
@@ -1479,7 +1491,9 @@ void DazzleLayerClass::Render(CameraClass* camera)
 	unsigned time_ms=WW3D::Get_Frame_Time();
 	if (time_ms==0) time_ms=1;
 
+#ifdef _WIN32
 	DX8Wrapper::Set_Material(NULL);
+#endif // _WIN32
 
 	for (unsigned type=0;type<type_count;++type) {
 		if (!types[type]) continue;

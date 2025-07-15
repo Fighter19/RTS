@@ -22,7 +22,7 @@
  *                                                                                             * 
  *                 Project Name : Command & Conquer                                            * 
  *                                                                                             * 
- *                     $Archive:: /G/wwlib/rawfile.h                                          $* 
+ *                     $Archive:: /G/wwlib/RAWFILE.H                                          $* 
  *                                                                                             * 
  *                      $Author:: Neal_k                                                      $*
  *                                                                                             * 
@@ -58,7 +58,7 @@
   #define	HANDLE_TYPE		HANDLE
 #endif
 
-#include	"wwfile.h"
+#include	"WWFILE.H"
 
 
 #ifndef WWERROR

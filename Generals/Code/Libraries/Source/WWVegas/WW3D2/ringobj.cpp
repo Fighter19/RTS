@@ -84,13 +84,15 @@
 #include "wwstring.h"
 #include "camera.h"
 #include "statistics.h"
-#include "dx8wrapper.h"
-#include "dx8indexbuffer.h"
-#include "dx8vertexbuffer.h"
 #include "sortingrenderer.h"
 #include "vector3i.h"
 #include "visrasterizer.h"
 
+#ifdef _WIN32
+#include "dx8wrapper.h"
+#include "dx8indexbuffer.h"
+#include "dx8vertexbuffer.h"
+#endif
 
 #define RING_NUM_LOD	(20)
 #define RING_LOWEST_LOD (3)
@@ -510,6 +512,7 @@ void RingRenderObjClass::render_ring(RenderInfoClass & rinfo,const Vector3 & cen
 	} else {
 		RingShader.Set_Texturing (ShaderClass::TEXTURING_DISABLE);
 	}
+#ifdef _WIN32
 	DX8Wrapper::Set_Shader(RingShader);
 	DX8Wrapper::Set_Texture(0,RingTexture);
 	DX8Wrapper::Set_Material(RingMaterial);	
@@ -574,7 +577,7 @@ void RingRenderObjClass::render_ring(RenderInfoClass & rinfo,const Vector3 & cen
 		0,
 		ring.Vertex_ct);
 #endif
-
+#endif // _WIN32
 } // render_ring
 
 
@@ -732,7 +735,9 @@ void RingRenderObjClass::Render(RenderInfoClass & rinfo)
 			rinfo.Gerd.loadMatrix (srtm);	 
 	#endif //WW3D_DX8
 		} else {
-			DX8Wrapper::Set_Transform(D3DTS_WORLD,temp);	
+#ifdef _WIN32
+			DX8Wrapper::Set_Transform(D3DTS_WORLD,temp);
+#endif // _WIN32
 		}
 
 		//

@@ -97,10 +97,12 @@
 #include "rinfo.h"
 #include "coltest.h"
 #include "inttest.h"
+#ifdef _WIN32
 #include "dx8wrapper.h"
 #include "dx8indexbuffer.h"
 #include "dx8vertexbuffer.h"
 #include "dx8fvf.h"
+#endif
 #include "sortingrenderer.h"
 #include "visrasterizer.h"
 
@@ -452,6 +454,7 @@ void BoxRenderObjClass::render_box(RenderInfoClass & rinfo,const Vector3 & cente
 			verts[ivert].Z = center.Z + _BoxVerts[ivert][2] * extent.Z;
 		}
 
+#ifdef _WIN32
 		/*
 		** Dump the box vertices into the sorting dynamic vertex buffer. 
 		*/
@@ -512,6 +515,7 @@ void BoxRenderObjClass::render_box(RenderInfoClass & rinfo,const Vector3 & cente
 		Get_Obj_Space_Bounding_Sphere(sphere); 
 
 		DX8Wrapper::Draw_Triangles(buffer_type,0,NUM_BOX_FACES,0,NUM_BOX_VERTS);
+#endif
 	}
 }
 
@@ -701,7 +705,9 @@ void AABoxRenderObjClass::Render(RenderInfoClass & rinfo)
 {
 	Matrix3D temp(1);
 	temp.Translate(Transform.Get_Translation());
+#ifdef _WIN32
 	DX8Wrapper::Set_Transform(D3DTS_WORLD,temp);
+#endif
 	render_box(rinfo,ObjSpaceCenter,ObjSpaceExtent);
 }
 
@@ -1079,7 +1085,9 @@ int OBBoxRenderObjClass::Class_ID(void) const
 void OBBoxRenderObjClass::Render(RenderInfoClass & rinfo)
 {
 	Matrix3D tm(Transform);
+#ifdef _WIN32
 	DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);
+#endif
 	render_box(rinfo,ObjSpaceCenter,ObjSpaceExtent);
 }
 

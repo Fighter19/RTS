@@ -63,11 +63,13 @@
 #include "ww3d.h"
 #include "rinfo.h"
 #include "chunkio.h"
-#include "dx8renderer.h"
-#include "dx8wrapper.h"
 #include "sortingrenderer.h"
 #include "coltest.h"
 
+#ifdef _WIN32
+#include "dx8renderer.h"
+#include "dx8wrapper.h"
+#endif
 
 /*
 ** Chunk ID's used by SceneClass
@@ -208,6 +210,7 @@ void SceneClass::Remove_Render_Object(RenderObjClass * obj)
  *=============================================================================================*/
 void SceneClass::Render(RenderInfoClass & rinfo)
 {
+#ifdef _WIN32
 	DX8Wrapper::Set_Fog(FogEnabled, FogColor, FogStart, FogEnd);
 
 	if (Get_Extra_Pass_Polygon_Mode()==EXTRA_PASS_DISABLE) {
@@ -236,6 +239,7 @@ void SceneClass::Render(RenderInfoClass & rinfo)
 
 		WW3D::Enable_Texturing(old_enable);
 	}
+#endif // _WIN32
 }
 
 /***********************************************************************************************
@@ -546,6 +550,7 @@ void SimpleSceneClass::Customized_Render(RenderInfoClass & rinfo)
 	WWASSERT(rinfo.light_environment==NULL);
 	int count=0;
 	// Turn off lights in case we have none
+#ifdef _WIN32
 	DX8Wrapper::Set_Light(0,NULL);
 	DX8Wrapper::Set_Light(1,NULL);
 	DX8Wrapper::Set_Light(2,NULL);
@@ -562,7 +567,7 @@ void SimpleSceneClass::Customized_Render(RenderInfoClass & rinfo)
 		}
 		count++;
 	}
-
+#endif // _WIN32
 	// loop through all render objects in the list:
 	for (it.First(&RenderList); !it.Is_Done(); it.Next()) {
 

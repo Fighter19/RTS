@@ -41,7 +41,7 @@
 
 #include	"surface.h"
 #include	"trect.h"
-#include	"point.h"
+#include	"Point.h"
 #include	<assert.h>
 
 

@@ -52,7 +52,7 @@
 #include "Common/CriticalSection.h"
 #endif
 #include "Common/Debug.h"
-#include "Common/registry.h"
+#include "Common/Registry.h"
 #include "Common/SystemInfo.h"
 #include "Common/UnicodeString.h"
 #include "GameClient/GameText.h"
@@ -103,7 +103,7 @@ static FILE *theLogFile = NULL;
 #define LARGE_BUFFER	8192
 static char theBuffer[ LARGE_BUFFER ];	// make it big to avoid weird overflow bugs in debug mode
 static int theDebugFlags = 0;
-static DWORD theMainThreadID = 0;
+static uint32_t theMainThreadID = 0;
 // ----------------------------------------------------------------------------
 // PUBLIC DATA 
 // ----------------------------------------------------------------------------
@@ -148,7 +148,9 @@ inline Bool ignoringAsserts()
 // ----------------------------------------------------------------------------
 inline HWND getThreadHWND()
 {
+#ifdef _WIN32
 	return (theMainThreadID == GetCurrentThreadId())?ApplicationHWnd:NULL;
+#endif
 }
 
 // ----------------------------------------------------------------------------
@@ -269,7 +271,7 @@ static int doCrashBox(const char *buffer, Bool logResult)
 			if (logResult)
 				DebugLog("[Retry]\n");
 #endif
-			::DebugBreak();
+			__debugbreak();
 			break;
 		case IDIGNORE:
 #ifdef DEBUG_LOGGING
@@ -339,7 +341,11 @@ void DebugInit(int flags)
 	{
 		theDebugFlags = flags;
 
+#ifdef _WIN32
 		theMainThreadID = GetCurrentThreadId();
+#else
+		theMainThreadID = (uint32_t)(intptr_t)::pthread_self();
+#endif
 
 	#ifdef DEBUG_LOGGING
 
@@ -431,7 +437,9 @@ void DebugCrash(const char *format, ...)
 	{
 		if (!DX8Wrapper_IsWindowed) {
 			if (ApplicationHWnd) {
+#ifdef _WIN32
 				ShowWindow(ApplicationHWnd, SW_HIDE);
+#endif
 			}
 		}
 		MessageBoxWrapper("DebugCrash - Debug not inited properly", "", MB_OK|MB_TASKMODAL);
@@ -449,7 +457,9 @@ void DebugCrash(const char *format, ...)
 	{
 		if (!DX8Wrapper_IsWindowed) {
 			if (ApplicationHWnd) {
+#ifdef _WIN32
 				ShowWindow(ApplicationHWnd, SW_HIDE);
+#endif
 			}
 		}
 		MessageBoxWrapper("String too long for debug buffers", "", MB_OK|MB_TASKMODAL);
@@ -550,7 +560,11 @@ void DebugSetFlags(int flags)
 // ----------------------------------------------------------------------------
 SimpleProfiler::SimpleProfiler()
 {
+#ifdef _WIN32
 	QueryPerformanceFrequency((LARGE_INTEGER*)&m_freq);
+#else
+	m_freq = 1000; // assume 1ms resolution, which is the case on most systems
+#endif
 	m_startThisSession = 0;
 	m_totalThisSession = 0;
 	m_totalAllSessions = 0;
@@ -561,7 +575,11 @@ SimpleProfiler::SimpleProfiler()
 void SimpleProfiler::start()
 {
 	DEBUG_ASSERTCRASH(m_startThisSession == 0, ("already started"));
+#ifdef _WIN32
 	QueryPerformanceCounter((LARGE_INTEGER*)&m_startThisSession);
+#else
+	m_startThisSession = _rdtsc();
+#endif
 }
 
 // ----------------------------------------------------------------------------
@@ -569,8 +587,12 @@ void SimpleProfiler::stop()
 {
 	if (m_startThisSession != 0) 
 	{
-		__int64 stop;
+		int64_t stop;
+#ifdef _WIN32
 		QueryPerformanceCounter((LARGE_INTEGER*)&stop);
+#else
+		stop = _rdtsc();
+#endif
 		m_totalThisSession = stop - m_startThisSession;
 		m_totalAllSessions += stop - m_startThisSession;
 		m_startThisSession = 0;
@@ -684,9 +706,11 @@ void ReleaseCrash(const char *reason)
 	}
 
 	if (!DX8Wrapper_IsWindowed) {
+#if _WIN32
 		if (ApplicationHWnd) {
 			ShowWindow(ApplicationHWnd, SW_HIDE);
 		}
+#endif
 	}
 
 #if defined(_DEBUG) || defined(_INTERNAL)
@@ -700,7 +724,7 @@ void ReleaseCrash(const char *reason)
 
 	if (!GetRegistryLanguage().compareNoCase("german2") || !GetRegistryLanguage().compareNoCase("german") )
 	{
-		::MessageBox(NULL, "Es ist ein gravierender Fehler aufgetreten. Solche Fehler können durch viele verschiedene Dinge wie Viren, überhitzte Hardware und Hardware, die den Mindestanforderungen des Spiels nicht entspricht, ausgelöst werden. Tipps zur Vorgehensweise findest du in den Foren unter www.generals.ea.com, Informationen zum Technischen Kundendienst im Handbuch zum Spiel.", "Fehler...", MB_OK|MB_TASKMODAL|MB_ICONERROR);
+		::MessageBox(NULL, "Es ist ein gravierender Fehler aufgetreten. Solche Fehler kï¿½nnen durch viele verschiedene Dinge wie Viren, ï¿½berhitzte Hardware und Hardware, die den Mindestanforderungen des Spiels nicht entspricht, ausgelï¿½st werden. Tipps zur Vorgehensweise findest du in den Foren unter www.generals.ea.com, Informationen zum Technischen Kundendienst im Handbuch zum Spiel.", "Fehler...", MB_OK|MB_TASKMODAL|MB_ICONERROR);
 	} 
 	else
 	{
@@ -727,9 +751,11 @@ void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 	/// do additional reporting on the crash, if possible
 
 	if (!DX8Wrapper_IsWindowed) {
+		#ifdef _WIN32
 		if (ApplicationHWnd) {
 			ShowWindow(ApplicationHWnd, SW_HIDE);
 		}
+		#endif
 	}
 
 	if (TheSystemIsUnicode) 
@@ -744,7 +770,9 @@ void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 		promptA.translate(prompt);
 		mesgA.translate(mesg);
 		//Make sure main window is not TOP_MOST
+		#ifdef _WIN32
 		::SetWindowPos(ApplicationHWnd, HWND_NOTOPMOST, 0, 0, 0, 0,SWP_NOSIZE |SWP_NOMOVE);
+		#endif
 		::MessageBoxA(NULL, mesgA.str(), promptA.str(), MB_OK|MB_TASKMODAL|MB_ICONERROR);
 	}
 

@@ -22,7 +22,7 @@
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
  *                                                                                             *
- *                     $Archive:: /Commando/Code/wwlib/vector.h                               $*
+ *                     $Archive:: /Commando/Code/wwlib/Vector.H                               $*
  *                                                                                             *
  *                      $Author:: Jani_p                                                      $*
  *                                                                                             *
@@ -61,7 +61,7 @@
 #include	<assert.h>
 #include	<stdlib.h>
 #include <string.h>
-#include <new.h>
+#include <new>
 
 #ifdef _MSC_VER
 #pragma warning (disable : 4702) // unreachable code, happens with some uses of these templates

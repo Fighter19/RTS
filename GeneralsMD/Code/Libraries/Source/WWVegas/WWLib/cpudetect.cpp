@@ -20,7 +20,7 @@
 #include "wwstring.h"
 #include "wwdebug.h"
 #include "thread.h"
-#include "mpu.h"
+#include "MPU.H"
 #pragma warning (disable : 4201)	// Nonstandard extension - nameless struct
 #include <windows.h>
 #include "systimer.h"
@@ -1068,7 +1068,7 @@ void CPUDetectClass::Init_Processor_Log()
 	}
 
 	if (CPUDetectClass::Get_L1_Instruction_Trace_Cache_Size()) {
-		SYSLOG(("L1 Instruction Trace Cache: %d way set associative, %dk µOPs\r\n",
+		SYSLOG(("L1 Instruction Trace Cache: %d way set associative, %dk ï¿½OPs\r\n",
 			CPUDetectClass::Get_L1_Instruction_Cache_Set_Associative(),
 			CPUDetectClass::Get_L1_Instruction_Cache_Size()/1024));
 	}

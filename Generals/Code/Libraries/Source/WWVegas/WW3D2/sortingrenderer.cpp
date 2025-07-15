@@ -17,14 +17,17 @@
 */
 
 #include "sortingrenderer.h"
+#include "vertmaterial.h"
+#include "texture.h"
+#include "statistics.h"
+
+#ifdef _WIN32
 #include "dx8vertexbuffer.h"
 #include "dx8indexbuffer.h"
 #include "dx8wrapper.h"
-#include "vertmaterial.h"
-#include "texture.h"
 #include "d3d8.h"
 #include "D3dx8math.h"
-#include "statistics.h"
+#endif
 
 bool SortingRendererClass::_EnableTriangleDraw=true;
 unsigned DEFAULT_SORTING_POLY_COUNT = 16384;	// (count * 3) must be less than 65536
@@ -569,7 +572,7 @@ void SortingRendererClass::Flush_Sorting_Pool()
 			indices+=state->start_index;
 			indices+=state->sorting_state.iba_offset;
 
-			for (i=0;i<state->polygon_count;++i) {
+			for (int i=0;i<state->polygon_count;++i) {
 				unsigned short idx1=indices[i*3]-state->min_vertex_index;
 				unsigned short idx2=indices[i*3+1]-state->min_vertex_index;
 				unsigned short idx3=indices[i*3+2]-state->min_vertex_index;
@@ -632,7 +635,7 @@ void SortingRendererClass::Flush_Sorting_Pool()
 		DynamicIBAccessClass::WriteLockClass lock(&dyn_ib_access);
 		ShortVectorIStruct* sorted_polygon_index_array=(ShortVectorIStruct*)lock.Get_Index_Array();
 
-		for (a=0;a<overlapping_polygon_count;++a) {
+		for (int a=0;a<overlapping_polygon_count;++a) {
 			sorted_polygon_index_array[a]=tis[a].tri;
 		}
 	}

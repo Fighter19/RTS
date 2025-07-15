@@ -39,7 +39,7 @@
 
 #include	"bsurface.h"
 #include	"palette.h"
-#include	"wwfile.h"
+#include	"WWFILE.H"
 #include	<string.h>
 
 
