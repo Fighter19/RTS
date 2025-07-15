@@ -81,11 +81,13 @@
 #include "matpass.h"
 #include "bwrender.h"
 #include "assetmgr.h"
-#include "dx8wrapper.h"
 
+#ifdef _WIN32
+#include "dx8wrapper.h"
+#endif
 
 // DEBUG DEBUG
-#include "mpu.h"
+#include "MPU.H"
 
 #define DEBUG_SHADOW_RENDERING					0
 #define DEFAULT_TEXTURE_SIZE						64
@@ -1123,7 +1125,7 @@ bool TexProjectClass::Compute_Texture(RenderObjClass * model,SpecialRenderInfoCl
 	TextureClass * rtarget = Peek_Render_Target();
 
 	if (rtarget != NULL) {
-
+#ifdef _WIN32
 		/*
 		** Set the render target
 		*/
@@ -1147,6 +1149,7 @@ bool TexProjectClass::Compute_Texture(RenderObjClass * model,SpecialRenderInfoCl
 		WW3D::End_Render(false);
 
 		DX8Wrapper::Set_Render_Target((IDirect3DSurface8 *)NULL);
+#endif
 	}
 
 #if 0

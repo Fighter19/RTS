@@ -35,15 +35,15 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "dynamesh.h"
-#include "dx8vertexbuffer.h"
-#include "dx8indexbuffer.h"
-#include "dx8wrapper.h"
 #include "sortingrenderer.h"
 #include "rinfo.h"
 #include "camera.h"
+#ifdef _WIN32
 #include "dx8fvf.h"
-
-
+#include "dx8vertexbuffer.h"
+#include "dx8indexbuffer.h"
+#include "dx8wrapper.h"
+#endif
 
 /*
 ** DynamicMeshModel implementation
@@ -176,7 +176,7 @@ void DynamicMeshModel::Render(RenderInfoClass & rinfo)
 {
 	// Process texture reductions:
 //	MatInfo->Process_Texture_Reduction();
-
+#ifdef _WIN32
 	unsigned buffer_type=(Get_Flag(MeshGeometryClass::SORT)&& WW3D::Is_Sorting_Enabled()) ? BUFFER_TYPE_DYNAMIC_SORTING : BUFFER_TYPE_DYNAMIC_DX8;
 
 	/*
@@ -363,7 +363,7 @@ void DynamicMeshModel::Render(RenderInfoClass & rinfo)
 		}	// while (!done)
 
 	}	// for (pass)
-
+#endif // _WIN32
 }
 
 void DynamicMeshModel::Initialize_Texture_Array(int pass, int stage, TextureClass *texture)
@@ -401,7 +401,9 @@ void DynamicMeshClass::Render(RenderInfoClass & rinfo)
 		const FrustumClass & frustum = rinfo.Camera.Get_Frustum();
 
 		if (CollisionMath::Overlap_Test(frustum, Get_Bounding_Box()) != CollisionMath::OUTSIDE) {
+#ifdef _WIN32
 			DX8Wrapper::Set_Transform(D3DTS_WORLD, Transform);
+#endif // _WIN32
 			Model->Render(rinfo);
 		}
 	}
@@ -432,7 +434,9 @@ bool DynamicMeshClass::End_Vertex()
 //			color->Z = CurVertexColor[color_array_index].Z;
 //			color->W = CurVertexColor[color_array_index].W;
 			unsigned * color = &((Model->Get_Color_Array(color_array_index))[VertCount]);
+#ifdef _WIN32
 			*color=DX8Wrapper::Convert_Color_Clamp(CurVertexColor[color_array_index]);
+#endif // _WIN32
 		}
 	}
 
@@ -685,7 +689,8 @@ int DynamicMeshClass::Set_Vertex_Material(VertexMaterialClass *material, bool do
 	// list.  if we are not supposed to search the list for it then just add
 	// it.
 	if (!dont_search) {
-		for (int lp = 0, found = 0; lp < Peek_Material_Info()->Vertex_Material_Count(); lp ++) {
+		int found = 0;
+		for (int lp = 0; lp < Peek_Material_Info()->Vertex_Material_Count(); lp ++) {
 			VertexMaterialClass *mat = Peek_Material_Info()->Get_Vertex_Material(lp);
 			if (material == mat) {
 				VertexMaterialIdx[pass] = lp;
@@ -746,7 +751,8 @@ int DynamicMeshClass::Set_Texture(TextureClass *texture, bool dont_search, int p
 	// list.  if we are not supposed to search the list for it then just add
 	// it.
 	if (!dont_search) {
-		for (int lp = 0, found = 0; lp < Peek_Material_Info()->Texture_Count(); lp ++) {
+		int found = 0;
+		for (int lp = 0; lp < Peek_Material_Info()->Texture_Count(); lp ++) {
 			TextureClass *tex = Peek_Material_Info()->Get_Texture(lp);
 			if (texture == tex) {
 				TextureIdx[pass] = lp;

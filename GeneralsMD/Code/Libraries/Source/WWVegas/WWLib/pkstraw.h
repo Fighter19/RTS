@@ -38,7 +38,7 @@
 #define PKSTRAW_H
 
 #include	"blwstraw.h"
-#include	"pk.h"
+#include	"PK.H"
 #include	"pkstraw.h"
 #include	"rndstraw.h"
 

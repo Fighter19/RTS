@@ -22,7 +22,7 @@
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
  *                                                                                             *
- *                     $Archive:: /Commando/Code/wwlib/ini.h                                  $*
+ *                     $Archive:: /Commando/Code/wwlib/INI.H                                  $*
  *                                                                                             *
  *                      $Author:: Steve_t                                                     $*
  *                                                                                             *
@@ -43,14 +43,14 @@
 
 #include <wchar.h>
 
-//#include	"listnode.h"
+//#include	"LISTNODE.H"
 //#include	"trect.h"
-//#include	"index.h"
+//#include	"INDEX.H"
 
-//#include	"pipe.h"
-//#include	"pk.h"
-//#include	"straw.h"
-//#include	"wwfile.h"
+//#include	"PIPE.H"
+//#include	"PK.H"
+//#include	"STRAW.H"
+//#include	"WWFILE.H"
 
 class PKey;
 class FileClass;

@@ -102,15 +102,16 @@
 #include "wwstring.h"
 #include "wwmemlog.h"
 #include "dazzle.h"
-#include "dx8wrapper.h"
-#include "dx8renderer.h"
 #include "metalmap.h"
 #include "w3dexclusionlist.h"
-#include <ini.h>
-#include <windows.h>
+#include <INI.H>
 #include <stdio.h>
+#ifdef _WIN32
+#include "dx8wrapper.h"
+#include "dx8renderer.h"
 #include <D3dx8core.h>
-
+#include <windows.h>
+#endif
 #include "texture.h"
 #include "wwprofile.h"
 
@@ -301,6 +302,7 @@ static void Log_Textures(bool inited,unsigned& total_count, unsigned& total_mem)
 		TextureClass * tex=ite.Peek_Value();
 		if (tex->Is_Initialized()!=inited) continue;
 
+#ifdef _WIN32
 		D3DSURFACE_DESC desc;
 		IDirect3DTexture8* d3d_texture=tex->Peek_DX8_Texture();
 		if (!d3d_texture) continue;
@@ -346,7 +348,6 @@ static void Log_Textures(bool inited,unsigned& total_count, unsigned& total_mem)
 		case D3DFMT_D24X4S4: tex_format="D3DFMT_D24X4S4"; break;
 		default:	break;
 		}
-
 		unsigned texmem=tex->Get_Texture_Memory_Usage();
 		total_mem+=texmem;
 		total_count++;
@@ -361,7 +362,7 @@ static void Log_Textures(bool inited,unsigned& total_count, unsigned& total_mem)
 			tex->Is_Initialized(),
 			number,
 			tex->Num_Refs()));
-
+#endif // _WIN32
 	}	
 }
 
@@ -379,7 +380,7 @@ void WW3DAssetManager::Log_Texture_Statistics()
 	Create_Number_String(number,total_initialized_tex_mem);
 	WWDEBUG_SAY(("\n%d initialized textures, totalling %14s bytes\n\n",
 		total_initialized_count,
-		number));
+		number.Peek_Buffer()));
 
 	WWDEBUG_SAY(("\nUn-initialized textures ---------------------------------------\n\n"));
 	Log_Textures(false,total_uninitialized_count,total_uninitialized_tex_mem);
@@ -387,7 +388,7 @@ void WW3DAssetManager::Log_Texture_Statistics()
 	Create_Number_String(number,total_uninitialized_tex_mem);
 	WWDEBUG_SAY(("\n%d un-initialized textures, totalling, totalling %14s bytes\n\n",
 		total_uninitialized_count,
-		number));
+		number.Peek_Buffer()));
 /*
 	RenderObjIterator * rite=WW3DAssetManager::Get_Instance()->Create_Render_Obj_Iterator();
 	if (rite) {
@@ -511,8 +512,10 @@ void WW3DAssetManager::Release_Unused_Assets(void)
  *=============================================================================================*/
 void WW3DAssetManager::Free_Assets_With_Exclusion_List(const DynamicVectorClass<StringClass> & exclusion_names)
 {
+#ifdef _WIN32
 	// Reset the dx8 mesh renderer
 	TheDX8MeshRenderer.Invalidate();
+#endif // _WIN32
 
 	// Build an exclusion list object that will do the real filtering work for us
 	W3DExclusionListClass exclusion_list(exclusion_names);
@@ -548,7 +551,7 @@ void WW3DAssetManager::Free_Assets_With_Exclusion_List(const DynamicVectorClass<
 	memset(PrototypeHashTable,0,sizeof(PrototypeClass *) * PROTOTYPE_HASH_TABLE_SIZE);	
 
 	// re-add the prototypes that we saved
-	for (i=0; i<exclude_array.Count(); i++) {
+	for (int i=0; i<exclude_array.Count(); i++) {
 		Add_Prototype(exclude_array[i]);
 	}
 
@@ -790,9 +793,9 @@ RenderObjClass * WW3DAssetManager::Create_Render_Obj(const char * name)
 
 	if (WW3D_Load_On_Demand && proto == NULL) {	// If we didn't find one, try to load on demand
 		char filename [MAX_PATH];
-		char *mesh_name = ::strchr (name, '.');
+		const char *mesh_name = ::strchr (name, '.');
 		if (mesh_name != NULL) {
-			::lstrcpyn (filename, name, ((int)mesh_name) - ((int)name) + 1);
+			::lstrcpyn (filename, name, ((intptr_t)mesh_name) - ((intptr_t)name) + 1);
 			::lstrcat (filename, ".w3d");
 		} else {
 			sprintf( filename, "%s.w3d", name);
@@ -967,7 +970,7 @@ HAnimClass *	WW3DAssetManager::Get_HAnim(const char * name)
 		if ( !HAnimManager.Is_Missing( name ) ) {	// if this is NOT a known missing anim
 
 			char filename[ MAX_PATH ];
-			char *animname = strchr( name, '.');
+			const char *animname = strchr( name, '.');
 			if (animname != NULL) {
 				sprintf( filename, "%s.w3d", animname+1);
 			} else {
@@ -1254,7 +1257,7 @@ void WW3DAssetManager::Log_All_Textures(void)
 		else {
 			tmp+=" ";
 		}
-		WWDEBUG_SAY(("%4.4dkb %s%s\n",bytes/1024,tmp,t->Get_Texture_Name()));
+		WWDEBUG_SAY(("%4.4dkb %s%s\n",bytes/1024,tmp.Peek_Buffer(),t->Get_Texture_Name()));
 	}
 
 	// Log procedural textures -------------------------------
@@ -1278,7 +1281,7 @@ void WW3DAssetManager::Log_All_Textures(void)
 		else {
 			tmp+=" ";
 		}
-		WWDEBUG_SAY(("%4.4dkb %s%s\n",bytes/1024,tmp,t->Get_Texture_Name()));
+		WWDEBUG_SAY(("%4.4dkb %s%s\n",bytes/1024,tmp.Peek_Buffer(),t->Get_Texture_Name()));
 	}
 
 	// Log "ordinary" textures -------------------------------
@@ -1303,7 +1306,7 @@ void WW3DAssetManager::Log_All_Textures(void)
 		else {
 			tmp+=" ";
 		}
-		WWDEBUG_SAY(("%4.4dkb %s%s\n",bytes/1024,tmp,t->Get_Texture_Name()));
+		WWDEBUG_SAY(("%4.4dkb %s%s\n",bytes/1024,tmp.Peek_Buffer(),t->Get_Texture_Name()));
 	}
 
 }

@@ -17,7 +17,7 @@
 */
 
 #include "fastallocator.h"
-#include <new.h>
+#include <new>
 
 static FastAllocatorGeneral* generalAllocator; //This general allocator will do all allocations for us.
 

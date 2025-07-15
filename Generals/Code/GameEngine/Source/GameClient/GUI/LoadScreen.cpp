@@ -412,7 +412,7 @@ void SinglePlayerLoadScreen::init( GameInfo *game )
 			m_unicodeObjectiveLines[i] = TheGameText->fetch(mission->m_missionObjectivesLabel[i]);
 	}
 
-	for(i = 0; i < MAX_DISPLAYED_UNITS; ++i)
+	for(Int i = 0; i < MAX_DISPLAYED_UNITS; ++i)
 	{
 		lineName.format("SinglePlayerLoadScreen.wnd:StaticTextCameoText%d",i);
 		m_unitDesc[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( lineName ));
@@ -550,7 +550,7 @@ void SinglePlayerLoadScreen::init( GameInfo *game )
 				m_loadScreen->winGetInstanceData()->setVideoBuffer(m_videoBuffer);
 
 		m_objectiveWin->winHide(FALSE);
-		for(i = 0; i < MAX_DISPLAYED_UNITS; ++i)
+		for(Int i = 0; i < MAX_DISPLAYED_UNITS; ++i)
 			m_unitDesc[i]->winHide(FALSE);
 		m_location->winHide(FALSE);
 
@@ -627,7 +627,7 @@ ShellGameLoadScreen::~ShellGameLoadScreen( void )
 
 void ShellGameLoadScreen::init( GameInfo *game )
 {
-	static BOOL firstLoad = TRUE;
+	static Bool firstLoad = TRUE;
 
 	
 	// create the layout of the load screen
@@ -813,7 +813,7 @@ void MultiPlayerLoadScreen::init( GameInfo *game )
 
 	Int netSlot = 0;
 	// Loop through and make the loadscreen look all good.
-	for (i = 0; i < MAX_SLOTS; ++i)
+	for (Int i = 0; i < MAX_SLOTS; ++i)
 	{
 		// Load the Progress Bar
 		AsciiString winName;
@@ -871,8 +871,8 @@ void MultiPlayerLoadScreen::init( GameInfo *game )
 
 		netSlot++;
 	}
-	
-	for(i = netSlot; i < MAX_SLOTS; ++i)
+
+	for(Int i = netSlot; i < MAX_SLOTS; ++i)
 	{
 		m_progressBars[i]->winHide(TRUE);
 		m_playerNames[i]->winHide(TRUE);
@@ -1025,7 +1025,7 @@ GameSlot *lSlot = game->getSlot(game->getLocalSlotNum());
 
 	Int netSlot = 0;
 	// Loop through and make the loadscreen look all good.
-	for (i = 0; i < MAX_SLOTS; ++i)
+	for (Int i = 0; i < MAX_SLOTS; ++i)
 	{
 		// Load the Progress Bar
 		AsciiString winName;
@@ -1203,7 +1203,7 @@ GameSlot *lSlot = game->getSlot(game->getLocalSlotNum());
 		netSlot++;
 	}
 	
-	for(i = netSlot; i < MAX_SLOTS; ++i)
+	for(Int i = netSlot; i < MAX_SLOTS; ++i)
 	{
 		m_playerWin[i]->winHide(TRUE);
 		//m_playerNames[i]->winHide(TRUE);

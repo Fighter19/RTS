@@ -610,9 +610,9 @@ extern HWND ApplicationHWnd;
 void GameEngine::execute( void )
 {
 	
-	DWORD prevTime = timeGetTime();
+	uint32_t prevTime = timeGetTime();
 #if defined(_DEBUG) || defined(_INTERNAL)
-	DWORD startTime = timeGetTime() / 1000;
+	uint32_t startTime = timeGetTime() / 1000;
 #endif
 
 	// pretty basic for now
@@ -633,7 +633,7 @@ void GameEngine::execute( void )
 				// enter only if in benchmark mode
 				if (TheGlobalData->m_benchmarkTimer > 0)
 				{
-					DWORD currentTime = timeGetTime() / 1000;
+					uint32_t currentTime = timeGetTime() / 1000;
 					if (TheGlobalData->m_benchmarkTimer < currentTime - startTime)
 					{
 						if (TheGameLogic->isInGame())
@@ -691,8 +691,8 @@ void GameEngine::execute( void )
 		#endif
 
 					// limit the framerate
-					DWORD now = timeGetTime();
-					DWORD limit = (1000.0f/m_maxFPS)-1;
+					uint32_t now = timeGetTime();
+					uint32_t limit = (1000.0f/m_maxFPS)-1;
 					while (TheGlobalData->m_useFpsLimit && (now - prevTime) < limit) 
 					{
 						::Sleep(0);
@@ -930,4 +930,8 @@ void updateTGAtoDDS()
 // If we're using the Wide character version of MessageBox, then there's no additional
 // processing necessary. Please note that this is a sleazy way to get this information,
 // but pending a better one, this'll have to do.
-extern const Bool TheSystemIsUnicode = (((void*) (::MessageBox)) == ((void*) (::MessageBoxW)));
+#ifdef UNICODE
+extern const Bool TheSystemIsUnicode = TRUE;
+#else
+extern const Bool TheSystemIsUnicode = FALSE;
+#endif

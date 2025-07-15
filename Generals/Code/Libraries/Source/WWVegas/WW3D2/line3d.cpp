@@ -53,10 +53,12 @@
 #include "wwdebug.h"
 #include "ww3d.h"
 #include "rinfo.h"
+#ifdef _WIN32
 #include "dx8wrapper.h"
 #include "dx8vertexbuffer.h"
 #include "dx8indexbuffer.h"
 #include "dx8fvf.h"
+#endif
 
 // 12 Triangles for index buffer
 const unsigned short Indices[]=
@@ -267,6 +269,7 @@ void Line3DClass::Render(RenderInfoClass & rinfo)
 		return;
 	}
 
+#ifdef _WIN32
 	DX8Wrapper::Set_Shader(Shader);
 	DX8Wrapper::Set_Texture(0,NULL);	
 	VertexMaterialClass *vm=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
@@ -302,6 +305,7 @@ void Line3DClass::Render(RenderInfoClass & rinfo)
 	DX8Wrapper::Set_Vertex_Buffer(vb);
 	DX8Wrapper::Set_Index_Buffer(ib,0);
 	DX8Wrapper::Draw_Triangles(0,36/3,0,8);
+#endif
 }
 
 /************************************************************************** 

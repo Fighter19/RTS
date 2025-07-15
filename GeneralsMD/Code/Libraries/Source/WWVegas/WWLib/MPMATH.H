@@ -22,7 +22,7 @@
  *                                                                                             * 
  *                 Project Name : Command & Conquer                                            * 
  *                                                                                             * 
- *                     $Archive:: /VSS_Sync/wwlib/mpmath.h                                    $* 
+ *                     $Archive:: /VSS_Sync/wwlib/MPMATH.H                                    $* 
  *                                                                                             * 
  *                      $Author:: Vss_sync                                                    $*
  *                                                                                             * 
@@ -46,7 +46,7 @@
 //lint -d_LINT=1
 
 
-#include	"straw.h"
+#include	"STRAW.H"
 #include	<stdlib.h>
 
 #define	UNITSIZE					32

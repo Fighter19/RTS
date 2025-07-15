@@ -40,7 +40,7 @@
 #include "sound3d.h"
 #include "wwaudio.h"
 #include "ffactory.h"
-#include "wwfile.h"
+#include "WWFILE.H"
 #include "chunkio.h"
 #include "scene.h"
 
@@ -146,8 +146,13 @@ SoundRenderObjClass::Set_Sound (AudibleSoundDefinitionClass *definition)
 	//
 	//	Create the sound object from its definition
 	//
+#ifdef WW_USE_MILES
 	if (definition != NULL) {
 		Sound = (AudibleSoundClass *)definition->Create ();
+	}
+#endif // WW_USE_MILES
+	else {
+		Sound = NULL;
 	}
 
 	return ;
@@ -316,7 +321,7 @@ SoundRenderObjClass::Update_On_Visibilty (void)
 	return ;
 }
 
-
+#ifdef WW_USE_MILES
 //////////////////////////////////////////////////////////////////////////////////
 //
 //	Get_Sound
@@ -331,6 +336,7 @@ SoundRenderObjClass::Get_Sound (void) const
 
 	return Sound;
 }
+#endif // WW_USE_MILES
 
 
 //////////////////////////////////////////////////////////////////////////////

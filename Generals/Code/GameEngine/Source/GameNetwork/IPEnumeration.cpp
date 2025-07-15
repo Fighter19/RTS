@@ -26,6 +26,10 @@
 
 #include "GameNetwork/IPEnumeration.h"
 
+#ifndef _WIN32
+#include <ifaddrs.h>
+#endif
+
 IPEnumeration::IPEnumeration( void )
 {
 	m_IPlist = NULL;
@@ -36,7 +40,9 @@ IPEnumeration::~IPEnumeration( void )
 {
 	if (m_isWinsockInitialized)
 	{
+#ifdef _WIN32
 		WSACleanup();
+#endif
 		m_isWinsockInitialized = false;
 	}
 
@@ -54,6 +60,7 @@ EnumeratedIP * IPEnumeration::getAddresses( void )
 	if (m_IPlist)
 		return m_IPlist;
 
+#ifdef _WIN32
 	if (!m_isWinsockInitialized)
 	{
 		WORD verReq = MAKEWORD(2, 2);
@@ -148,6 +155,67 @@ EnumeratedIP * IPEnumeration::getAddresses( void )
 			}
 		}
 	}
+#else
+	struct ifaddrs *ifaddr;
+	if (getifaddrs(&ifaddr) == -1)
+	{
+		DEBUG_LOG(("Failed call to getifaddrs; errno returned %d\n", errno));
+		return NULL;
+	}
+
+	for (struct ifaddrs *interface = ifaddr; interface != NULL; interface = interface->ifa_next)
+	{
+		if (interface->ifa_addr == NULL || interface->ifa_addr->sa_family != AF_INET)
+			continue;
+
+		// In case you need any of them, feel free to uncomment
+		if (strncmp(interface->ifa_name, "lo", 2) == 0)
+			continue;
+
+		if (strncmp(interface->ifa_name, "docker", 6) == 0)
+			continue;
+
+		EnumeratedIP *newIP = newInstance(EnumeratedIP);
+
+		AsciiString str;
+		str.format("%s", interface->ifa_name);
+
+		UnsignedInt testIP = ((struct sockaddr_in *)interface->ifa_addr)->sin_addr.s_addr;
+		UnsignedInt ip = ntohl(testIP);
+
+		newIP->setIPstring(str);
+		newIP->setIP(ip);
+
+		DEBUG_LOG(("IP: 0x%8.8X / 0x%8.8X (%s)\n", testIP, ip, str.str()));
+
+		// Add the IP to the list in ascending order
+		if (!m_IPlist)
+		{
+			m_IPlist = newIP;
+			newIP->setNext(NULL);
+		}
+		else
+		{
+			if (newIP->getIP() < m_IPlist->getIP())
+			{
+				newIP->setNext(m_IPlist);
+				m_IPlist = newIP;
+			}
+			else
+			{
+				EnumeratedIP *p = m_IPlist;
+				while (p->getNext() && p->getNext()->getIP() < newIP->getIP())
+				{
+					p = p->getNext();
+				}
+				newIP->setNext(p->getNext());
+				p->setNext(newIP);
+			}
+		}
+		
+	}
+	freeifaddrs(ifaddr);
+#endif
 
 	return m_IPlist;
 }
@@ -156,6 +224,7 @@ AsciiString IPEnumeration::getMachineName( void )
 {
 	if (!m_isWinsockInitialized)
 	{
+#ifdef _WIN32
 		WORD verReq = MAKEWORD(2, 2);
 		WSADATA wsadata;
 
@@ -168,6 +237,7 @@ AsciiString IPEnumeration::getMachineName( void )
 			WSACleanup();
 			return NULL;
 		}
+#endif
 		m_isWinsockInitialized = true;
 	}
 
@@ -175,7 +245,11 @@ AsciiString IPEnumeration::getMachineName( void )
 	char hostname[256];
 	if (gethostname(hostname, sizeof(hostname)))
 	{
+#ifdef _WIN32
 		DEBUG_LOG(("Failed call to gethostname; WSAGetLastError returned %d\n", WSAGetLastError()));
+#else
+		DEBUG_LOG(("Failed call to gethostname; errno returned %d\n", errno));
+#endif
 		return NULL;
 	}
 

@@ -38,8 +38,8 @@
 #define PKPIPE_H
 
 #include	"blowpipe.h"
-#include	"pipe.h"
-#include	"pk.h"
+#include	"PIPE.H"
+#include	"PK.H"
 #include	"rndstraw.h"
 
 

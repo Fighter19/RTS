@@ -55,7 +55,7 @@
 #include "Common/INI.h"
 #include "Common/Registry.h"
 #include "GameClient/GlobalLanguage.h"
-#include "Common/Filesystem.h"
+#include "Common/FileSystem.h"
 
 //-----------------------------------------------------------------------------
 // DEFINES ////////////////////////////////////////////////////////////////////
@@ -121,6 +121,7 @@ GlobalLanguage::GlobalLanguage()
 
 GlobalLanguage::~GlobalLanguage()
 {
+#ifdef _WIN32
 	StringListIt it = m_localFonts.begin();
 	while( it != m_localFonts.end())
 	{
@@ -129,15 +130,15 @@ GlobalLanguage::~GlobalLanguage()
 		//SendMessage( HWND_BROADCAST, WM_FONTCHANGE, 0, 0);
 		++it;
 	}
+#endif
 }
 
 void GlobalLanguage::init( void ) 
 {
-
 	INI ini;
 	AsciiString fname;
 	fname.format("Data\\%s\\Language.ini", GetRegistryLanguage().str());
-
+#ifdef _WIN32
 	OSVERSIONINFO	osvi;
 	osvi.dwOSVersionInfoSize=sizeof(OSVERSIONINFO);
 	//GS NOTE: Must call doesFileExist in either case so that NameKeyGenerator will stay in sync
@@ -164,7 +165,9 @@ void GlobalLanguage::init( void )
 		}
 		++it;
 	}
-
+#else
+	ini.load( fname, INI_LOAD_OVERWRITE, NULL );
+#endif
 	
 }
 void GlobalLanguage::reset( void ) {}

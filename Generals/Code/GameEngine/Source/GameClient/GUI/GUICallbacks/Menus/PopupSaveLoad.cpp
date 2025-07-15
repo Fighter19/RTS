@@ -60,6 +60,10 @@
 #include "GameLogic/GameLogic.h"
 #include "GameClient/GameWindowTransitions.h"
 
+#ifndef _WIN32
+#include <filesystem>
+#endif
+
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 static NameKeyType buttonBackKey					= NAMEKEY_INVALID;
 static NameKeyType buttonSaveKey					= NAMEKEY_INVALID;
@@ -699,7 +703,11 @@ WindowMsgHandledType SaveLoadMenuSystem( GameWindow *window, UnsignedInt msg,
 					AsciiString filepath = TheGameState->getFilePathInSaveDirectory(selectedGameInfo->filename);
 
 					// delete the file
+#ifdef _WIN32
 					DeleteFile( filepath.str() );
+#else
+					std::filesystem::remove( filepath.str() );
+#endif
 					
 					// repopulate the listbox
 					TheGameState->populateSaveGameListbox( listboxGames, currentLayoutType );

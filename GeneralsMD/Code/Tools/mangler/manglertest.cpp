@@ -24,7 +24,7 @@
 #endif
 
 #include "mangler.h"
-#include "crc.h"
+#include "CRC.H"
 
 #include <configfile.h>
 #include "threadfac.h"

@@ -34,6 +34,9 @@
 
 #include <math.h>
 #include <string.h>
+// @SV - 2025/07/15: Unix compatibility
+#include <cstdint>
+#include <compat.h>
 
 /*
 **	Turn off some unneeded warnings.
@@ -126,9 +129,10 @@ typedef char							Byte;							// 1 byte		USED TO BE "SignedByte"
 typedef char							Char;							// 1 byte of text
 typedef bool							Bool;							// 
 // note, the types below should use "long long", but MSVC doesn't support it yet
-typedef __int64						Int64;							// 8 bytes 
-typedef unsigned __int64	UnsignedInt64;	  	// 8 bytes 
-
+typedef int64_t						Int64;							// 8 bytes 
+typedef uint64_t					UnsignedInt64;	  	// 8 bytes 
+typedef uintptr_t 				UnsignedIntPtr;			// 4 or 8 bytes, depending on platform
+typedef intptr_t					IntPtr;						// 4 or 8 bytes, depending on platform
 #include "Lib/Trig.h"
 
 //-----------------------------------------------------------------------------
@@ -176,14 +180,16 @@ inline Real deg2rad(Real rad) { return rad * (PI/180); }
 // code, so use this function with caution -- it might not round in the way you want.
 __forceinline long fast_float2long_round(float f)
 {
-	long i;
+	// long i;
 
-	__asm {
-		fld [f]
-		fistp [i]
-	}
+	// __asm {
+	// 	fld [f]
+	// 	fistp [i]
+	// }
 
-	return i;
+	// @SV - 2025/07/15: Use C++11 lroundf instead of inline assembly
+	// to avoid issues with rounding modes and to be more portable.
+	return lroundf(f);
 }
 
 //-------------------------------------------------------------------------------------------------

@@ -38,6 +38,7 @@
 
 Bool  getStringFromRegistry(HKEY root, AsciiString path, AsciiString key, AsciiString& val)
 {
+#ifdef _WIN32
 	HKEY handle;
 	unsigned char buffer[256];
 	unsigned long size = 256;
@@ -55,12 +56,23 @@ Bool  getStringFromRegistry(HKEY root, AsciiString path, AsciiString key, AsciiS
 		val = (char *)buffer;
 		return TRUE;
 	}
+#else
+	// If we are not on Windows, we cannot access the registry.
+	// Read from the environment instead
+	const char* envValue = getenv(key.str());
+	if (envValue)
+	{
+		val = envValue;
+		return TRUE;
+	}
+#endif
 
 	return FALSE;
 }
 
 Bool getUnsignedIntFromRegistry(HKEY root, AsciiString path, AsciiString key, UnsignedInt& val)
 {
+#ifdef _WIN32
 	HKEY handle;
 	unsigned char buffer[4];
 	unsigned long size = 4;
@@ -78,12 +90,23 @@ Bool getUnsignedIntFromRegistry(HKEY root, AsciiString path, AsciiString key, Un
 		val = *(UnsignedInt *)buffer;
 		return TRUE;
 	}
+#else
+	// If we are not on Windows, we cannot access the registry.
+	// Read from the environment instead
+	const char* envValue = getenv(key.str());
+	if (envValue)
+	{
+		val = atoi(envValue);
+		return TRUE;
+	}
+#endif
 
 	return FALSE;
 }
 
 Bool setStringInRegistry( HKEY root, AsciiString path, AsciiString key, AsciiString val)
 {
+#ifdef _WIN32
 	HKEY handle;
 	unsigned long type;
 	unsigned long returnValue;
@@ -98,10 +121,21 @@ Bool setStringInRegistry( HKEY root, AsciiString path, AsciiString key, AsciiStr
 	}
 
 	return (returnValue == ERROR_SUCCESS);
+#else
+	// If we are not on Windows, we cannot access the registry.
+	// Use environment variables instead
+	if (setenv(key.str(), val.str(), 1) == 0)
+	{
+		return TRUE;
+	}
+
+	return FALSE;
+#endif
 }
 
 Bool setUnsignedIntInRegistry( HKEY root, AsciiString path, AsciiString key, UnsignedInt val)
 {
+#ifdef _WIN32
 	HKEY handle;
 	unsigned long type;
 	unsigned long returnValue;
@@ -116,6 +150,15 @@ Bool setUnsignedIntInRegistry( HKEY root, AsciiString path, AsciiString key, Uns
 	}
 
 	return (returnValue == ERROR_SUCCESS);
+#else
+	// If we are not on Windows, we cannot access the registry.
+	// Use environment variables instead
+	char buffer[12];
+	snprintf(buffer, sizeof(buffer), "%u", val);
+	setenv(key.str(), buffer, 1);
+	// Note: This will overwrite any existing environment variable with the same name
+	return TRUE;
+#endif
 }
 
 Bool GetStringFromRegistry(AsciiString path, AsciiString key, AsciiString& val)

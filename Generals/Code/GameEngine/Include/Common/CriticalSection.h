@@ -37,9 +37,17 @@
 extern PerfGather TheCritSecPerfGather;
 #endif
 
+#ifndef _WIN32
+#include <pthread.h>
+#endif
+
 class CriticalSection
 {
+#ifdef _WIN32
 	CRITICAL_SECTION m_windowsCriticalSection;
+#else
+	pthread_mutex_t m_posixCriticalSection;
+#endif
 
 	public:
 		CriticalSection()
@@ -47,7 +55,11 @@ class CriticalSection
 			#ifdef PERF_TIMERS
 			AutoPerfGather a(TheCritSecPerfGather);
 			#endif
+	#ifdef _WIN32
 			InitializeCriticalSection( &m_windowsCriticalSection );
+	#else
+			pthread_mutex_init( &m_posixCriticalSection, NULL );
+	#endif
 		}
 
 		virtual ~CriticalSection()
@@ -55,7 +67,11 @@ class CriticalSection
 			#ifdef PERF_TIMERS
 			AutoPerfGather a(TheCritSecPerfGather);
 			#endif
+	#ifdef _WIN32
 			DeleteCriticalSection( &m_windowsCriticalSection );
+	#else
+			pthread_mutex_destroy( &m_posixCriticalSection );
+	#endif
 		}
 
 	public:	// Use these when entering/exiting a critical section.
@@ -64,7 +80,11 @@ class CriticalSection
 			#ifdef PERF_TIMERS
 			AutoPerfGather a(TheCritSecPerfGather);
 			#endif
+	#ifdef _WIN32
 			EnterCriticalSection( &m_windowsCriticalSection );
+	#else
+			pthread_mutex_lock( &m_posixCriticalSection );
+	#endif
 		}
 		
 		void exit( void )
@@ -72,7 +92,11 @@ class CriticalSection
 			#ifdef PERF_TIMERS
 			AutoPerfGather a(TheCritSecPerfGather);
 			#endif
+	#ifdef _WIN32
 			LeaveCriticalSection( &m_windowsCriticalSection );
+	#else
+			pthread_mutex_unlock( &m_posixCriticalSection );
+	#endif
 		}
 };
 

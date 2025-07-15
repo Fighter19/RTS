@@ -27,6 +27,8 @@
 #ifndef __STACKDUMP_H_
 #define __STACKDUMP_H_
 
+#include <cstdint>
+
 #ifndef IG_DEGBUG_STACKTRACE
 #define IG_DEBUG_STACKTRACE	1
 #endif
@@ -39,7 +41,7 @@ void StackDump(void (*callback)(const char*));
 
 // Writes a stackdump (provide a callback : gets called per line)
 // If callback is NULL then will write using OuputDebugString
-void StackDumpFromContext(DWORD eip,DWORD esp,DWORD ebp, void (*callback)(const char*));
+void StackDumpFromContext(uint32_t eip,uint32_t esp,uint32_t ebp, void (*callback)(const char*));
 
 // Gets count* addresses from the current stack
 void FillStackAddresses(void**addresses, unsigned int count, unsigned int skip = 0);
@@ -50,8 +52,9 @@ void StackDumpFromAddresses(void**addresses, unsigned int count, void (*callback
 void GetFunctionDetails(void *pointer, char*name, char*filename, unsigned int* linenumber, unsigned int* address);
 
 // Dumps out the exception info and stack trace.
+#ifdef _WIN32
 void DumpExceptionInfo( unsigned int u, EXCEPTION_POINTERS* e_info );
-
+#endif 
 #else
 
 __inline void StackDump(void (*callback)(const char*)) {};
@@ -65,8 +68,9 @@ __inline void StackDumpFromAddresses(void**addresses, unsigned int count, void (
 __inline void GetFunctionDetails(void *pointer, char*name, char*filename, unsigned int* linenumber, unsigned int* address) {}
 
 // Dumps out the exception info and stack trace.
+#ifdef _WIN32
 __inline void DumpExceptionInfo( unsigned int u, EXCEPTION_POINTERS* e_info ) {};
-
+#endif
 #endif
 
 extern AsciiString g_LastErrorDump;

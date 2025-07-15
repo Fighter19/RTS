@@ -188,6 +188,7 @@ public:
 	// Color Conversion
 	WWINLINE unsigned	long	Convert_To_ABGR( void ) const;
 	WWINLINE unsigned	long	Convert_To_ARGB( void ) const;
+	WWINLINE unsigned	long	Convert_To_ARGB( float alpha ) const;
 };
 
 
@@ -911,6 +912,15 @@ WWINLINE unsigned long	Vector3::Convert_To_ARGB( void ) const
 			 (unsigned(Y*255.0f)<<8) | 
 			 (unsigned(Z*255.0f));
 }
+
+WWINLINE unsigned long	Vector3::Convert_To_ARGB( float alpha ) const 
+{
+	return (unsigned(alpha*255.0f)<<24) | 
+			 (unsigned(X*255.0f)<<16) | 
+			 (unsigned(Y*255.0f)<<8) | 
+			 (unsigned(Z*255.0f));
+}
+
 
 #endif /* Vector3_H */
 

@@ -59,6 +59,11 @@
 #include "GameClient/Shell.h"
 #include "GameLogic/GameLogic.h"
 
+#ifndef _WIN32
+#include <filesystem>
+#include <system_error>
+#endif
+
 #ifdef _INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
@@ -285,10 +290,19 @@ void reallySaveReplay(void)
 
 	if (TheLocalFileSystem->doesFileExist(filename.str()))
 	{
+#ifdef _WIN32
 		if(DeleteFile(filename.str()) == 0)
 		{
 			wchar_t buffer[1024];
 			FormatMessageW ( FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), 0, buffer, sizeof(buffer), NULL);
+#else
+		std::error_code ec;
+		if(std::filesystem::remove(filename.str(), ec) == false)
+		{
+			wchar_t buffer[1024];
+			std::string errorMessage = ec.message();
+			mbstowcs(buffer, errorMessage.c_str(), sizeof(buffer)/sizeof(wchar_t));
+#endif
 			UnicodeString errorStr;
 			errorStr.set(buffer);
 			errorStr.trim();
@@ -310,10 +324,19 @@ void reallySaveReplay(void)
 	}
 
 	// copy the replay to the right place
+#ifdef _WIN32
 	if(CopyFile(oldFilename.str(),filename.str(), FALSE) == 0)
 	{
 		wchar_t buffer[1024];
 		FormatMessageW( FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), 0, buffer, sizeof(buffer), NULL);
+#else
+	std::error_code ec;
+	if(std::filesystem::copy_file(oldFilename.str(), filename.str(), std::filesystem::copy_options::overwrite_existing, ec) == false)
+	{
+		wchar_t buffer[1024];
+		std::string errorMessage = ec.message();
+		mbstowcs(buffer, errorMessage.c_str(), sizeof(buffer)/sizeof(wchar_t));
+#endif
 		UnicodeString errorStr;
 		errorStr.set(buffer);
 		errorStr.trim();

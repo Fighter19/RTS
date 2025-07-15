@@ -26,7 +26,7 @@
 
 #include "Common/Recorder.h"
 #include "Common/FileSystem.h"
-#include "Common/playerlist.h"
+#include "Common/PlayerList.h"
 #include "Common/Player.h"
 #include "Common/GlobalData.h"
 #include "Common/GameEngine.h"
@@ -49,6 +49,12 @@
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
+#endif
+
+#ifndef _WIN32
+#undef max
+#undef min
+#include <filesystem>
 #endif
 
 Int REPLAY_CRC_INTERVAL = 100;
@@ -297,7 +303,11 @@ void RecorderClass::cleanUpReplayFile( void )
 		DEBUG_LOG(("Saving replay to %s\n", fname));
 		AsciiString oldFname;
 		oldFname.format("%s%s", getReplayDir().str(), m_fileName.str());
+#ifdef _WIN32
 		CopyFile(oldFname.str(), fname, TRUE);
+#else
+		std::filesystem::copy_file(oldFname.str(), fname, std::filesystem::copy_options::overwrite_existing);
+#endif
 #ifdef DEBUG_FILE_NAME
 		AsciiString debugFname = fname;
 		debugFname.removeLastChar();
@@ -319,7 +329,11 @@ void RecorderClass::cleanUpReplayFile( void )
 		if (fileSize <= MAX_DEBUG_SIZE || TheGlobalData->m_saveAllStats)
 		{
 			DEBUG_LOG(("Using CopyFile to copy %s\n", DEBUG_FILE_NAME));
+#ifdef _WIN32
 			CopyFile(DEBUG_FILE_NAME, debugFname.str(), TRUE);
+#else
+			std::filesystem::copy_file(DEBUG_FILE_NAME, debugFname.str(), std::filesystem::copy_options::overwrite_existing);
+#endif
 		}
 		else
 		{
@@ -1162,7 +1176,7 @@ Bool RecorderClass::playbackFile(AsciiString filename)
  * Read a unicode string from the current file position. The string is assumed to be 0-terminated.
  */
 UnicodeString RecorderClass::readUnicodeString() {
-	UnsignedShort str[1024] = L"";
+	wchar_t str[1024] = L"";
 	Int index = 0;
 
 	Int c = fgetwc(m_file);

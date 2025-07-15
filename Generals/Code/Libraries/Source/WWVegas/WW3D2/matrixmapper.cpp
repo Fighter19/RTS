@@ -44,8 +44,9 @@
 
 
 #include "matrixmapper.h"
+#ifdef _WIN32
 #include "dx8wrapper.h"
-
+#endif
 
 /***********************************************************************************************
  * MatrixMapperClass::MatrixMapperClass -- Constructor                                         *
@@ -208,7 +209,7 @@ void MatrixMapperClass::Compute_Texture_Coordinate(const Vector3 & point,Vector3
 void MatrixMapperClass::Apply(int uv_array_index)
 {
 	Matrix4 m;
-
+#ifdef _WIN32
 	switch (Type) 
 	{
 	case ORTHO_PROJECTION:
@@ -257,6 +258,6 @@ void MatrixMapperClass::Apply(int uv_array_index)
 		DX8Wrapper::Set_DX8_Texture_Stage_State(uv_array_index,D3DTSS_TEXTURETRANSFORMFLAGS,D3DTTFF_COUNT2);
 		break;
 	}
-
+#endif
 
 }

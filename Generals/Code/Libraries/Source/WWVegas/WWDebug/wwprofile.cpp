@@ -53,8 +53,11 @@
 #include "always.h"
 #include "wwprofile.h"
 #include "wwdebug.h"
+#ifdef _UNIX
+#include <pthread.h>
+#else
 #include <windows.h>
-
+#endif
 
 
 /***********************************************************************************************
@@ -72,20 +75,7 @@
 inline void WWProfile_Get_Ticks(_int64 * ticks)
 {
 #ifdef _UNIX
-	*ticks = 0;
-#else 
-	__asm
-	{
-		push edx;
-		push ecx;
-		mov ecx,ticks;
-		_emit 0Fh
-		_emit 31h
-		mov [ecx],eax;
-		mov [ecx+4],edx;
-		pop ecx;
-		pop edx;
-	}
+	*ticks = _rdtsc();
 #endif
 }
 
@@ -295,8 +285,11 @@ WWProfileHierachyNodeClass	*	WWProfileManager::CurrentNode = &WWProfileManager::
 int									WWProfileManager::FrameCounter = 0;
 __int64								WWProfileManager::ResetTime = 0;
 
+#ifdef _UNIX
+static pthread_t				ThreadID = (pthread_t)-1;
+#else
 static unsigned int				ThreadID = static_cast<unsigned int>(-1);
-
+#endif
 
 /***********************************************************************************************
  * WWProfileManager::Start_Profile -- Begin a named profile                                    *
@@ -318,7 +311,11 @@ static unsigned int				ThreadID = static_cast<unsigned int>(-1);
  *=============================================================================================*/
 void	WWProfileManager::Start_Profile( const char * name )
 {
+#ifdef _UNIX
+	if (pthread_equal(pthread_self(), ThreadID) != 0) {
+#else
 	if (::GetCurrentThreadId() != ThreadID) {
+#endif
 		return;
 	}
 
@@ -345,7 +342,11 @@ void	WWProfileManager::Start_Profile( const char * name )
  *=============================================================================================*/
 void	WWProfileManager::Stop_Profile( void )
 {
+#ifdef _UNIX
+	if (pthread_equal(pthread_self(), ThreadID) == 0) {
+#else
 	if (::GetCurrentThreadId() != ThreadID) {
+#endif
 		return;
 	}
 
@@ -374,7 +375,11 @@ void	WWProfileManager::Stop_Profile( void )
  *=============================================================================================*/
 void	WWProfileManager::Reset( void )
 { 
+#ifdef _UNIX
+	ThreadID = pthread_self();
+#else
 	ThreadID = ::GetCurrentThreadId();
+#endif
 
 	Root.Reset(); 
 	FrameCounter = 0;

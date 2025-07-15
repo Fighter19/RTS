@@ -43,7 +43,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include	"always.h"
-#include	"pk.h"
+#include	"PK.H"
 #include	"rndstraw.h"
 #include	<string.h>
 

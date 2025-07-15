@@ -38,7 +38,6 @@
 //#define close _close
 //#define read  _read
 //#define write _write
-
 #else  //UNIX
 #include <netdb.h>
 #include <sys/types.h>

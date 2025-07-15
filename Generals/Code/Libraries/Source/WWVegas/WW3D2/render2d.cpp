@@ -41,16 +41,19 @@
 #include "texture.h"
 #include "matrix4.h"
 #include "matrix3d.h"
-#include "dx8wrapper.h"
-#include "dx8indexbuffer.h"
-#include "dx8vertexbuffer.h"
 #include "sortingrenderer.h"
 #include "vertmaterial.h"
-#include "dx8fvf.h"
-#include "dx8caps.h"
 #include "wwprofile.h"
 #include "wwmemlog.h"
 #include "assetmgr.h"
+
+#ifdef _WIN32
+#include "dx8fvf.h"
+#include "dx8caps.h"
+#include "dx8wrapper.h"
+#include "dx8indexbuffer.h"
+#include "dx8vertexbuffer.h"
+#endif
 
 RectClass							Render2DClass::ScreenResolution( 0,0,0,0 );
 
@@ -538,6 +541,7 @@ void Render2DClass::Render(void)
 	Matrix4 view,proj;
 	Matrix4 identity(true);
 
+#ifdef _WIN32
 	DX8Wrapper::Get_Transform(D3DTS_VIEW,view);
 	DX8Wrapper::Get_Transform(D3DTS_PROJECTION,proj);
 
@@ -625,6 +629,7 @@ void Render2DClass::Render(void)
 
 	DX8Wrapper::Set_Transform(D3DTS_VIEW,view);
 	DX8Wrapper::Set_Transform(D3DTS_PROJECTION,proj);
+#endif
 	if (IsGrayScale)
 		ShaderClass::Invalidate();	//force both stages to be reset.
 

@@ -18,17 +18,22 @@
 
 #include "statistics.h"
 #include "wwstring.h"
+#include "shader.h"
 #include "simplevec.h"
-#include "dx8renderer.h"
-#include "dx8wrapper.h"
-#include "dx8caps.h"
 #include "textureloader.h"
 #include "texture.h"
+#include "ww3d.h"
 #include <cstdio>
 
 #include <memory.h>
 #ifdef _UNIX
 #include "osdep.h"
+#endif
+
+#ifdef _WIN32
+#include "dx8renderer.h"
+#include "dx8wrapper.h"
+#include "dx8caps.h"
 #endif
 
 // ----------------------------------------------------------------------------
@@ -293,11 +298,13 @@ void Debug_Statistics::Record_DX8_Skin_Polys_And_Vertices(int pcount,int vcount)
 
 void Debug_Statistics::Record_DX8_Polys_And_Vertices(int pcount,int vcount,const ShaderClass& shader)
 {
+#ifdef _WIN32
 	if (shader.Get_NPatch_Enable()==ShaderClass::NPATCH_ENABLE && DX8Caps::Support_NPatches()) {
 		unsigned level=WW3D::Get_NPatches_Level();
 		level*=level;
 		pcount*=level;
 	}
+#endif
 	dx8_polygons+=pcount;
 	dx8_vertices+=vcount;
 	draw_calls++;
@@ -367,7 +374,9 @@ void Debug_Statistics::Begin_Statistics()
 	sorting_vertices=0;
 	draw_calls=0;
 	Record_Texture_Begin();
+#ifdef _WIN32
 	DX8Wrapper::Begin_Statistics();
+#endif
 //	DX8MeshRendererClass::Begin_Statistics();
 }
 
@@ -384,7 +393,9 @@ void Debug_Statistics::End_Statistics()
 	last_frame_draw_calls=draw_calls;
 
 //	DX8MeshRendererClass::End_Statistics();
+#ifdef _WIN32
 	DX8Wrapper::End_Statistics();
+#endif
 }
 
 void Debug_Statistics::Shutdown_Statistics()

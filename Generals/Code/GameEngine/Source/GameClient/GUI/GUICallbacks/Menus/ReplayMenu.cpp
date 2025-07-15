@@ -39,7 +39,7 @@
 #include "Common/Version.h"
 #include "GameClient/WindowLayout.h"
 #include "GameClient/Gadget.h"
-#include "GameClient/GadgetListbox.h"
+#include "GameClient/GadgetListBox.h"
 #include "GameClient/Shell.h"
 #include "GameClient/KeyDefs.h"
 #include "GameClient/GameWindowManager.h"
@@ -47,6 +47,11 @@
 #include "GameClient/MapUtil.h"
 #include "GameClient/GameText.h"
 #include "GameClient/GameWindowTransitions.h"
+
+#ifndef _WIN32
+#include <filesystem>
+#include <system_error>
+#endif
 
 #ifdef _INTERNAL
 // for occasional debugging...
@@ -628,10 +633,17 @@ void deleteReplay( void )
 	filename = TheRecorder->getReplayDir();
 	translate.translate(GetReplayFilenameFromListbox(listboxReplayFiles, selected));
 	filename.concat(translate);
+#ifdef _WIN32
 	if(DeleteFile(filename.str()) == 0)
 	{
 		char buffer[1024];
 		FormatMessage ( FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), 0, buffer, sizeof(buffer), NULL);
+#else
+	std::error_code ec;
+	if(std::filesystem::remove(filename.str(), ec) == false)
+	{
+		const char* buffer = ec.message().c_str();
+#endif
 		UnicodeString errorStr;
 		translate.set(buffer);
 		errorStr.translate(translate);
@@ -659,6 +671,7 @@ void copyReplay( void )
 	filename.concat(translate);
 	
 	char path[1024];
+#ifdef _WIN32
 	LPITEMIDLIST pidl;
 	SHGetSpecialFolderLocation(NULL, CSIDL_DESKTOPDIRECTORY, &pidl);
 	SHGetPathFromIDList(pidl,path);
@@ -675,6 +688,27 @@ void copyReplay( void )
 		errorStr.trim();
 		MessageBoxOk(TheGameText->fetch("GUI:Error"),errorStr, NULL);
 	}
-
+#else
+	// More or less defacto standard for implementors of the XDG standard
+	std::filesystem::path newFilename;
+	const char *xdgDesktopDir = getenv("XDG_DESKTOP_DIR");
+	if (xdgDesktopDir)
+	{
+		newFilename = std::filesystem::path(xdgDesktopDir);
+	}
+	else
+	{
+		newFilename = std::filesystem::path(getenv("HOME")) / "Desktop";
+	}
+	newFilename /= translate.str();
+	std::error_code ec;
+	std::filesystem::copy_file(filename.str(), newFilename.string(), ec);
+	if (ec)
+	{
+		UnicodeString errorStr;
+		errorStr.translate(ec.message().c_str());
+		MessageBoxOk(TheGameText->fetch("GUI:Error"), errorStr, NULL);
+	}
+#endif
 }
 

@@ -295,7 +295,7 @@ SOURCE=.\wlib\xtime.h
 # End Group
 # Begin Source File
 
-SOURCE=.\crc.h
+SOURCE=.\CRC.H
 # End Source File
 # Begin Source File
 

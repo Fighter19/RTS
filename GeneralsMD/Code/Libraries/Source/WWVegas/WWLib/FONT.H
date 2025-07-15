@@ -41,7 +41,7 @@
 #define FONT_H
 
 #include	"convert.h"
-#include	"point.h"
+#include	"Point.h"
 #include	"trect.h"
 #include	<stddef.h>
 

@@ -18,8 +18,10 @@
 
 #include "mutex.h"
 #include "wwdebug.h"
+#ifdef _UNIX
+#else
 #include <windows.h>
-
+#endif
 
 // ----------------------------------------------------------------------------
 

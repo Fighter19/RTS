@@ -71,8 +71,9 @@
 #include "camera.h"
 #include "ww3d.h"
 #include "matrix4.h"
+#ifdef _WIN32
 #include "dx8wrapper.h"
-
+#endif
 
 /***********************************************************************************************
  * CameraClass::CameraClass -- constructor                                                     *
@@ -721,6 +722,7 @@ void CameraClass::Apply(void)
 	bool windowed;
 	WW3D::Get_Render_Target_Resolution(width,height,bits,windowed);
 	
+#ifdef _WIN32
 	D3DVIEWPORT8 vp;
 	vp.X = (DWORD)(Viewport.Min.X * (float)width);
 	vp.Y = (DWORD)(Viewport.Min.Y * (float)height);
@@ -734,6 +736,7 @@ void CameraClass::Apply(void)
 	Get_D3D_Projection_Matrix(&d3dprojection);
 	DX8Wrapper::Set_Transform(D3DTS_PROJECTION,d3dprojection);
 	DX8Wrapper::Set_Transform(D3DTS_VIEW,CameraInvTransform);
+#endif
 }
 
 void CameraClass::Set_Clip_Planes(float znear,float zfar)						

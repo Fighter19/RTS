@@ -28,7 +28,7 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
-#include "GameSpy/GP/GP.h"
+#include <gamespy/gp/gp.h>
 #include "GameSpy/gstats/gpersist.h"
 
 #include "GameNetwork/FirewallHelper.h"
@@ -249,7 +249,7 @@ void GameSpyChat::update( void )
 		{
 			TheShell->pop();
 			TheShell->push(TheGameSpyThread->getNextShellScreen());
-			TheGameSpyThread->setNextShellScreen( AsciiString.TheEmptyString );
+			TheGameSpyThread->setNextShellScreen( AsciiString::TheEmptyString );
 		}
 
 		if (TheGameSpyThread->showLocaleSelect())

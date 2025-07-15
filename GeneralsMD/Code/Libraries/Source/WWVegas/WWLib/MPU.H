@@ -22,7 +22,7 @@
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
  *                                                                                             *
- *                     $Archive:: /Commando/Code/wwlib/mpu.h                                  $*
+ *                     $Archive:: /Commando/Code/wwlib/MPU.H                                  $*
  *                                                                                             *
  *                      $Author:: Denzil_l                                                    $*
  *                                                                                             *

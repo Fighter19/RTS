@@ -113,13 +113,14 @@
 #include "inttest.h"
 #include "decalmsh.h"
 #include "decalsys.h"
-#include "dx8polygonrenderer.h"
-#include "dx8indexbuffer.h"
-#include "dx8renderer.h"
 #include "visrasterizer.h"
 #include "wwmemlog.h"
 #include <stdio.h>
-
+#ifdef _WIN32
+#include "dx8polygonrenderer.h"
+#include "dx8indexbuffer.h"
+#include "dx8renderer.h"
+#endif
 
 bool MeshClass::Legacy_Meshes_Fogged = true;
 
@@ -676,7 +677,7 @@ void MeshClass::Render(RenderInfoClass & rinfo)
 		WW3D::Add_To_Static_Sort_List(this, sort_level);
 
 	} else {
-
+#ifdef _WIN32
 		const FrustumClass & frustum=rinfo.Camera.Get_Frustum();
 
 		if (	Model->Get_Flag(MeshGeometryClass::SKIN) ||
@@ -764,6 +765,7 @@ void MeshClass::Render(RenderInfoClass & rinfo)
 				}
 			}
 		}
+#endif // WIN32
 	}
 }
 
@@ -787,6 +789,7 @@ void MeshClass::Render_Material_Pass(MaterialPassClass * pass,IndexBufferClass *
 	float oldOpacity=-1.0f;
 	Vector3 oldEmissive(-1,-1,-1);
 
+#ifdef _WIN32
 	if (LightEnvironment != NULL) {
 		DX8Wrapper::Set_Light_Environment(LightEnvironment);
 	}
@@ -966,6 +969,7 @@ void MeshClass::Render_Material_Pass(MaterialPassClass * pass,IndexBufferClass *
 		//MW: Need uninstall custom materials in case they leave D3D in unknown state
 		pass->UnInstall_Materials();
 	}
+#endif // WIN32
 }
 
 

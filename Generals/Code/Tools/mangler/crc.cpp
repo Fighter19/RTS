@@ -23,7 +23,7 @@
 #include <process.h> // *MUST* be included before ANY Wnet/Wlib headers if _REENTRANT is defined
 #endif
 
-#include "crc.h"
+#include "CRC.H"
 
 #include "configfile.h"
 #include "threadfac.h"

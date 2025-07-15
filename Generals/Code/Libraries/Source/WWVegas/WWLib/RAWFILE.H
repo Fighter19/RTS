@@ -22,7 +22,7 @@
  *                                                                                             * 
  *                 Project Name : Command & Conquer                                            * 
  *                                                                                             * 
- *                     $Archive:: /G/wwlib/rawfile.h                                          $* 
+ *                     $Archive:: /G/wwlib/RAWFILE.H                                          $* 
  *                                                                                             * 
  *                      $Author:: Neal_k                                                      $*
  *                                                                                             * 
@@ -48,17 +48,10 @@
 
 // #include	"win.h"
 
-#ifdef _UNIX
 #include <stdio.h>
-#include "osdep.h"
-  #define	NULL_HANDLE	 	NULL	
-  #define	HANDLE_TYPE		FILE*	
-#else
-  #define	NULL_HANDLE		INVALID_HANDLE_VALUE
-  #define	HANDLE_TYPE		HANDLE
-#endif
-
-#include	"wwfile.h"
+#define	NULL_HANDLE	 	NULL	
+#define	HANDLE_TYPE		FILE*	
+#include	"WWFILE.H"
 
 
 #ifndef WWERROR
@@ -142,11 +135,7 @@ class RawFileClass : public FileClass
 		/*
 		**	This is the low level DOS handle. A -1 indicates an empty condition.
 		*/
-		#ifdef _UNIX
-			FILE*  Handle;
-		#else
-			void * Handle;
-		#endif
+		FILE*  Handle;
 
 		/*
 		**	This points to the filename as a NULL terminated string. It may point to either a

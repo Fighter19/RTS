@@ -41,13 +41,16 @@
 #include "seglinerenderer.h"
 #include "ww3d.h"
 #include "rinfo.h"
-#include "dx8wrapper.h"
 #include "sortingrenderer.h"
 #include "vp.h"
 #include "vector3i.h"
-#include "random.h"
+#include "RANDOM.H"
 #include "v3_rnd.h"
+#include "w3d_file.h"
 
+#ifdef _WIN32
+#include "dx8wrapper.h"
+#endif
 
 /* We have chunking logic which handles N segments at a time. To simplify the subdivision logic,
 ** we will ensure that N is a power of two and that N >= 2^MAX_SEGLINE_SUBDIV_LEVELS, so that the
@@ -206,9 +209,11 @@ void SegLineRendererClass::Render
 )
 {
 	Matrix4 view;
+#ifdef _WIN32
 	DX8Wrapper::Get_Transform(D3DTS_VIEW,view);
-
+#endif
 	Matrix4 identity(true);
+#ifdef _WIN32
 	DX8Wrapper::Set_Transform(D3DTS_WORLD,identity);	
 	DX8Wrapper::Set_Transform(D3DTS_VIEW,identity);	
 
@@ -890,7 +895,7 @@ void SegLineRendererClass::Render
 		*/
 
 		// Configure vertex array and setup renderer.
-		unsigned int vnum = num_intersections[TOP_EDGE] + num_intersections[BOTTOM_EDGE];		
+		unsigned int vnum = num_intersections[TOP_EDGE] + num_intersections[BOTTOM_EDGE];
 		VertexFormatXYZDUV1 *vArray=W3DNEWARRAY VertexFormatXYZDUV1[vnum];		
 		Vector3i v_index_array[MAX_SEGLINE_POLY_BUFFER_SIZE];
 		
@@ -1034,7 +1039,6 @@ void SegLineRendererClass::Render
 					vidx++;
 				}
 			}
-
 			// Reduce both pointcounts by the same amount so the smaller one is 1 (skip points)
 			delta = MIN(residual_top_points, residual_bottom_points) - 1;
 			residual_top_points -= delta;
@@ -1144,7 +1148,7 @@ void SegLineRendererClass::Render
 	}	// Chunking loop
 
 	DX8Wrapper::Set_Transform(D3DTS_VIEW,view);
-
+#endif // _WIN32
 }
 
 

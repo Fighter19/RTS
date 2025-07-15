@@ -120,7 +120,7 @@ DEP_CPP_CHUNK=\
 	".\iostruct.h"\
 	".\visualc.h"\
 	".\watcom.h"\
-	".\wwfile.h"\
+	".\WWFILE.H"\
 	
 NODEP_CPP_CHUNK=\
 	".\osdep.h"\
@@ -326,11 +326,11 @@ DEP_CPP_RAWFI=\
 	".\always.h"\
 	".\bool.h"\
 	".\borlandc.h"\
-	".\rawfile.h"\
+	".\RAWFILE.H"\
 	".\visualc.h"\
 	".\watcom.h"\
 	".\win.h"\
-	".\wwfile.h"\
+	".\WWFILE.H"\
 	
 NODEP_CPP_RAWFI=\
 	".\osdep.h"\
@@ -555,7 +555,7 @@ SOURCE=.\PROGRESS.H
 # End Source File
 # Begin Source File
 
-SOURCE=.\rawfile.h
+SOURCE=.\RAWFILE.H
 # End Source File
 # Begin Source File
 
@@ -595,7 +595,7 @@ SOURCE=.\win.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\wwfile.h
+SOURCE=.\WWFILE.H
 # End Source File
 # Begin Source File
 

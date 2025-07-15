@@ -28,7 +28,15 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
+#ifdef _WIN32
 #include <winsock.h>	// This one has to be here. Prevents collisions with winsock2.h
+#else
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#endif
 
 #include "GameNetwork/GameSpy/GameResultsThread.h"
 #include "mutex.h"
@@ -208,7 +216,7 @@ Bool GameResultsQueue::areGameResultsBeingSent( void )
 
 //-------------------------------------------------------------------------
 // Wrap ladder results in HTTP POST
-static WrapHTTP( const std::string& hostname, std::string& results )
+static void WrapHTTP( const std::string& hostname, std::string& results )
 {
 	const char HEADER[] =
 		"PUT / HTTP/1.1\r\n"
@@ -228,14 +236,16 @@ static WrapHTTP( const std::string& hostname, std::string& results )
 void GameResultsThreadClass::Thread_Function()
 {
 	try {
+#ifdef _WIN32
 	_set_se_translator( DumpExceptionInfo ); // Hook that allows stack trace.
-	GameResultsRequest req;
 
 	WSADATA wsaData;
 
 	// Fire up winsock (prob already done, but doesn't matter)
 	WORD wVersionRequested = MAKEWORD(1, 1);
 	WSAStartup( wVersionRequested, &wsaData );
+#endif
+	GameResultsRequest req;
 
 	while ( running )
 	{
@@ -254,7 +264,7 @@ void GameResultsThreadClass::Thread_Function()
 			}
 			else
 			{
-				HOSTENT *hostStruct;
+				hostent *hostStruct;
 				in_addr *hostNode;
 				hostStruct = gethostbyname(hostnameBuffer);
 				if (hostStruct == NULL)
@@ -281,8 +291,9 @@ void GameResultsThreadClass::Thread_Function()
 		// end our timeslice
 		Switch_Thread();
 	}
-
+#ifdef _WIN32
 	WSACleanup();
+#endif
 	} catch ( ... ) {
 		DEBUG_CRASH(("Exception in results thread!"));
 	}
@@ -290,6 +301,7 @@ void GameResultsThreadClass::Thread_Function()
 
 //-------------------------------------------------------------------------
 
+#if defined(DEBUG_LOGGING) && defined(_WIN32)
 #define CASE(x) case (x): return #x;
 
 static const char *getWSAErrorString( Int error )
@@ -354,7 +366,7 @@ static const char *getWSAErrorString( Int error )
 }
 
 #undef CASE
-
+#endif
 //-------------------------------------------------------------------------
 
 Int GameResultsThreadClass::sendGameResults( UnsignedInt IP, UnsignedShort port, const std::string& results )
@@ -365,7 +377,11 @@ Int GameResultsThreadClass::sendGameResults( UnsignedInt IP, UnsignedShort port,
 	Int sock = socket( AF_INET, SOCK_STREAM, 0 );
 	if (sock < 0)
 	{
+#ifdef _WIN32
 		DEBUG_LOG(("GameResultsThreadClass::sendGameResults() - socket() returned %d(%s)\n", sock, getWSAErrorString(sock)));
+#else
+		DEBUG_LOG(("GameResultsThreadClass::sendGameResults() - socket() returned %d(errno)\n", sock, errno));
+#endif
 		return sock;
 	}
 
@@ -376,6 +392,7 @@ Int GameResultsThreadClass::sendGameResults( UnsignedInt IP, UnsignedShort port,
 	sockAddr.sin_addr.s_addr = IP;
 	sockAddr.sin_port = htons(port);
 
+#ifdef _WIN32
 	// Start the connection process....
 	if( connect( sock, (struct sockaddr *)&sockAddr, sizeof( sockAddr ) ) == -1 )
 	{
@@ -402,6 +419,7 @@ Int GameResultsThreadClass::sendGameResults( UnsignedInt IP, UnsignedShort port,
 	}
 
 	closesocket(sock);
+#endif
 
 	return results.length();
 }

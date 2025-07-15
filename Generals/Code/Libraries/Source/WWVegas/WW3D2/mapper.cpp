@@ -34,18 +34,18 @@
 
 #include "mapper.h"
 #include "ww3d.h"
-#include "ini.h"
+#include "INI.H"
 #include "chunkio.h"
 #include "w3derr.h"
 #include "meshmatdesc.h"
-#include "dx8wrapper.h"
 #include "wwdebug.h"
 #include "matinfo.h"
 #include "rendobj.h"
 #include "mesh.h"
-
-
+#ifdef _WIN32
+#include "dx8wrapper.h"
 inline DWORD F2DW( FLOAT f ) { return *((DWORD*)&f); }
+#endif
 
 
 // HY 1/26/01
@@ -111,6 +111,7 @@ void LinearOffsetTextureMapperClass::Apply(int uv_array_index)
 	m[0].X=Scale.X;
 	m[1].Z=offset_v;
 	m[1].Y=Scale.Y;
+#ifdef _WIN32
 	DX8Wrapper::Set_Transform((D3DTRANSFORMSTATETYPE) (D3DTS_TEXTURE0+Stage),m);
 
 	// Disable Texgen
@@ -118,7 +119,7 @@ void LinearOffsetTextureMapperClass::Apply(int uv_array_index)
 
 	// Tell rasterizer to expect 2D texture coordinates
 	DX8Wrapper::Set_DX8_Texture_Stage_State(Stage,D3DTSS_TEXTURETRANSFORMFLAGS,D3DTTFF_COUNT2);
-
+#endif
 	// Update state
 	CurrentUVOffset.X = offset_u;
 	CurrentUVOffset.Y = offset_v;
@@ -159,6 +160,7 @@ void ScaleTextureMapperClass::Apply(int uv_array_index)
 	
 	m[0].X=Scale.U;
 	m[1].Y=Scale.V;
+#ifdef _WIN32
 	DX8Wrapper::Set_Transform((D3DTRANSFORMSTATETYPE) (D3DTS_TEXTURE0+Stage),m);
 
 	// Disable Texgen
@@ -166,6 +168,7 @@ void ScaleTextureMapperClass::Apply(int uv_array_index)
 
 	// Tell rasterizer to expect 2D texture coordinates
 	DX8Wrapper::Set_DX8_Texture_Stage_State(Stage,D3DTSS_TEXTURETRANSFORMFLAGS,D3DTTFF_COUNT2);
+#endif
 }
 
 // Grid Mapper
@@ -211,6 +214,7 @@ void GridTextureMapperClass::Apply(int uv_array_index)
 	// otherwise change to translate
 	m[0].Z = u_offset;
 	m[1].Z = v_offset;
+#ifdef _WIN32
 	DX8Wrapper::Set_Transform((D3DTRANSFORMSTATETYPE) (D3DTS_TEXTURE0+Stage), m);
 
 	// Disable Texgen
@@ -218,6 +222,7 @@ void GridTextureMapperClass::Apply(int uv_array_index)
 
 	// Tell rasterizer to expect 2D texture coordinates
 	DX8Wrapper::Set_DX8_Texture_Stage_State(Stage, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT2);
+#endif
 }
 
 void GridTextureMapperClass::Reset(void)
@@ -325,6 +330,7 @@ void RotateTextureMapperClass::Apply(int uv_array_index)
 	float c,s;
 	c=WWMath::Cos(CurrentAngle);
 	s=WWMath::Sin(CurrentAngle);
+#ifdef _WIN32
 	Matrix4 m(true);
 
 	// subtract center
@@ -333,7 +339,6 @@ void RotateTextureMapperClass::Apply(int uv_array_index)
 	// then scale
 	m[0].Set(Scale.X*c,-Scale.X*s,-Scale.X*(c*Center.U-s*Center.V-Center.U),0.0f);
 	m[1].Set(Scale.Y*s,Scale.Y*c,-Scale.Y*(s*Center.U+c*Center.V-Center.V),0.0f);	
-
 	DX8Wrapper::Set_Transform((D3DTRANSFORMSTATETYPE) (D3DTS_TEXTURE0+Stage),m);
 
 	// Disable Texgen
@@ -341,6 +346,7 @@ void RotateTextureMapperClass::Apply(int uv_array_index)
 
 	// Tell rasterizer to expect 2D texture coordinates
 	DX8Wrapper::Set_DX8_Texture_Stage_State(Stage,D3DTSS_TEXTURETRANSFORMFLAGS,D3DTTFF_COUNT2);
+#endif
 }
 
 // SineLinearOffset Mapper
@@ -399,6 +405,7 @@ void SineLinearOffsetTextureMapperClass::Apply(int uv_array_index)
 	// otherwise change to translate
 	m[0].Z=offset_u;
 	m[1].Z=offset_v;
+#ifdef _WIN32
 	DX8Wrapper::Set_Transform((D3DTRANSFORMSTATETYPE) (D3DTS_TEXTURE0+Stage),m);
 
 	// Disable Texgen
@@ -406,6 +413,7 @@ void SineLinearOffsetTextureMapperClass::Apply(int uv_array_index)
 
 	// Tell rasterizer to expect 2D texture coordinates
 	DX8Wrapper::Set_DX8_Texture_Stage_State(Stage,D3DTSS_TEXTURETRANSFORMFLAGS,D3DTTFF_COUNT2);
+#endif
 
 }
 
@@ -462,6 +470,7 @@ void StepLinearOffsetTextureMapperClass::Apply(int uv_array_index)
 	// otherwise change to translate
 	m[0].Z=CurrentStep.U;
 	m[1].Z=CurrentStep.V;
+#ifdef _WIN32
 	DX8Wrapper::Set_Transform((D3DTRANSFORMSTATETYPE) (D3DTS_TEXTURE0+Stage),m);
 
 	// Disable Texgen
@@ -469,6 +478,7 @@ void StepLinearOffsetTextureMapperClass::Apply(int uv_array_index)
 
 	// Tell rasterizer to expect 2D texture coordinates
 	DX8Wrapper::Set_DX8_Texture_Stage_State(Stage,D3DTSS_TEXTURETRANSFORMFLAGS,D3DTTFF_COUNT2);
+#endif
 
 }
 
@@ -540,6 +550,7 @@ void ZigZagLinearOffsetTextureMapperClass::Apply(int uv_array_index)
 	// otherwise change to translate
 	m[0].Z=offset_u;
 	m[1].Z=offset_v;
+#ifdef _WIN32
 	DX8Wrapper::Set_Transform((D3DTRANSFORMSTATETYPE) (D3DTS_TEXTURE0+Stage),m);
 
 	// Disable Texgen
@@ -547,6 +558,7 @@ void ZigZagLinearOffsetTextureMapperClass::Apply(int uv_array_index)
 
 	// Tell rasterizer to expect 2D texture coordinates
 	DX8Wrapper::Set_DX8_Texture_Stage_State(Stage,D3DTSS_TEXTURETRANSFORMFLAGS,D3DTTFF_COUNT2);
+#endif
 
 }
 
@@ -571,6 +583,7 @@ void ClassicEnvironmentMapperClass::Apply(int uv_array_index)
 							0.0f, 0.5f, 0.0f, 0.5f,
 							0.0f, 0.0f, 1.0f, 0.0f );
 
+#ifdef _WIN32
 	DX8Wrapper::Set_Transform((D3DTRANSFORMSTATETYPE) (D3DTS_TEXTURE0+Stage),matenv);
 
 	// Get camera normals
@@ -578,7 +591,7 @@ void ClassicEnvironmentMapperClass::Apply(int uv_array_index)
 
 	// Tell rasterizer to expect 2D matrices
 	DX8Wrapper::Set_DX8_Texture_Stage_State(Stage,D3DTSS_TEXTURETRANSFORMFLAGS,D3DTTFF_COUNT2);
-	
+#endif
 }
 
 void EnvironmentMapperClass::Apply(int uv_array_index)
@@ -591,6 +604,7 @@ void EnvironmentMapperClass::Apply(int uv_array_index)
 							0.0f, 0.25f, 0.0f, 0.5f,
 							0.0f, 0.0f, 1.0f, 0.0f );	
 
+#ifdef _WIN32
 	DX8Wrapper::Set_Transform((D3DTRANSFORMSTATETYPE) (D3DTS_TEXTURE0+Stage),matenv);
 
 	// Get camera reflection vector
@@ -598,7 +612,7 @@ void EnvironmentMapperClass::Apply(int uv_array_index)
 
 	// Tell rasterizer to expect 2D matrices
 	DX8Wrapper::Set_DX8_Texture_Stage_State(Stage,D3DTSS_TEXTURETRANSFORMFLAGS,D3DTTFF_COUNT2);
-	
+#endif
 }
 
 EdgeMapperClass::EdgeMapperClass(unsigned int stage) :
@@ -646,7 +660,7 @@ void EdgeMapperClass::Apply(int uv_array_index)
 	Matrix3D matenv(	0.0f, 0.0f, 0.5f, 0.5f,
 							0.0f, 0.0f, 0.0f, VOffset,
 							0.0f, 0.0f, 1.0f, 0.0f );	
-
+#ifdef _WIN32
 	DX8Wrapper::Set_Transform((D3DTRANSFORMSTATETYPE) (D3DTS_TEXTURE0+Stage),matenv);
 
 	// Get camera reflection vector
@@ -657,7 +671,7 @@ void EdgeMapperClass::Apply(int uv_array_index)
 
 	// Tell rasterizer to expect 2D matrices
 	DX8Wrapper::Set_DX8_Texture_Stage_State(Stage,D3DTSS_TEXTURETRANSFORMFLAGS,D3DTTFF_COUNT2);
-	
+#endif
 }
 
 void EdgeMapperClass::Reset(void)
@@ -676,6 +690,7 @@ void WSClassicEnvironmentMapperClass::Apply(int uv_array_index)
 							0.0f, 0.0f, 1.0f, 0.0f );
 
 	// multiply by inverse of view transform	
+#ifdef _WIN32
 	Matrix4 mat;
 	DX8Wrapper::Get_Transform(D3DTS_VIEW,mat);	
 	Matrix3D mat2(mat[0].X,mat[1].X,mat[2].X,0.0f,
@@ -694,7 +709,7 @@ void WSClassicEnvironmentMapperClass::Apply(int uv_array_index)
 
 	// Tell rasterizer to expect 2D matrices
 	DX8Wrapper::Set_DX8_Texture_Stage_State(Stage,D3DTSS_TEXTURETRANSFORMFLAGS,D3DTTFF_COUNT2);
-	
+#endif
 }
 
 void WSEnvironmentMapperClass::Apply(int uv_array_index)
@@ -708,6 +723,7 @@ void WSEnvironmentMapperClass::Apply(int uv_array_index)
 							0.0f, 0.0f, 1.0f, 0.0f );		
 
 	// multiply by inverse of view transform	
+#ifdef _WIN32
 	Matrix4 mat;	
 	DX8Wrapper::Get_Transform(D3DTS_VIEW,mat);		
 	Matrix3D mat2(mat[0].X,mat[1].X,mat[2].X,0.0f,
@@ -726,7 +742,7 @@ void WSEnvironmentMapperClass::Apply(int uv_array_index)
 
 	// Tell rasterizer to expect 2D matrices
 	DX8Wrapper::Set_DX8_Texture_Stage_State(Stage,D3DTSS_TEXTURETRANSFORMFLAGS,D3DTTFF_COUNT2);
-	
+#endif
 }
 
 void ScreenMapperClass::Apply(int uv_array_index)
@@ -742,6 +758,7 @@ void ScreenMapperClass::Apply(int uv_array_index)
 
 	// multiply by projection matrix	
 	// followed by scale and translation
+#ifdef _WIN32
 	Matrix4 mat;	
 	DX8Wrapper::Get_Transform(D3DTS_PROJECTION,mat);	
 	mat[0]*=Scale.X; // entire row since we're pre-multiplying
@@ -760,7 +777,7 @@ void ScreenMapperClass::Apply(int uv_array_index)
 
 	// Tell rasterizer what to expect
 	DX8Wrapper::Set_DX8_Texture_Stage_State(Stage,D3DTSS_TEXTURETRANSFORMFLAGS,D3DTTFF_PROJECTED | D3DTTFF_COUNT3);
-
+#endif
 	// Update state
 	CurrentUVOffset.X = offset_u;
 	CurrentUVOffset.Y = offset_v;
@@ -781,6 +798,7 @@ void GridClassicEnvironmentMapperClass::Apply(int uv_array_index)
 							0.0f,	del,	0.0f,	v_offset + del,
 							0.0f,	0.0f,	1.0f,	0.0f				);		
 
+#ifdef _WIN32
 	DX8Wrapper::Set_Transform((D3DTRANSFORMSTATETYPE) (D3DTS_TEXTURE0+Stage),tform);
 
 	// Get camera normals
@@ -788,6 +806,7 @@ void GridClassicEnvironmentMapperClass::Apply(int uv_array_index)
 
 	// Tell rasterizer to expect 2D matrices
 	DX8Wrapper::Set_DX8_Texture_Stage_State(Stage,D3DTSS_TEXTURETRANSFORMFLAGS,D3DTTFF_COUNT2);
+#endif
 }
 
 void GridEnvironmentMapperClass::Apply(int uv_array_index)
@@ -810,7 +829,7 @@ void GridEnvironmentMapperClass::Apply(int uv_array_index)
 	Matrix3D tform(	del,	0.0f,	0.0f,	u_offset + del,
 							0.0f,	del,	0.0f,	v_offset + del,
 							0.0f,	0.0f,	1.0f,	0.0f				);		
-
+#ifdef _WIN32
 	DX8Wrapper::Set_Transform((D3DTRANSFORMSTATETYPE) (D3DTS_TEXTURE0+Stage),tform);
 
 	// Get camera space reflection
@@ -818,6 +837,7 @@ void GridEnvironmentMapperClass::Apply(int uv_array_index)
 
 	// Tell rasterizer to expect 2D matrices
 	DX8Wrapper::Set_DX8_Texture_Stage_State(Stage,D3DTSS_TEXTURETRANSFORMFLAGS,D3DTTFF_COUNT2);
+#endif
 }
 
 RandomTextureMapperClass::RandomTextureMapperClass(float fps, unsigned int stage):
@@ -883,7 +903,7 @@ void RandomTextureMapperClass::Apply(int uv_array_index)
 	voff=fmodf(voff,1.0f);
 	m[0].Z=uoff;
 	m[1].Z=voff;
-
+#ifdef _WIN32
 	DX8Wrapper::Set_Transform((D3DTRANSFORMSTATETYPE) (D3DTS_TEXTURE0+Stage),m);
 
 	// Disable Texgen
@@ -891,6 +911,7 @@ void RandomTextureMapperClass::Apply(int uv_array_index)
 
 	// Tell rasterizer to expect 2D texture coordinates
 	DX8Wrapper::Set_DX8_Texture_Stage_State(Stage,D3DTSS_TEXTURETRANSFORMFLAGS,D3DTTFF_COUNT2);
+#endif
 }
 
 // BumpEnv Mapper
@@ -938,11 +959,13 @@ void BumpEnvTextureMapperClass::Apply(int uv_array_index)
 	c=ScaleFactor * WWMath::Fast_Cos(CurrentAngle);
 	s=ScaleFactor * WWMath::Fast_Sin(CurrentAngle);
 
+#ifdef _WIN32
 	// Set the Bump Environment Matrix
 	DX8Wrapper::Set_DX8_Texture_Stage_State(Stage,D3DTSS_BUMPENVMAT00, F2DW(c));
 	DX8Wrapper::Set_DX8_Texture_Stage_State(Stage,D3DTSS_BUMPENVMAT01, F2DW(-s));
 	DX8Wrapper::Set_DX8_Texture_Stage_State(Stage,D3DTSS_BUMPENVMAT10, F2DW(s));
 	DX8Wrapper::Set_DX8_Texture_Stage_State(Stage,D3DTSS_BUMPENVMAT11, F2DW(c));
+#endif
 }
 
 void RandomTextureMapperClass::Reset(void)

@@ -22,7 +22,7 @@
  *                                                                                             * 
  *                 Project Name : Command & Conquer                                            * 
  *                                                                                             * 
- *                     $Archive:: /Commando/Code/wwlib/wwfile.h                               $* 
+ *                     $Archive:: /Commando/Code/wwlib/WWFILE.H                               $* 
  *                                                                                             * 
  *                      $Author:: Ian_l                                                       $*
  *                                                                                             * 

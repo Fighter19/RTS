@@ -43,7 +43,7 @@
 
 #include "render2d.h"
 #include "refcount.h"
-#include "vector.h"
+#include "Vector.H"
 #include "vector2i.h"
 #include "wwstring.h"
 #include "win.h"
@@ -125,16 +125,18 @@ private:
 	int									PixelOverlap;
 	int									PointSize;
 	StringClass							GDIFontName;
-	HFONT									OldGDIFont;
+#ifdef _WIN32
+	HFONT								OldGDIFont;
 	HBITMAP								OldGDIBitmap;
 	HBITMAP								GDIBitmap;	
-	HFONT									GDIFont;
+	HFONT								GDIFont;
+#endif
 	uint8 *								GDIBitmapBits;
 	HDC									MemDC;
 	FontCharsClassCharDataStruct *					ASCIICharArray[256];
 	FontCharsClassCharDataStruct **					UnicodeCharArray;
-	uint16								FirstUnicodeChar;
-	uint16								LastUnicodeChar;
+	WCHAR								FirstUnicodeChar;
+	WCHAR								LastUnicodeChar;
 	bool									IsBold;
 };
 

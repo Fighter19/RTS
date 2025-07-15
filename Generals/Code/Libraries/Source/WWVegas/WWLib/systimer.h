@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -38,10 +38,25 @@
 #ifndef _SYSTIMER_H
 
 #include "always.h"
+#ifdef _WIN32
 #include <windows.h>
 #include "mmsys.h"
 
 #define TIMEGETTIME SystemTime.Get
+#define MS_TIMER_SECOND 1000
+#else
+#include <sys/time.h>
+
+inline unsigned long systimerGetMS(void)
+{
+	struct timeval tv;
+	gettimeofday(&tv, NULL);
+	return (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
+}
+
+#define TIMEGETTIME systimerGetMS
+#define MS_TIMER_SECOND 1000
+#endif
 
 /*
 ** Class that just wraps around timeGetTime()

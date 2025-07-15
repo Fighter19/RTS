@@ -25,16 +25,20 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-#include "streakrender.h"
+#include "streakRender.h"
 #include "ww3d.h"
 #include "rinfo.h"
-#include "dx8wrapper.h"
 #include "sortingrenderer.h"
 #include "vp.h"
 #include "vector3i.h"
-#include "random.h"
+#include "RANDOM.H"
 #include "v3_rnd.h"
+#include "vertmaterial.h"
+#include "w3d_file.h"
 
+#ifdef _WIN32
+#include "dx8wrapper.h"
+#endif
 
 /* We have chunking logic which handles N segments at a time. To simplify the subdivision logic,
 ** we will ensure that N is a power of two and that N >= 2^MAX_STREAK_SUBDIV_LEVELS, so that the
@@ -313,6 +317,7 @@ void StreakRendererClass::RenderStreak
 )
 {
 	Matrix4 view;
+#ifdef _WIN32
 	DX8Wrapper::Get_Transform(D3DTS_VIEW,view);
 
 	Matrix4 identity(true);
@@ -1402,7 +1407,7 @@ char q[]="&&  &&  &&  &&  &&  &&  &&  &&  &&  &&  &&  &&  &&  &&  &&  &&  &&  &&
 	}	// Chunking loop
 
 	DX8Wrapper::Set_Transform(D3DTS_VIEW,view);
-
+#endif // _WIN32
 }
 
 /////////////////////////////////////////////////////////////////////////////

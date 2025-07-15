@@ -2896,7 +2896,7 @@ SOURCE=.\Include\Common\CopyProtection.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Include\Common\crc.h
+SOURCE=.\Include\Common\CRC.H
 # End Source File
 # Begin Source File
 

@@ -19,9 +19,13 @@
 #include "ddsfile.h"
 #include "ffactory.h"
 #include "bufffile.h"
+#include "bitmaphandler.h"
+#include "ww3d.h"
+
+#ifdef _WIN32
 #include "formconv.h"
 #include "dx8wrapper.h"
-#include "bitmaphandler.h"
+#endif // _WIN32
 
 // ----------------------------------------------------------------------------
 
@@ -56,6 +60,7 @@ DDSFileClass::DDSFileClass(const char* name,unsigned reduction_factor)
 	// Verify the structure size matches the read size
 	WWASSERT(read_bytes==SurfaceDesc.Size);
 
+#ifdef _WIN32
 	Format=D3DFormat_To_WW3DFormat((D3DFORMAT)SurfaceDesc.PixelFormat.FourCC);
 	WWASSERT(
 		Format==WW3D_FORMAT_DXT1 ||
@@ -63,6 +68,7 @@ DDSFileClass::DDSFileClass(const char* name,unsigned reduction_factor)
 		Format==WW3D_FORMAT_DXT3 ||
 		Format==WW3D_FORMAT_DXT4 ||
 		Format==WW3D_FORMAT_DXT5);
+#endif
 
 	MipLevels=SurfaceDesc.MipMapCount;
 	if (MipLevels==0) MipLevels=1;
@@ -103,7 +109,7 @@ DDSFileClass::DDSFileClass(const char* name,unsigned reduction_factor)
 			level_size/=4;
 		}
 	}
-	for (level=0;level<MipLevels;++level) {
+	for (unsigned level=0;level<MipLevels;++level) {
 		LevelSizes[level]=level_size;
 		LevelOffsets[level]=level_offset;
 		level_offset+=level_size;
@@ -230,6 +236,7 @@ bool DDSFileClass::Load()
 void DDSFileClass::Copy_Level_To_Surface(unsigned level,IDirect3DSurface8* d3d_surface)
 {
 	WWASSERT(d3d_surface);
+#ifdef _WIN32
 	// Verify that the destination surface size matches the source surface size
 	D3DSURFACE_DESC surface_desc;
 	DX8_ErrorCode(d3d_surface->GetDesc(&surface_desc));
@@ -248,6 +255,7 @@ void DDSFileClass::Copy_Level_To_Surface(unsigned level,IDirect3DSurface8* d3d_s
 
 	// Finally, unlock the surface
 	DX8_ErrorCode(d3d_surface->UnlockRect());
+#endif // _WIN32
 }
 
 // ----------------------------------------------------------------------------
@@ -307,7 +315,7 @@ void DDSFileClass::Copy_Level_To_Surface(
 					}
 				}
 				if (Format==WW3D_FORMAT_DXT1 && contains_alpha) {
-					WWDEBUG_SAY(("Warning: DXT1 format should not contain alpha information - file %s\n",Name));
+					WWDEBUG_SAY(("Warning: DXT1 format should not contain alpha information - file %s\n",Name.Peek_Buffer()));
 				}
 			}
 		}

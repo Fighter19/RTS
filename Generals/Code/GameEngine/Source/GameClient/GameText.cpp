@@ -372,7 +372,9 @@ void GameTextManager::init( void )
 	UnicodeString ourName = fetch("GUI:Command&ConquerGenerals");
 	extern HWND ApplicationHWnd;  ///< our application window handle
 	if (ApplicationHWnd) {
+	#ifdef _WIN32
 		::SetWindowTextW(ApplicationHWnd, ourName.str());
+	#endif
 	}
 
 }

@@ -47,7 +47,7 @@
 #endif
 
 #ifndef VECTOR_H
-#include "vector.h"
+#include "Vector.H"
 #endif
 
 #ifndef SNAPPTS_H

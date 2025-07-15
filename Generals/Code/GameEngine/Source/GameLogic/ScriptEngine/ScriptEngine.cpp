@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
-#include "common/DataChunk.h"
+#include "Common/DataChunk.h"
 #include "Common/File.h"
 #include "Common/FileSystem.h"
 #include "Common/GameEngine.h"
@@ -4769,9 +4769,9 @@ void ScriptEngine::update( void )
 	USE_PERF_TIMER(ScriptEngine)
 #ifdef SPECIAL_SCRIPT_PROFILING
 #ifdef DEBUG_LOGGING
-	__int64 startTime64;
+	int64_t startTime64;
 	double timeToUpdate=0.0f;
-	__int64 endTime64,freq64;
+	int64_t endTime64,freq64;
 	QueryPerformanceFrequency((LARGE_INTEGER *)&freq64);//LORENZEN'S NOTE_TO_SELF: USE THIS
 	QueryPerformanceCounter((LARGE_INTEGER *)&startTime64);//LORENZEN'S NOTE_TO_SELF: USE THIS
 /* dump out the named objects table.  For extremely intense debug only.  jba. :P
@@ -6254,9 +6254,9 @@ void ScriptEngine::executeScript( Script *pScript )
 	}
 #ifdef DEBUG_LOGGING
 #ifdef SPECIAL_SCRIPT_PROFILING
-	__int64 startTime64;
+	int64_t startTime64;
 	Real timeToEvaluate=0.0f;
-	__int64 endTime64,freq64;
+	int64_t endTime64,freq64;
 	QueryPerformanceFrequency((LARGE_INTEGER *)&freq64);
 	QueryPerformanceCounter((LARGE_INTEGER *)&startTime64);
 #endif
@@ -6870,11 +6870,16 @@ Bool ScriptEngine::evaluateConditions( Script *pScript, Team *thisTeam, Player *
 #define COLLECT_CONDITION_EVAL_TIMES
 #endif
 #ifdef COLLECT_CONDITION_EVAL_TIMES
-	__int64 startTime64;
+	int64_t startTime64;
 	Real timeToEvaluate=0.0f;
-	__int64 endTime64,freq64;
+	int64_t endTime64,freq64;
+#ifdef _WIN32
 	QueryPerformanceFrequency((LARGE_INTEGER *)&freq64);
 	QueryPerformanceCounter((LARGE_INTEGER *)&startTime64);
+#else
+	startTime64 = _rdtsc();
+	freq64 = 1; // Not used on non-Windows platforms.
+#endif
 #endif
 	OrCondition *pCurCondition;
 	for (pCurCondition = pConditionHead; pCurCondition; pCurCondition = pCurCondition->getNextOrCondition()) {
@@ -6894,7 +6899,11 @@ Bool ScriptEngine::evaluateConditions( Script *pScript, Team *thisTeam, Player *
 		}
 	}
 #ifdef COLLECT_CONDITION_EVAL_TIMES
+#ifdef _WIN32
 	QueryPerformanceCounter((LARGE_INTEGER *)&endTime64);
+#else
+	endTime64 = _rdtsc();
+#endif
 	timeToEvaluate = ((Real)(endTime64-startTime64) / (Real)(freq64));
 	pScript->incrementConditionCount();
 	pScript->addToConditionTime(timeToEvaluate);

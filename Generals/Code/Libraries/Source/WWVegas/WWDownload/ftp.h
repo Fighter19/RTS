@@ -24,7 +24,6 @@
 
 //#include "../resource.h"       // main symbols
 
-#include "winsock.h"
 #include "stdio.h"
 
 #include "WWDownload/ftpdefs.h"
@@ -47,6 +46,8 @@
 
 #define FTP_TEMPFILENAME	"..\\__~DOWN_L~D"
 
+#ifdef _WIN32
+#include "winsock.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // Cftp
@@ -113,5 +114,39 @@ public:
 	HRESULT SendCommand( LPCSTR pCommand, int iSize );
 
 };
+#else
+#define FTP_FAILED -1
+class Cftp
+{
+private:
+	// Dummy class for non-Windows platforms
+public:
+	Cftp() {}
+	virtual ~Cftp() {}
+	HRESULT ConnectToServer(LPCSTR szServerName) { return FTP_FAILED; }
+	HRESULT DisconnectFromServer() { return FTP_FAILED; }
+	HRESULT LoginToServer( LPCSTR szUserName, LPCSTR szPassword ) { return FTP_FAILED; }
+	HRESULT LogoffFromServer( void ) { return FTP_FAILED; }
+	HRESULT FindFile( LPCSTR szRemoteFileName, int * piSize ) { return FTP_FAILED; }
+	HRESULT FileRecoveryPosition( LPCSTR szLocalFileName, LPCSTR szRegistryRoot ) { return FTP_FAILED; }
+	HRESULT RestartFrom( int i ) { return FTP_FAILED; }
+	HRESULT GetNextFileBlock( LPCSTR szLocalFileName, int * piTotalRead ) { return FTP_FAILED; }
+	HRESULT RecvReply( LPCSTR pReplyBuffer, int iSize, int * piRetCode ) { return FTP_FAILED; }
+	HRESULT SendCommand( LPCSTR pCommand, int iSize ) { return FTP_FAILED; }
+	int AsyncGetHostByName( char * szName, struct sockaddr_in &address ) { return FTP_FAILED; }
+	void GetDownloadFilename( const char* localname, char* downloadname) 
+	{
+		strcpy(downloadname, FTP_TEMPFILENAME);
+	}
+	void CloseSockets(void) {}
+	void ZeroStuff(void) {}
+	int SendData( char * pData, int iSize ) { return FTP_FAILED; }			
+	int RecvData( char * pData, int iSize ) { return FTP_FAILED; }
+	int SendNewPort() { return FTP_FAILED; }
+	int OpenDataConnection() { return FTP_FAILED; }
+	void CloseDataConnection() {}
+};
+
+#endif // _WIN32
 
 #endif //__FTP_H_

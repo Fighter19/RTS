@@ -55,7 +55,7 @@
 
 #include	"noinit.h"
 #include	<assert.h>
-#include	<new.h>
+#include	<new>
 #include	<string.h>
 #include	<stddef.h>
 #include	<stdlib.h>
