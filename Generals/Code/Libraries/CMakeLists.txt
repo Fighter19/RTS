@@ -7,4 +7,3 @@ add_subdirectory(Source/WWVegas)
 # EA Libraries
 add_subdirectory(Source/EABrowserEngine)
 add_subdirectory(Source/EABrowserDispatch)
-add_subdirectory(Source/Compression)

@@ -18,7 +18,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG")
 set(CMAKE_CXX_FLAGS_RELWITHDEBUG "${CMAKE_CXX_FLAGS_RELWITHDEBUG} -D_INTERNAL")
 
 
-### Installer Setuo
+### Installer Setup
 set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
 set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
 set(CPACK_PACKAGE_VERSION_PATCH ${PROJECT_VERSION_PATCH})
@@ -32,6 +32,11 @@ cpack_add_component(ZEROHOUR DISPLAY_NAME "C&C Generals - Zero Hour"
 cpack_add_component(BFME DISPLAY_NAME "Battle for middleearth"
   DESCRIPTION "Binaries required for playing Battle for middleearth"
 )
+
+# Add -Werror=nonportable-include-path for GCC and Clang
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=nonportable-include-path")
+endif()
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
