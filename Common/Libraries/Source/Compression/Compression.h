@@ -1,5 +1,6 @@
 /*
 **	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -19,11 +20,7 @@
 // FILE: Compression.h ///////////////////////////////////////////////////////
 // Author: Matthew D. Campbell
 //////////////////////////////////////////////////////////////////////////////
-
 #pragma once
-
-#ifndef __COMPRESSION_H__
-#define __COMPRESSION_H__
 
 #include "Lib/BaseType.h"
 
@@ -32,8 +29,10 @@ enum CompressionType
 	COMPRESSION_MIN = 0,
 	COMPRESSION_NONE = COMPRESSION_MIN,
 	COMPRESSION_REFPACK,
-	COMPRESSION_MAX = COMPRESSION_REFPACK,
+#ifdef RTS_USE_LZHL
 	COMPRESSION_NOXLZH,
+#endif
+#ifdef RTS_USE_ZLIB
 	COMPRESSION_ZLIB1,
 	COMPRESSION_ZLIB2,
 	COMPRESSION_ZLIB3,
@@ -43,29 +42,28 @@ enum CompressionType
 	COMPRESSION_ZLIB7,
 	COMPRESSION_ZLIB8,
 	COMPRESSION_ZLIB9,
+#endif
 	COMPRESSION_BTREE,
 	COMPRESSION_HUFF,
+	COMPRESSION_MAX = COMPRESSION_HUFF,
 };
 
 class CompressionManager
 {
-public:
+  public:
+	static Bool isDataCompressed(const void *mem, Int len);
+	static CompressionType getCompressionType(const void *mem, Int len);
 
-	static Bool isDataCompressed( const void *mem, Int len );
-	static CompressionType getCompressionType( const void *mem, Int len );
+	static Int getMaxCompressedSize(Int uncompressedLen, CompressionType compType);
+	static Int getUncompressedSize(const void *mem, Int len);
 
-	static Int getMaxCompressedSize( Int uncompressedLen, CompressionType compType );
-	static Int getUncompressedSize( const void *mem, Int len );
+	static Int compressData(CompressionType compType, void *src, Int srcLen, void *dest, Int destLen); // 0 on error
+	static Int decompressData(void *src, Int srcLen, void *dest, Int destLen);						   // 0 on error
 
-	static Int compressData( CompressionType compType, void *src, Int srcLen, void *dest, Int destLen ); // 0 on error
-	static Int decompressData( void *src, Int srcLen, void *dest, Int destLen ); // 0 on error
-
-	static const char *getCompressionNameByType( CompressionType compType );
+	static const char *getCompressionNameByType(CompressionType compType);
 
 	// For perf timers, so we can have separate ones for compression/decompression
-	static const char *getDecompressionNameByType( CompressionType compType );
+	static const char *getDecompressionNameByType(CompressionType compType);
 
-	static CompressionType getPreferredCompression( void );
+	static CompressionType getPreferredCompression(void);
 };
-
-#endif // __COMPRESSION_H__

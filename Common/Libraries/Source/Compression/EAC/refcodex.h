@@ -1,5 +1,6 @@
 /*
 **	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -22,53 +23,53 @@
 #define __REFCODEX 1
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 #ifndef __CODEX_H
 #error "Include codex.h before refcodex.h"
 #endif
 
-/****************************************************************/
-/*  REF Codex                                                   */
-/****************************************************************/
+	/****************************************************************/
+	/*  REF Codex                                                   */
+	/****************************************************************/
 
-/* Information Functions */
+	/* Information Functions */
 
-CODEXABOUT *GCALL REF_about(void);
-bool        GCALL REF_is(const void *compresseddata);
+	CODEXABOUT *GCALL REF_about(void);
+	bool GCALL REF_is(const void *compresseddata);
 
-/* Decode Functions */
+	/* Decode Functions */
 
-int        GCALL REF_size(const void *compresseddata);
+	int GCALL REF_size(const void *compresseddata);
 #ifdef __cplusplus
-int        GCALL REF_decode(void *dest, const void *compresseddata, int *compressedsize=0);
+	int GCALL REF_decode(void *dest, const void *compresseddata, int *compressedsize = 0);
 #else
-int        GCALL REF_decode(void *dest, const void *compresseddata, int *compressedsize);
+int GCALL REF_decode(void *dest, const void *compresseddata, int *compressedsize);
 #endif
 
-/* Encode Functions */
+	/* Encode Functions */
 
 #ifdef __cplusplus
-int        GCALL REF_encode(void *compresseddata, const void *source, int sourcesize, int *opts=0);
+	int GCALL REF_encode(void *compresseddata, const void *source, int sourcesize, int *opts = 0);
 #else
-int        GCALL REF_encode(void *compresseddata, const void *source, int sourcesize, int *opts);
+int GCALL REF_encode(void *compresseddata, const void *source, int sourcesize, int *opts);
 #endif
 
-/****************************************************************/
-/*  Internal                                                    */
-/****************************************************************/
+	/****************************************************************/
+	/*  Internal                                                    */
+	/****************************************************************/
 
 #ifndef qmin
-#define qmin(a,b) ((a)<(b)?(a):(b))
+#define qmin(a, b) ((a) < (b) ? (a) : (b))
 #endif
 
 #ifndef qmax
-#define qmax(a,b) ((a)>(b)?(a):(b))
+#define qmax(a, b) ((a) > (b) ? (a) : (b))
 #endif
 
 #ifdef __cplusplus
 }
 #endif
 #endif
-

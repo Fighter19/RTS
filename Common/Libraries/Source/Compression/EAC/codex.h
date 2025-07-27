@@ -1,5 +1,6 @@
 /*
 **	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -45,34 +46,35 @@
 #endif
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 #define CODEX_VERSION 200
 
-/****************************************************************/
-/*  Data Types                                                  */
-/****************************************************************/
+	/****************************************************************/
+	/*  Data Types                                                  */
+	/****************************************************************/
 
-/* Info structure describing bitmaps */
+	/* Info structure describing bitmaps */
 
-typedef struct
-{
-    int signature;              /* signature of codex ie 'tga ' (optional) */
-    int size;                   /* size of CODEXABOUT structure */
-    int version;                /* version number of CODEXABOUT structure (200) */
+	typedef struct
+	{
+		int signature; /* signature of codex ie 'tga ' (optional) */
+		int size;	   /* size of CODEXABOUT structure */
+		int version;   /* version number of CODEXABOUT structure (200) */
 
-    unsigned int decode    :1;  /* supports decoding */
-    unsigned int encode    :1;  /* supports encoding */
-    unsigned int size32    :1;  /* support 32 bit size field */
-    unsigned int pad       :29;
+		unsigned int decode : 1; /* supports decoding */
+		unsigned int encode : 1; /* supports encoding */
+		unsigned int size32 : 1; /* support 32 bit size field */
+		unsigned int pad : 29;
 
-    char versionstr[8];          /* version number of codex module ie 1.00 */
-    char shorttypestr[8];        /* 3 or 4 character type string ie ref */
-    char longtypestr[16];        /* full name of data format ie Refpack */
-} CODEXABOUT;
+		char versionstr[8];	  /* version number of codex module ie 1.00 */
+		char shorttypestr[8]; /* 3 or 4 character type string ie ref */
+		char longtypestr[16]; /* full name of data format ie Refpack */
+	} CODEXABOUT;
 
-#define QMAKEID(a,b,c,d) (((a)<<24)|((b)<<16)|((c)<<8)|(d))
+#define QMAKEID(a, b, c, d) (((a) << 24) | ((b) << 16) | ((c) << 8) | (d))
 
 #if !defined(GCALL)
 #if defined(_MSC_VER) && !defined(_XBOX)
@@ -82,35 +84,34 @@ typedef struct
 #endif
 #endif
 
+	typedef struct QFUNCTIONS
+	{
+		CODEXABOUT *(GCALL *CODEX_about)(void);
+		bool(GCALL *CODEX_is)(const void *compressed);
+		int(GCALL *CODEX_size)(const void *compressed);
+		int(GCALL *CODEX_decode)(void *dest, const void *source, int *sourcesizeptr);
+		int(GCALL *CODEX_encode)(void *dest, const void *source, int sourcesize, int *opts);
+	} QFUNCTIONS;
 
-typedef struct QFUNCTIONS
-{
-    CODEXABOUT * (GCALL * CODEX_about)(void);
-    bool         (GCALL * CODEX_is)(const void *compressed);
-    int          (GCALL * CODEX_size)(const void *compressed);
-    int          (GCALL * CODEX_decode)(void *dest, const void *source, int *sourcesizeptr);
-    int          (GCALL * CODEX_encode)(void *dest, const void *source, int sourcesize, int *opts);
-} QFUNCTIONS;
+	extern struct QFUNCTIONS qfunctions[];
 
-extern struct QFUNCTIONS qfunctions[];
-
-/****************************************************************/
-/*  Codex Module Example Prototypes                             */
-/****************************************************************/
+	/****************************************************************/
+	/*  Codex Module Example Prototypes                             */
+	/****************************************************************/
 
 #include "gimex.h" /* for memory IO */
 
-/* Information Functions */
+	/* Information Functions */
 
-CODEXABOUT *GCALL CODEX_about(void);
-bool        GCALL CODEX_is(const void *source);
-int         GCALL CODEX_size(const void *source);
+	CODEXABOUT *GCALL CODEX_about(void);
+	bool GCALL CODEX_is(const void *source);
+	int GCALL CODEX_size(const void *source);
 
-/* Decode/Encode Functions */
+	/* Decode/Encode Functions */
 
 #ifdef __cplusplus
-int GCALL CODEX_decode(void *dest, const void *source, int *sourcesizeptr=0);
-int GCALL CODEX_encode(void *dest, const void *source, int sourcesize, int *opts=0);
+	int GCALL CODEX_decode(void *dest, const void *source, int *sourcesizeptr = 0);
+	int GCALL CODEX_encode(void *dest, const void *source, int sourcesize, int *opts = 0);
 #else
 int GCALL CODEX_decode(void *dest, const void *source, int *sourcesizeptr);
 int GCALL CODEX_encode(void *dest, const void *source, int sourcesize, int *opts);
@@ -120,4 +121,3 @@ int GCALL CODEX_encode(void *dest, const void *source, int sourcesize, int *opts
 }
 #endif
 #endif
-

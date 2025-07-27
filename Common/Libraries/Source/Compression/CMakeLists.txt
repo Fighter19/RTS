@@ -26,10 +26,16 @@ target_include_directories(c_compression PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CM
 add_library(Gen::Compression ALIAS c_compression)
 
 ### ZLIB Compression
-find_package(ZLIB REQUIRED)
-if(ZLIB_FOUND)
-    target_link_libraries(c_compression PUBLIC ZLIB::ZLIB)
+if(RTS_USE_ZLIB)
+    find_package(ZLIB REQUIRED)
+    if(ZLIB_FOUND)
+        target_link_libraries(c_compression PUBLIC ZLIB::ZLIB)
+    endif()
+    target_compile_definitions(c_compression PUBLIC RTS_USE_ZLIB)
 endif()
 
 ### LZHL Compression
-target_link_libraries(c_compression PUBLIC liblzhl)
+if(RTS_USE_LZHL)
+    target_link_libraries(c_compression PUBLIC liblzhl)
+    target_compile_definitions(c_compression PUBLIC RTS_USE_LZHL)
+endif()
