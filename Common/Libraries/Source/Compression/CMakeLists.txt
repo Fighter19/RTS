@@ -1,4 +1,4 @@
-add_library(g_compression STATIC
+add_library(c_compression STATIC
     Compression.h
     CompressionManager.cpp
     EAC/btreeabout.cpp
@@ -20,16 +20,16 @@ add_library(g_compression STATIC
 )
 
 ### Target configuration
-set_target_properties(g_compression PROPERTIES OUTPUT_NAME Compression)
-target_link_libraries(g_compression PUBLIC g_libraries_include)
-target_include_directories(g_compression PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../)
-add_library(Gen::Compression ALIAS g_compression)
+set_target_properties(c_compression PROPERTIES OUTPUT_NAME Compression)
+target_link_libraries(c_compression PUBLIC c_libraries_include)
+target_include_directories(c_compression PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../)
+add_library(Gen::Compression ALIAS c_compression)
 
 ### ZLIB Compression
 find_package(ZLIB REQUIRED)
 if(ZLIB_FOUND)
-    target_link_libraries(g_compression PUBLIC ZLIB::ZLIB)
+    target_link_libraries(c_compression PUBLIC ZLIB::ZLIB)
 endif()
 
 ### LZHL Compression
-target_link_libraries(g_compression PUBLIC liblzhl)
+target_link_libraries(c_compression PUBLIC liblzhl)
