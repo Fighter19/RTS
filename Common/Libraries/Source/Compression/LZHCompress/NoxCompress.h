@@ -1,5 +1,6 @@
 /*
 **	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -19,22 +20,17 @@
 // compress.h
 // Compress/Decompression header.
 // Author: Jeff Brown, January 1999
-
-
-#ifndef __compress_h
-#define __compress_h
+#pragma once
 
 #define MAP_EXTENSION ".map"
 #define LZH_EXTENSION ".nxz"
 #define RUL_EXTENSION ".rul"
 
-Bool DecompressFile		(char *infile, char *outfile);
-Bool CompressFile			(char *infile, char *outfile);
-Bool CompressPacket		(char *inPacket, char *outPacket);
-Bool DecompressPacket	(char *inPacket, char *outPacket);
-UnsignedInt CalcNewSize		(UnsignedInt rawSize);
+Bool DecompressFile(char *infile, char *outfile);
+Bool CompressFile(char *infile, char *outfile);
+Bool CompressPacket(char *inPacket, char *outPacket);
+Bool DecompressPacket(char *inPacket, char *outPacket);
+UnsignedInt CalcNewSize(UnsignedInt rawSize);
 
-Bool DecompressMemory		(void *inBufferVoid, Int inSize, void *outBufferVoid, Int& outSize);
-Bool CompressMemory			(void *inBufferVoid, Int inSize, void *outBufferVoid, Int& outSize);
-
-#endif
+Bool DecompressMemory(void *inBufferVoid, Int inSize, void *outBufferVoid, Int &outSize);
+Bool CompressMemory(void *inBufferVoid, Int inSize, void *outBufferVoid, Int &outSize);

@@ -2,8 +2,8 @@ set(LZHL_DIR ${CMAKE_CURRENT_BINARY_DIR}/_deps/lzhl-src/CompLibHeader)
 
 include(FetchContent)
 FetchContent_Populate(lzhl DOWNLOAD_EXTRACT_TIMESTAMP
-    GIT_REPOSITORY https://github.com/TheSuperHackers/lzhl-1.0
-    GIT_TAG        dfd96e2ca64adaddb35dd4ebadd6add7d5586783
+    GIT_REPOSITORY https://github.com/feliwir/lzhl-1.0
+    GIT_TAG        2de7d6020710c2e3a65e47f3c3ab6fc3facbf4df
     SOURCE_DIR     ${LZHL_DIR}
 )
 
