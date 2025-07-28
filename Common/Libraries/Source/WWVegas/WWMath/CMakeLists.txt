@@ -1,4 +1,4 @@
-add_library(g_wwmath STATIC
+add_library(c_wwmath STATIC
     aabox.cpp
     aabox.h
     aabtreecull.cpp
@@ -81,12 +81,12 @@ add_library(g_wwmath STATIC
 )
 
 ### Target configurations
-set_target_properties(g_wwmath PROPERTIES OUTPUT_NAME WWMath)
-target_link_libraries(g_wwmath PUBLIC g_wwlib g_wwsaveload)
-target_include_directories(g_wwmath PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/../")
-add_library(Gen::WWMath ALIAS g_wwmath)
+set_target_properties(c_wwmath PROPERTIES OUTPUT_NAME WWMath)
+target_link_libraries(c_wwmath PUBLIC c_wwlib c_wwsaveload)
+target_include_directories(c_wwmath PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/../")
+add_library(Gen::WWMath ALIAS c_wwmath)
 
 ### Dependencies
 find_package(glm CONFIG REQUIRED)
-target_link_libraries(g_wwmath PUBLIC glm::glm)
-target_compile_definitions(g_wwmath PUBLIC RTS_USE_GLM)
+target_link_libraries(c_wwmath PUBLIC glm::glm)
+target_compile_definitions(c_wwmath PUBLIC RTS_USE_GLM)
