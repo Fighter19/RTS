@@ -46,7 +46,7 @@
 #include "vector4.h"
 #include "vector3.h"
 #include "vector2.h"
-#include "Vector.H"
+#include "vector.h"
 
 class VertexMaterialClass;
 class RenderInfoClass;

@@ -38,7 +38,7 @@
 #include "texture.h"
 
 #include <stdio.h>
-#include "TARGA.H"
+#include "targa.h"
 #include <nstrdup.h>
 #include "w3d_file.h"
 #include "assetmgr.h"

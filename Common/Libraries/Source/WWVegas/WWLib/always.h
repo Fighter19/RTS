@@ -1,5 +1,6 @@
 /*
 **	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -33,138 +34,105 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
-
-#ifndef ALWAYS_H
-#define ALWAYS_H
 
 #include <assert.h>
 // @SV: 2025/07/15: Unix compatibility
 #include <compat.h>
 #include <new>
 
-// Disable warning about exception handling not being enabled. It's used as part of STL - in a part of STL we don't use.
-#pragma warning(disable : 4530)
-
-/*
-** Define for debug memory allocation to include __FILE__ and __LINE__ for every memory allocation.
-** This helps find leaks.
-*/
-//#define STEVES_NEW_CATCHER
-#ifdef _DEBUG
-#ifdef _MSC_VER
-#ifdef STEVES_NEW_CATCHER
-
-	#include	<crtdbg.h>
-	#include <stdlib.h>
-	#include <malloc.h>
-
-	#define   malloc(s)         _malloc_dbg(s, _NORMAL_BLOCK, __FILE__, __LINE__)
-	#define   calloc(c, s)      _calloc_dbg(c, s, _NORMAL_BLOCK, __FILE__, __LINE__)
-	#define   realloc(p, s)     _realloc_dbg(p, s, _NORMAL_BLOCK, __FILE__, __LINE__)
-	#define   _expand(p, s)     _expand_dbg(p, s, _NORMAL_BLOCK, __FILE__, __LINE__)
-	#define   free(p)           _free_dbg(p, _NORMAL_BLOCK)
-	#define   _msize(p)         _msize_dbg(p, _NORMAL_BLOCK)
-
-	void* __cdecl operator new(unsigned int s);
-
-#endif	//STEVES_NEW_CATCHER
-#endif	//_MSC_VER
-#endif	//_DEBUG
-
 #ifndef _OPERATOR_NEW_DEFINED_
+#define _OPERATOR_NEW_DEFINED_
 
-	#define _OPERATOR_NEW_DEFINED_
+extern void *__cdecl operator new(size_t size);
+extern void __cdecl operator delete(void *p) noexcept;
 
-	extern void * __cdecl operator new		(size_t size);
-	extern void __cdecl operator delete		(void *p) noexcept;
+extern void *__cdecl operator new[](size_t size);
+extern void __cdecl operator delete[](void *p) noexcept;
 
-	extern void * __cdecl operator new[]	(size_t size);
-	extern void __cdecl operator delete[]	(void *p) noexcept;
+// additional overloads to account for VC/MFC funky versions
+extern void *__cdecl operator new(size_t nSize, const char *, int);
+extern void __cdecl operator delete(void *, const char *, int);
 
-	// additional overloads to account for VC/MFC funky versions
-	extern void* __cdecl operator new			(size_t nSize, const char *, int);
-	extern void __cdecl operator delete		(void *, const char *, int);
+extern void *__cdecl operator new[](size_t nSize, const char *, int);
+extern void __cdecl operator delete[](void *, const char *, int);
 
-	extern void* __cdecl operator new[]		(size_t nSize, const char *, int);
-	extern void __cdecl operator delete[]	(void *, const char *, int);
-
-	// additional overloads for 'placement new'
-	//inline void* __cdecl operator new							(size_t s, void *p) { return p; }
-	//inline void __cdecl operator delete						(void *, void *p)		{ }
-	// inline void* __cdecl operator new[]						(size_t s, void *p) { return p; }
-	// inline void __cdecl operator delete[]					(void *, void *p)		{ }
+// additional overloads for 'placement new'
+// inline void* __cdecl operator new							(size_t s, void *p) { return p; }
+// inline void __cdecl operator delete						(void *, void *p)		{ }
+// inline void* __cdecl operator new[]						(size_t s, void *p) { return p; }
+// inline void __cdecl operator delete[]					(void *, void *p)		{ }
 
 #endif
 
-#if (defined(_DEBUG) || defined(_INTERNAL)) 
-	#define MSGW3DNEW(MSG)					new( MSG, 0 )
-	#define MSGW3DNEWARRAY(MSG)			new( MSG, 0 )
-	#define W3DNEW									new("W3D_" __FILE__, 0)
-	#define W3DNEWARRAY							new("W3A_" __FILE__, 0)
+#if (defined(_DEBUG) || defined(_INTERNAL))
+#define MSGW3DNEW(MSG)		new (MSG, 0)
+#define MSGW3DNEWARRAY(MSG) new (MSG, 0)
+#define W3DNEW				new ("W3D_" __FILE__, 0)
+#define W3DNEWARRAY			new ("W3A_" __FILE__, 0)
 #else
-	#define MSGW3DNEW(MSG)					new
-	#define MSGW3DNEWARRAY(MSG)			new
-	#define W3DNEW									new
-	#define W3DNEWARRAY							new
+#define MSGW3DNEW(MSG)		new
+#define MSGW3DNEWARRAY(MSG) new
+#define W3DNEW				new
+#define W3DNEWARRAY			new
 #endif
 
 // ----------------------------------------------------------------------------
-extern void* createW3DMemPool(const char *poolName, int allocationSize);
-extern void* allocateFromW3DMemPool(void* p, int allocationSize);
-extern void* allocateFromW3DMemPool(void* p, int allocationSize, const char* msg, int unused);
-extern void freeFromW3DMemPool(void* pool, void* p);
+extern void *createW3DMemPool(const char *poolName, int allocationSize);
+extern void *allocateFromW3DMemPool(void *p, int allocationSize);
+extern void *allocateFromW3DMemPool(void *p, int allocationSize, const char *msg, int unused);
+extern void freeFromW3DMemPool(void *pool, void *p);
 
 // ----------------------------------------------------------------------------
-#define W3DMPO_GLUE(ARGCLASS) \
-private: \
-	static void* getClassMemoryPool() \
-	{ \
-		/* \
-			Note that this static variable will be initialized exactly once: the first time \
-			control flows over this section of code. This allows us to neatly resolve the \
-			order-of-execution problem for static variables, ensuring this is not executed \
-			prior to the initialization of TheMemoryPoolFactory. \
-		*/ \
-		static void* The##ARGCLASS##Pool = createW3DMemPool(#ARGCLASS, sizeof(ARGCLASS)); \
-		return The##ARGCLASS##Pool; \
-	} \
-protected: \
-	virtual int glueEnforcer() const { return sizeof(this); } \
-public: \
-	inline void* operator new(size_t s) { return allocateFromW3DMemPool(getClassMemoryPool(), s); } \
-	inline void operator delete(void *p) { freeFromW3DMemPool(getClassMemoryPool(), p); } \
-	inline void* operator new(size_t s, const char* msg, int unused) { return allocateFromW3DMemPool(getClassMemoryPool(), s, msg, unused); } \
-	inline void operator delete(void *p, const char* msg, int unused) { freeFromW3DMemPool(getClassMemoryPool(), p); } \
+#define W3DMPO_GLUE(ARGCLASS)                                                                       \
+  private:                                                                                          \
+	static void *getClassMemoryPool() {                                                             \
+		/*                                                                                          \
+			Note that this static variable will be initialized exactly once: the first time         \
+			control flows over this section of code. This allows us to neatly resolve the           \
+			order-of-execution problem for static variables, ensuring this is not executed          \
+			prior to the initialization of TheMemoryPoolFactory.                                    \
+		*/                                                                                          \
+		static void *The##ARGCLASS##Pool = createW3DMemPool(#ARGCLASS, sizeof(ARGCLASS));           \
+		return The##ARGCLASS##Pool;                                                                 \
+	}                                                                                               \
+                                                                                                    \
+  protected:                                                                                        \
+	virtual int glueEnforcer() const { return sizeof(this); }                                       \
+                                                                                                    \
+  public:                                                                                           \
+	inline void *operator new(size_t s) { return allocateFromW3DMemPool(getClassMemoryPool(), s); } \
+	inline void operator delete(void *p) { freeFromW3DMemPool(getClassMemoryPool(), p); }           \
+	inline void *operator new(size_t s, const char *msg, int unused) {                              \
+		return allocateFromW3DMemPool(getClassMemoryPool(), s, msg, unused);                        \
+	}                                                                                               \
+	inline void operator delete(void *p, const char *msg, int unused) { freeFromW3DMemPool(getClassMemoryPool(), p); }
 
 // ----------------------------------------------------------------------------
-class W3DMPO
-{
-private:
-	static void* getClassMemoryPool()
-	{
-		assert(0);	// must replace this via W3DMPO_GLUE
+class W3DMPO {
+  private:
+	static void *getClassMemoryPool() {
+		assert(0); // must replace this via W3DMPO_GLUE
 		return 0;
 	}
-protected:
+
+  protected:
 	// we never call this; it is present to cause compile errors in descendent classes
 	virtual int glueEnforcer() const = 0;
-public:
+
+  public:
 	virtual ~W3DMPO() { /* nothing */ }
 };
 // ----------------------------------------------------------------------------
 
-
 // Jani: Intel's C++ compiler issues too many warnings in WW libraries when using warning level 4
-#if defined (__ICL)    // Detect Intel compiler
-#pragma warning (3)
-#pragma warning ( disable: 981 ) // parameters defined in unspecified order
-#pragma warning ( disable: 279 ) // controlling expressaion is constant
-#pragma warning ( disable: 271 ) // trailing comma is nonstandard
-#pragma warning ( disable: 171 ) // invalid type conversion
-#pragma warning ( disable: 1 ) // last line of file ends without a newline
+#if defined(__ICL) // Detect Intel compiler
+#pragma warning(3)
+#pragma warning(disable : 981) // parameters defined in unspecified order
+#pragma warning(disable : 279) // controlling expressaion is constant
+#pragma warning(disable : 271) // trailing comma is nonstandard
+#pragma warning(disable : 171) // invalid type conversion
+#pragma warning(disable : 1)   // last line of file ends without a newline
 #endif
 
 // Jani: MSVC doesn't necessarily inline code with inline keyword. Using __forceinline results better inlining
@@ -185,11 +153,11 @@ public:
 #define NOMINMAX
 
 #ifndef MAX
-#define MAX(a,b)            (((a) > (b)) ? (a) : (b))
+#define MAX(a, b) (((a) > (b)) ? (a) : (b))
 #endif
 
 #ifndef MIN
-#define MIN(a,b)            (((a) < (b)) ? (a) : (b))
+#define MIN(a, b) (((a) < (b)) ? (a) : (b))
 #endif
 
 #ifdef min
@@ -200,24 +168,21 @@ public:
 #undef max
 #endif
 
-template <class T> T min(T a,T b)
-{
-	if (a<b) {
+template <class T> T min(T a, T b) {
+	if (a < b) {
 		return a;
 	} else {
 		return b;
 	}
 }
 
-template <class T> T max(T a,T b)
-{
-	if (a>b) {
+template <class T> T max(T a, T b) {
+	if (a > b) {
 		return a;
 	} else {
 		return b;
 	}
 }
-
 
 /*
 **	This includes the minimum set of compiler defines and pragmas in order to bring the
@@ -225,20 +190,19 @@ template <class T> T max(T a,T b)
 **	error or warning.
 */
 #if defined(__BORLANDC__)
-#include	"borlandc.h"
+#include "borlandc.h"
 #endif
 
 #if defined(_MSC_VER)
-#include	"visualc.h"
+#include "visualc.h"
 #endif
 
 #if defined(__WATCOMC__)
-#include	"watcom.h"
+#include "watcom.h"
 #endif
 
-
-#ifndef	NULL
-	#define	NULL		0
+#ifndef NULL
+#define NULL 0
 #endif
 
 /**********************************************************************
@@ -246,12 +210,9 @@ template <class T> T max(T a,T b)
 **	within an array.
 */
 #ifndef ARRAY_SIZE
-#define	ARRAY_SIZE(x)		int(sizeof(x)/sizeof(x[0]))
+#define ARRAY_SIZE(x) int(sizeof(x) / sizeof(x[0]))
 #endif
 
 #ifndef size_of
-#define size_of(typ,id) sizeof(((typ*)0)->id)
-#endif
-
-
+#define size_of(typ, id) sizeof(((typ *)0)->id)
 #endif

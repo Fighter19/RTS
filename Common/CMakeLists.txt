@@ -8,6 +8,7 @@ if(RTS_USE_LZHL)
 endif()
 include(Deps/gamespy.cmake)
 
+# set(CMAKE_COMPILE_WARNING_AS_ERROR ON)
 add_subdirectory(Compat)
 add_subdirectory(Libraries)
 add_subdirectory(Tools)

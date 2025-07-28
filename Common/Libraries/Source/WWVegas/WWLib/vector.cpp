@@ -16,22 +16,22 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/wwlib/vector.cpp                             $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/wwlib/vector.cpp                             $*
+ *                                                                                             *
  *                      $Author:: Patrick                                                     $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 8/22/01 1:46p                                               $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 19                                                          $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  *   BooleanVectorClass::BooleanVectorClass -- Copy constructor for boolean array.             *
  *   BooleanVectorClass::BooleanVectorClass -- Explicit data buffer constructor.               *
  *   BooleanVectorClass::Clear -- Resets boolean vector to empty state.                        *
@@ -52,9 +52,9 @@
  *   VectorClass<T>::~VectorClass -- Default destructor for vector class.                      *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"always.h"
-#include	"Vector.H"
-#include	<string.h>
+#include "always.h"
+#include "vector.h"
+#include <string.h>
 
 /*
 **	The following template function can be located here ONLY if all the instantiations are
@@ -82,17 +82,12 @@
  * HISTORY:                                                                                    *
  *   07/18/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-BooleanVectorClass::BooleanVectorClass(unsigned size, unsigned char * array) :
-	BitCount(size),
-	Copy(false),
-	LastIndex(-1),
-	BitArray(0, 0)
-{
-	BitArray.Resize(((size + (8-1)) / 8), array);
-//	LastIndex = -1;
-//	BitCount = size;
+BooleanVectorClass::BooleanVectorClass(unsigned size, unsigned char *array)
+	: BitCount(size), Copy(false), LastIndex(-1), BitArray(0, 0) {
+	BitArray.Resize(((size + (8 - 1)) / 8), array);
+	//	LastIndex = -1;
+	//	BitCount = size;
 }
-
 
 /***********************************************************************************************
  * BooleanVectorClass::BooleanVectorClass -- Copy constructor of boolean array.                *
@@ -109,12 +104,10 @@ BooleanVectorClass::BooleanVectorClass(unsigned size, unsigned char * array) :
  * HISTORY:                                                                                    *
  *   07/18/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-BooleanVectorClass::BooleanVectorClass(BooleanVectorClass const & vector)
-{
+BooleanVectorClass::BooleanVectorClass(BooleanVectorClass const &vector) {
 	LastIndex = -1;
 	*this = vector;
 }
-
 
 /***********************************************************************************************
  * BooleanVectorClass::operator = -- Assignment operator.                                      *
@@ -132,16 +125,14 @@ BooleanVectorClass::BooleanVectorClass(BooleanVectorClass const & vector)
  * HISTORY:                                                                                    *
  *   07/18/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-BooleanVectorClass & BooleanVectorClass::operator =(BooleanVectorClass const & vector)
-{
+BooleanVectorClass &BooleanVectorClass::operator=(BooleanVectorClass const &vector) {
 	Fixup();
 	Copy = vector.Copy;
 	LastIndex = vector.LastIndex;
 	BitArray = vector.BitArray;
 	BitCount = vector.BitCount;
-	return(*this);
+	return (*this);
 }
-
 
 /***********************************************************************************************
  * BooleanVectorClass::operator == -- Comparison operator for boolean vector.                  *
@@ -158,12 +149,10 @@ BooleanVectorClass & BooleanVectorClass::operator =(BooleanVectorClass const & v
  * HISTORY:                                                                                    *
  *   07/18/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool BooleanVectorClass::operator == (const BooleanVectorClass & vector) const
-{
+bool BooleanVectorClass::operator==(const BooleanVectorClass &vector) const {
 	Fixup(LastIndex);
-	return(BitCount == vector.BitCount && BitArray == vector.BitArray);
+	return (BitCount == vector.BitCount && BitArray == vector.BitArray);
 }
-
 
 /***********************************************************************************************
  * BooleanVectorClass::Resize -- Resizes a boolean vector object.                              *
@@ -180,8 +169,7 @@ bool BooleanVectorClass::operator == (const BooleanVectorClass & vector) const
  * HISTORY:                                                                                    *
  *   07/18/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-int BooleanVectorClass::Resize(unsigned size)
-{
+int BooleanVectorClass::Resize(unsigned size) {
 	Fixup();
 
 	if (size > 0) {
@@ -197,7 +185,7 @@ int BooleanVectorClass::Resize(unsigned size)
 		**	Actually resize the bit array. Since this is a bit packed array,
 		**	there are 8 elements per byte (rounded up).
 		*/
-		int success = BitArray.Resize(((size + (8-1)) / 8));
+		int success = BitArray.Resize(((size + (8 - 1)) / 8));
 
 		/*
 		**	Since there is no default constructor for bit packed integers, a manual
@@ -210,7 +198,7 @@ int BooleanVectorClass::Resize(unsigned size)
 			}
 		}
 
-		return(success);
+		return (success);
 	}
 
 	/*
@@ -218,9 +206,8 @@ int BooleanVectorClass::Resize(unsigned size)
 	**	This is always successful.
 	*/
 	Clear();
-	return(true);
+	return (true);
 }
-
 
 /***********************************************************************************************
  * BooleanVectorClass::Clear -- Resets boolean vector to empty state.                          *
@@ -238,13 +225,11 @@ int BooleanVectorClass::Resize(unsigned size)
  * HISTORY:                                                                                    *
  *   07/18/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-void BooleanVectorClass::Clear(void)
-{
+void BooleanVectorClass::Clear(void) {
 	Fixup();
 	BitCount = 0;
 	BitArray.Clear();
 }
-
 
 /***********************************************************************************************
  * BooleanVectorClass::Reset -- Clear all boolean values in array.                             *
@@ -260,14 +245,12 @@ void BooleanVectorClass::Clear(void)
  * HISTORY:                                                                                    *
  *   07/18/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-void BooleanVectorClass::Reset(void)
-{
+void BooleanVectorClass::Reset(void) {
 	LastIndex = -1;
 	if (BitArray.Length() > 0) {
 		memset(&BitArray[0], '\0', BitArray.Length());
 	}
 }
-
 
 /***********************************************************************************************
  * BooleanVectorClass::Set -- Forces all boolean elements to true.                             *
@@ -283,14 +266,12 @@ void BooleanVectorClass::Reset(void)
  * HISTORY:                                                                                    *
  *   07/18/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-void BooleanVectorClass::Set(void)
-{
+void BooleanVectorClass::Set(void) {
 	LastIndex = -1;
 	if (BitArray.Length() > 0) {
 		memset(&BitArray[0], '\xFF', BitArray.Length());
 	}
 }
-
 
 /***********************************************************************************************
  * BooleanVectorClass::Fixup -- Updates the boolean vector to a known state.                   *
@@ -313,8 +294,7 @@ void BooleanVectorClass::Set(void)
  * HISTORY:                                                                                    *
  *   07/18/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-void BooleanVectorClass::Fixup(int index) const
-{
+void BooleanVectorClass::Fixup(int index) const {
 	/*
 	**	If the requested index value is illegal, then force the index
 	**	to be -1. This is the default non-index value.
@@ -335,7 +315,7 @@ void BooleanVectorClass::Fixup(int index) const
 		*/
 		if (LastIndex != -1) {
 			assert(unsigned(LastIndex) < unsigned(BitCount));
-			Set_Bit((void*)&BitArray[0], LastIndex, Copy);
+			Set_Bit((void *)&BitArray[0], LastIndex, Copy);
 		}
 
 		/*
@@ -344,14 +324,13 @@ void BooleanVectorClass::Fixup(int index) const
 		*/
 		if (index != -1) {
 			assert(unsigned(index) < unsigned(BitCount));
-			((unsigned char &)Copy) = (unsigned char)Get_Bit((void*)&BitArray[0], index);
-//			((unsigned char&)Copy) = Get_Bit((void*)&BitArray[0], index);
+			((unsigned char &)Copy) = (unsigned char)Get_Bit((void *)&BitArray[0], index);
+			//			((unsigned char&)Copy) = Get_Bit((void*)&BitArray[0], index);
 		}
 
 		((BooleanVectorClass *)this)->LastIndex = index;
 	}
 }
-
 
 /***********************************************************************************************
  * BooleanVectorClass::Init -- Initializes the bit vector from an user array.                  *
@@ -365,10 +344,9 @@ void BooleanVectorClass::Fixup(int index) const
  * HISTORY:                                                                                    *
  *   07/18/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-void BooleanVectorClass::Init(unsigned size, unsigned char * array)
-{
+void BooleanVectorClass::Init(unsigned size, unsigned char *array) {
 	Copy = false;
 	LastIndex = -1;
 	BitCount = size;
-	BitArray.Resize(((size + (8-1)) / 8), array);
+	BitArray.Resize(((size + (8 - 1)) / 8), array);
 }

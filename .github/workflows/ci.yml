@@ -21,6 +21,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: ⚙️ Install deps
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install libltdl-dev
+
       # Install latest CMake and Ninja.
       - uses: lukka/get-cmake@latest
       # Or pin to a specific CMake version:

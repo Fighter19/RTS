@@ -13,19 +13,19 @@ add_library(c_wwlib STATIC
     binheap.h
     bittype.h
     bound.h
-    BSEARCH.H
+    bsearch.h
     buff.cpp
-    BUFF.H
+    buff.h
     bufffile.cpp
     bufffile.h
-    CallbackHook.h
+    callbackhook.h
     chunkio.cpp
     chunkio.h
     cpudetect.cpp
     cpudetect.h
     #crandom.h
     crc.cpp
-    CRC.H
+    crc.h
     #crcpipe.cpp
     #crcpipe.h
     #crcstraw.cpp
@@ -44,17 +44,17 @@ add_library(c_wwlib STATIC
     hash.cpp
     hash.h
     hashcalc.h
-    HASHLIST.H
+    hashlist.h
     #hashtab.h
     hashtemplate.h
     #incdec.h
-    INDEX.H
+    index.h
     ini.cpp
-    INI.H
+    ini.h
     inisup.h
     iostruct.h
     jshell.cpp
-    LISTNODE.H
+    listnode.h
     #lzo.cpp
     #lzo.h
     #lzo1x.h
@@ -80,14 +80,14 @@ add_library(c_wwlib STATIC
     nstrdup.h
     ntree.h
     pipe.cpp
-    PIPE.H
-    Point.h
+    pipe.h
+    point.h
     ramfile.cpp
-    RAMFILE.H
+    ramfile.h
     random.cpp
-    RANDOM.H
+    random.h
     rawfile.cpp
-    RAWFILE.H
+    rawfile.h
     readline.cpp
     readline.h
     realcrc.cpp
@@ -99,22 +99,22 @@ add_library(c_wwlib STATIC
     #regexpr.h
     #search.h
     sharebuf.h
-    Signaler.h
+    signaler.h
     simplevec.h
-    SLIST.H
+    slist.h
     slnode.cpp
-    SLNODE.H
+    slnode.h
     stimer.cpp
     stimer.h
     straw.cpp
-    STRAW.H
+    straw.h
     strtok_r.cpp
     strtok_r.h
     #swap.h
     systimer.cpp
     systimer.h
-    TARGA.CPP
-    TARGA.H
+    targa.cpp
+    targa.h
     textfile.cpp
     textfile.h
     #tgatodxt.cpp
@@ -126,21 +126,21 @@ add_library(c_wwlib STATIC
     trim.h
     uarray.h
     vector.cpp
-    Vector.H
+    vector.h
     visualc.h
     widestring.cpp
     widestring.h
     win.h
     wwfile.cpp
-    WWFILE.H
+    wwfile.h
     wwfont.cpp
     wwfont.h
     wwstring.cpp
     wwstring.h
     xpipe.cpp
-    XPIPE.H
+    xpipe.h
     xstraw.cpp
-    XSTRAW.H
+    xstraw.h
 )
 
 ### Target configuration

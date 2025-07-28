@@ -25,7 +25,6 @@
 
 #include "always.h"
 
-
 // Always use mutex or critical section when accessing the same data from multiple threads!
 
 // ----------------------------------------------------------------------------
@@ -35,9 +34,8 @@
 //
 // ----------------------------------------------------------------------------
 
-class MutexClass
-{
-	void* handle;
+class MutexClass {
+	void *handle;
 	unsigned locked;
 
 	// Lock and unlock are private so that you can't use them directly. Use LockClass as a sentry instead!
@@ -45,30 +43,28 @@ class MutexClass
 	bool Lock(int time);
 	void Unlock();
 
-public:
+  public:
 	// Name can (and usually should) be NULL. Use name only if you wish to create a globally unique mutex
-	MutexClass(const char* name = NULL);
+	MutexClass(const char *name = NULL);
 	~MutexClass();
 
-	enum {
-		WAIT_INFINITE=-1
-	};
+	enum { WAIT_INFINITE = -1 };
 
-	class LockClass
-	{
-		MutexClass& mutex;
+	class LockClass {
+		MutexClass &mutex;
 		bool failed;
-	public:
 
+	  public:
 		// In order to lock a mutex create a local instance of LockClass with mutex as a parameter.
 		// Time is in milliseconds, INFINITE means infinite wait.
-		LockClass(MutexClass& m, int time=MutexClass::WAIT_INFINITE);
+		LockClass(MutexClass &m, int time = MutexClass::WAIT_INFINITE);
 		~LockClass();
 
 		// Returns true if the lock failed
 		bool Failed() { return failed; }
-	private:
-		LockClass &operator=(const LockClass&) { return(*this); }
+
+	  private:
+		LockClass &operator=(const LockClass &) { return (*this); }
 	};
 	friend class LockClass;
 };
@@ -80,33 +76,32 @@ public:
 //
 // ----------------------------------------------------------------------------
 
-class CriticalSectionClass
-{
-	void* handle;
+class CriticalSectionClass {
+	void *handle;
 	unsigned locked;
 
 	// Lock and unlock are private so that you can't use them directly. Use LockClass as a sentry instead!
 	void Lock();
 	void Unlock();
 
-public:
+  public:
 	// Name can (and usually should) be NULL. Use name only if you wish to create a globally unique mutex
 	CriticalSectionClass();
 	~CriticalSectionClass();
 
-	class LockClass
-	{
-		CriticalSectionClass& CriticalSection;
-	public:
+	class LockClass {
+		CriticalSectionClass &CriticalSection;
+
+	  public:
 		// In order to lock a mutex create a local instance of LockClass with mutex as a parameter.
 		// Time is in milliseconds, INFINITE means infinite wait.
-		LockClass(CriticalSectionClass& c);
+		LockClass(CriticalSectionClass &c);
 		~LockClass();
-	private:
-		LockClass &operator=(const LockClass&) { return(*this); }
+
+	  private:
+		LockClass &operator=(const LockClass &) { return (*this); }
 	};
 	friend class LockClass;
 };
-
 
 #endif

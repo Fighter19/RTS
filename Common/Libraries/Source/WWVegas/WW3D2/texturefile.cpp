@@ -20,7 +20,7 @@
 #include "textureloader.h"
 #include "ww3d.h"
 #include "wwstring.h"
-#include	"RAWFILE.H"
+#include	"rawfile.h"
 #include	"ffactory.h"
 #include "nstrdup.h"
 #include "texfcach.h"

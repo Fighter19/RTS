@@ -19,10 +19,10 @@
 #ifndef RSACRYPT_H
 #define RSACRYPT_H
 
-#include <wwlib/INT.H>
-#include <wwlib/WWFILE.H>
+#include <wwlib/int.h>
+#include <wwlib/wwfile.h>
 
-//#define SIMPLE_AND_SLOW_RSA
+// #define SIMPLE_AND_SLOW_RSA
 
 // Version identification string for OpenSSH identity files.
 #define AUTHFILE_ID_STRING "SSH PRIVATE KEY FILE FORMAT 1.1\n"
@@ -46,7 +46,7 @@
 // Public keys:
 //	n = product of two primes, p & q (p & q must remain secret)
 //	e = relatively prime to (p-1)(q-1)
-// 
+//
 // Private keys:
 //	d = e^-1 mod ((p-1)(q-1))		// e^-1 = inverse of e
 //
@@ -59,72 +59,67 @@
 // Note: I use a trick involving the chinese remainder theorem to get a 3x speedup in decryption.
 // It's well documented on the web so I won't get into detail here.
 //
-template <int PRECISION>
-class RSACrypt
-{
- public:
-		typedef Int<PRECISION>	Integer;
+template <int PRECISION> class RSACrypt {
+  public:
+	typedef Int<PRECISION> Integer;
 
-		RSACrypt()	{}
-		~RSACrypt()	{}
+	RSACrypt() {}
+	~RSACrypt() {}
 
-		void Set_Public_Keys(const Integer &pub_n, const Integer &pub_e);
-		void Set_Keys(const Integer &pub_n, const Integer &pub_e, 
-			const Integer &priv_d, const Integer &keygen_p, const Integer &keygen_q);
+	void Set_Public_Keys(const Integer &pub_n, const Integer &pub_e);
+	void Set_Keys(const Integer &pub_n, const Integer &pub_e, const Integer &priv_d, const Integer &keygen_p,
+				  const Integer &keygen_q);
 
-		void Get_Public_Keys(Integer &pub_n, Integer &pub_e) const;
-		void Get_Private_Key(Integer &priv_d) const;
-		void Get_Keygen_Keys(Integer &keygen_p, Integer &keygen_q) const;
+	void Get_Public_Keys(Integer &pub_n, Integer &pub_e) const;
+	void Get_Private_Key(Integer &priv_d) const;
+	void Get_Keygen_Keys(Integer &keygen_p, Integer &keygen_q) const;
 
-		bool Load_SSH_Keyset(FileClass *file);
+	bool Load_SSH_Keyset(FileClass *file);
 
-		void Encrypt(const Integer &plaintext, Integer &cyphertext) const;
-		void Decrypt(const Integer &cyphertext, Integer &plaintext) const;
+	void Encrypt(const Integer &plaintext, Integer &cyphertext) const;
+	void Decrypt(const Integer &cyphertext, Integer &plaintext) const;
 
- private:
-		bool Load_Bignum(FileClass *file, Integer &num);
+  private:
+	bool Load_Bignum(FileClass *file, Integer &num);
 
-		void Decryption_Setup();		// Do precomputation to speedup decryption
+	void Decryption_Setup(); // Do precomputation to speedup decryption
 
-		Integer		PublicN;
-		Integer		PublicE;
+	Integer PublicN;
+	Integer PublicE;
 
-		Integer		PrivateD;
+	Integer PrivateD;
 
-		Integer		KeygenP;		// Primes P & Q generated as part of the keyset
-		Integer		KeygenQ;
+	Integer KeygenP; // Primes P & Q generated as part of the keyset
+	Integer KeygenQ;
 
-										// Precomputed values that speed up encryption
-		Integer		DmodPm1;		// d mod p-1
-		Integer		DmodQm1;		// d mod q-1
+	// Precomputed values that speed up encryption
+	Integer DmodPm1; // d mod p-1
+	Integer DmodQm1; // d mod q-1
 
-		Integer		RP;			// RP = q^(p-1) mod n
-		Integer		RQ;			// RQ = p^(q-1) mod n;
+	Integer RP; // RP = q^(p-1) mod n
+	Integer RQ; // RQ = p^(q-1) mod n;
 };
 
 //
 // Set the two public keys: n & e
 //
-template <int PRECISION>
-void RSACrypt<PRECISION>::Set_Public_Keys(const Integer &pub_n, const Integer &pub_e)
-{
-	PublicN=pub_n;
-	PublicE=pub_e;
+template <int PRECISION> void RSACrypt<PRECISION>::Set_Public_Keys(const Integer &pub_n, const Integer &pub_e) {
+	PublicN = pub_n;
+	PublicE = pub_e;
 }
 
 //
 // Set the public & private keys: n, e & d
 //
 template <int PRECISION>
-void RSACrypt<PRECISION>::Set_Keys(const Integer &pub_n, const Integer &pub_e, 
-	const Integer &priv_d, const Integer &keygen_p, const Integer &keygen_q)
-{
-	PublicN=pub_n;
-	PublicE=pub_e;
-	PrivateD=priv_d;
+void RSACrypt<PRECISION>::Set_Keys(const Integer &pub_n, const Integer &pub_e, const Integer &priv_d,
+								   const Integer &keygen_p, const Integer &keygen_q) {
+	PublicN = pub_n;
+	PublicE = pub_e;
+	PrivateD = priv_d;
 
-	KeygenP=keygen_p;
-	KeygenQ=keygen_q;
+	KeygenP = keygen_p;
+	KeygenQ = keygen_q;
 
 	Decrtyption_Setup();
 }
@@ -132,113 +127,98 @@ void RSACrypt<PRECISION>::Set_Keys(const Integer &pub_n, const Integer &pub_e,
 //
 // Get the public keys
 //
-template <int PRECISION>
-void RSACrypt<PRECISION>::Get_Public_Keys(Integer &pub_n, Integer &pub_e) const
-{
-	pub_n=PublicN;
-	pub_e=PublicE;
+template <int PRECISION> void RSACrypt<PRECISION>::Get_Public_Keys(Integer &pub_n, Integer &pub_e) const {
+	pub_n = PublicN;
+	pub_e = PublicE;
 }
 
 //
 // Get the private key
 //
-template <int PRECISION>
-void RSACrypt<PRECISION>::Get_Private_Key(Integer &priv_d) const 
-{
-	priv_d=PrivateD;
-}
-
+template <int PRECISION> void RSACrypt<PRECISION>::Get_Private_Key(Integer &priv_d) const { priv_d = PrivateD; }
 
 //
 // Get the private numbers created during the keyset generation
 // Private as in revealing these will reveal the private key!
 //
-template <int PRECISION>
-void RSACrypt<PRECISION>::Get_Keygen_Keys(Integer &keygen_p, Integer &keygen_q) const
-{
-	keygen_p=KeygenP;
-	keygen_q=KeygenQ;
+template <int PRECISION> void RSACrypt<PRECISION>::Get_Keygen_Keys(Integer &keygen_p, Integer &keygen_q) const {
+	keygen_p = KeygenP;
+	keygen_q = KeygenQ;
 }
-
 
 //
 // Load an RSA private keyset from an OpenSSH "identity" file.
 //
-template <int PRECISION>
-bool RSACrypt<PRECISION>::Load_SSH_Keyset(FileClass *file)
-{
+template <int PRECISION> bool RSACrypt<PRECISION>::Load_SSH_Keyset(FileClass *file) {
 	assert(file);
-	if ( ! file)
-		return(false);
+	if (!file)
+		return (false);
 
-	bool retval=true;
+	bool retval = true;
 	unsigned char buffer[1024];
 
-	if ( ! file->Open())
-		return(false);
+	if (!file->Open())
+		return (false);
 
-	file->Read(buffer, strlen(AUTHFILE_ID_STRING)+1);
-	buffer[strlen(AUTHFILE_ID_STRING)]=0;	// null term
+	file->Read(buffer, strlen(AUTHFILE_ID_STRING) + 1);
+	buffer[strlen(AUTHFILE_ID_STRING)] = 0; // null term
 
 	if (strcmp((char *)buffer, AUTHFILE_ID_STRING))
-		return(false);
+		return (false);
 
-	unsigned char cypher_type;		// keyfile encryption method
+	unsigned char cypher_type; // keyfile encryption method
 	file->Read(&cypher_type, 1);
 	if (cypher_type != 0)
-		return(false);
+		return (false);
 
-	file->Read(buffer, 4);		// reserved data
+	file->Read(buffer, 4); // reserved data
 
-	file->Read(buffer, 4);		// ignored
+	file->Read(buffer, 4); // ignored
 
-	retval=retval && Load_Bignum(file, PublicN);
-	retval=retval && Load_Bignum(file, PublicE);
+	retval = retval && Load_Bignum(file, PublicN);
+	retval = retval && Load_Bignum(file, PublicE);
 	if (!retval)
-		return(false);
+		return (false);
 
 	// comment string
 	int comment_length;
 	file->Read(&comment_length, 4);
-	comment_length=ntohl(comment_length);
+	comment_length = ntohl(comment_length);
 
 	file->Read(buffer, comment_length);
 
 	// post-decrypt check chars
 	file->Read(buffer, 4);
 	if ((buffer[0] != buffer[2]) || (buffer[1] != buffer[3]))
-		return(false);
+		return (false);
 
-	Integer q_inv_mod_p;	// invserse of q mod p (we don't need this)
+	Integer q_inv_mod_p; // invserse of q mod p (we don't need this)
 
-	retval=retval && Load_Bignum(file, PrivateD);
-	retval=retval && Load_Bignum(file, q_inv_mod_p);
-	retval=retval && Load_Bignum(file, KeygenP);
-	retval=retval && Load_Bignum(file, KeygenQ);
+	retval = retval && Load_Bignum(file, PrivateD);
+	retval = retval && Load_Bignum(file, q_inv_mod_p);
+	retval = retval && Load_Bignum(file, KeygenP);
+	retval = retval && Load_Bignum(file, KeygenQ);
 	if (!retval)
-		return(false);
+		return (false);
 
 	// Any remaining bytes are padding
 
 	Decryption_Setup();
 
-	return(true);
+	return (true);
 }
 
 //
 // Precomputation for fast decryption
 //
-template <int PRECISION>
-void RSACrypt<PRECISION>::Decryption_Setup(void)
-{
+template <int PRECISION> void RSACrypt<PRECISION>::Decryption_Setup(void) {
 	Integer temp;
 
 	// If p < q, swap p & q
-	if (KeygenP < KeygenQ)
-	{
-		temp=KeygenP;
-		KeygenP=KeygenQ;
-		KeygenQ=temp;
+	if (KeygenP < KeygenQ) {
+		temp = KeygenP;
+		KeygenP = KeygenQ;
+		KeygenQ = temp;
 	}
 
 	assert(KeygenP > KeygenQ);
@@ -263,27 +243,21 @@ void RSACrypt<PRECISION>::Decryption_Setup(void)
 	RQ = KeygenP.exp_b_mod_c(qm1, PublicN);
 }
 
-
 //
 // RSA Encryption		c = m^e mod n
 //
-template <int PRECISION>
-void RSACrypt<PRECISION>::Encrypt(const Integer &plaintext, Integer &cyphertext) const 
-{
+template <int PRECISION> void RSACrypt<PRECISION>::Encrypt(const Integer &plaintext, Integer &cyphertext) const {
 	Integer m(plaintext);
-	cyphertext=m.exp_b_mod_c(PublicE, PublicN);
+	cyphertext = m.exp_b_mod_c(PublicE, PublicN);
 }
-
 
 //
 // RSA Decryption		m = c^d mod n
 //
-template <int PRECISION>
-void RSACrypt<PRECISION>::Decrypt(const Integer &cyphertext, Integer &plaintext) const 
-{
+template <int PRECISION> void RSACrypt<PRECISION>::Decrypt(const Integer &cyphertext, Integer &plaintext) const {
 #ifdef SIMPLE_AND_SLOW_RSA
 	Integer c(cyphertext);
-	plaintext=c.exp_b_mod_c(PrivateD, PublicN);
+	plaintext = c.exp_b_mod_c(PrivateD, PublicN);
 #else
 	Integer temp;
 
@@ -294,56 +268,51 @@ void RSACrypt<PRECISION>::Decrypt(const Integer &cyphertext, Integer &plaintext)
 
 	// mp = cmp ^ dmp mod p
 	Integer mp;
-	mp=cmp.exp_b_mod_c(DmodPm1, KeygenP);
+	mp = cmp.exp_b_mod_c(DmodPm1, KeygenP);
 
 	// mq = cmq ^ dmq mod q
 	Integer mq;
-	mq=cmq.exp_b_mod_c(DmodQm1, KeygenQ);
+	mq = cmq.exp_b_mod_c(DmodQm1, KeygenQ);
 
+	Integer sp, sq;
 
-	Integer	sp, sq;
-
-	//sp=mp * RP mod n;
-	//sq=mq * RQ mod n;
+	// sp=mp * RP mod n;
+	// sq=mq * RQ mod n;
 	XMP_Prepare_Modulus(&PublicN.reg[0], PRECISION);
 	XMP_Mod_Mult(&sp.reg[0], &mp.reg[0], &RP.reg[0], PRECISION);
 	XMP_Mod_Mult(&sq.reg[0], &mq.reg[0], &RQ.reg[0], PRECISION);
 	XMP_Mod_Mult_Clear(PRECISION);
 
-	plaintext = sp+sq;
+	plaintext = sp + sq;
 	if (plaintext >= PublicN)
-		plaintext-=PublicN;
+		plaintext -= PublicN;
 
 #endif
 }
-
 
 ////////////////////////////////// Private Methods Below ///////////////////////////////////
 
 //
 // Load a large number from the SSH keyset file
 //
-template <int PRECISION>
-bool RSACrypt<PRECISION>::Load_Bignum(FileClass *file, Integer &num)
-{
+template <int PRECISION> bool RSACrypt<PRECISION>::Load_Bignum(FileClass *file, Integer &num) {
 	int readlen;
 	unsigned char buffer[1024];
 	unsigned short int n_bits, n_bytes;
 
-	readlen=file->Read(&n_bits, 2);		// bits in network byte order
+	readlen = file->Read(&n_bits, 2); // bits in network byte order
 	if (readlen != 2)
-		return(false);
-	n_bits=ntohs(n_bits);
-	n_bytes=(n_bits+7)/8;
+		return (false);
+	n_bits = ntohs(n_bits);
+	n_bytes = (n_bits + 7) / 8;
 
-	readlen=file->Read(buffer, n_bytes);
+	readlen = file->Read(buffer, n_bytes);
 	if (readlen != n_bytes)
-		return(false);
+		return (false);
 
 	num.Unsigned_Decode(buffer, n_bytes);
 
-	return(true);
+	return (true);
 }
-
 
 #endif

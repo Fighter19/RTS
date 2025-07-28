@@ -74,7 +74,7 @@
 #include "statistics.h"
 #include "simplevec.h"
 #include "texture.h"
-#include "Vector.H"
+#include "vector.h"
 #include "vp.h"
 #include "matrix4.h"
 #include "rinfo.h"

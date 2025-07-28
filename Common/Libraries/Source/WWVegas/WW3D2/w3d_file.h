@@ -374,11 +374,17 @@ enum {
 				W3D_CHUNK_DCG								=0x0000003B,	// per-vertex diffuse color values (array of W3dRGBAStruct's)
 				W3D_CHUNK_DIG								=0x0000003C,	// per-vertex diffuse illumination values (array of W3dRGBStruct's)
 				W3D_CHUNK_SCG								=0x0000003E,	// per-vertex specular color values (array of W3dRGBStruct's)
+				W3D_CHUNK_FXSHADER_IDS						=0x0000003F,	// single or per-tri array of uint32 fx shader indices (check chunk size)
 
 				W3D_CHUNK_TEXTURE_STAGE					=0x00000048,	// wrapper around a texture stage.
 					W3D_CHUNK_TEXTURE_IDS				=0x00000049,	// single or per-tri array of uint32 texture indices (check chunk size)
 					W3D_CHUNK_STAGE_TEXCOORDS			=0x0000004A,	// per-vertex texture coordinates (array of W3dTexCoordStruct's)
 					W3D_CHUNK_PER_FACE_TEXCOORD_IDS	=0x0000004B,	// indices to W3D_CHUNK_STAGE_TEXCOORDS, (array of Vector3i)
+
+		W3D_CHUNK_FX_SHADERS 					=0x00000050,	// define an array of shaders to be used in the mesh
+			W3D_CHUNK_FX_SHADER					=0x00000051,	// a single shader entry
+				W3D_CHUNK_FX_SHADER_INFO		=0x00000052,	// information about the shader to be used (W3dFXShaderInfoStruct)
+				W3D_CHUNK_FX_SHADER_CONSTANT	=0x00000053,	// contains a constant name and value for the shader
 
 
 		W3D_CHUNK_DEFORM									=0x00000058,	// mesh deform or 'damage' information.
@@ -386,8 +392,11 @@ enum {
 				W3D_CHUNK_DEFORM_KEYFRAME				=0x0000005A,	// a keyframe of deform information in the set
 					W3D_CHUNK_DEFORM_DATA				=0x0000005B,	// deform information about a single vertex
 
+		W3D_CHUNK_VERTEX_TANGENTS = 0x00000060,         // array of tangents (array of W3dVectorStruct's)
+		W3D_CHUNK_VERTEX_BINORMALS = 0x00000061,         // array of binormals (array of W3dVectorStruct's)
+
 		W3D_CHUNK_PS2_SHADERS							=0x00000080,	// Shader info specific to the Playstation 2.
-		
+
 		W3D_CHUNK_AABTREE									=0x00000090,	// Axis-Aligned Box Tree for hierarchical polygon culling
 			W3D_CHUNK_AABTREE_HEADER,										// catalog of the contents of the AABTree
 			W3D_CHUNK_AABTREE_POLYINDICES,								// array of uint32 polygon indices with count=mesh.PolyCount
@@ -453,6 +462,8 @@ enum {
 		W3D_CHUNK_EMITTER_LINE_PROPERTIES,								// line properties, used by line rendering mode
 		W3D_CHUNK_EMITTER_ROTATION_KEYFRAMES,							// rotation keys for the particles
 		W3D_CHUNK_EMITTER_FRAME_KEYFRAMES,								// frame keys (u-v based frame animation)
+		W3D_CHUNK_EMITTER_BLUR_TIME_KEYFRAMES,						// length of tail for line groups
+		W3D_CHUNK_EMITTER_EXTRA_INFO,										// Extra info for the emitter
 
 	W3D_CHUNK_AGGREGATE								=0x00000600,		// description of an aggregate object
 		W3D_CHUNK_AGGREGATE_HEADER,										// general information such as name and version
@@ -858,6 +869,24 @@ struct W3dPS2ShaderStruct
 	uint8						DParam;
 	uint8						pad[3];
 };
+
+struct W3dFXShaderInfoStruct
+{
+	char	ShaderName[W3D_NAME_LEN * 2];
+	uint8	Technique;
+	uint8	Pad[3];
+};
+
+typedef enum
+{
+	CONSTANT_TYPE_TEXTURE = 1,
+	CONSTANT_TYPE_FLOAT1 = 2,
+	CONSTANT_TYPE_FLOAT2 = 3,
+	CONSTANT_TYPE_FLOAT3 = 4,
+	CONSTANT_TYPE_FLOAT4 = 5,
+	CONSTANT_TYPE_INT = 6,
+	CONSTANT_TYPE_BOOL = 7
+} W3D_FX_SHADER_CONSTANT_TYPES;
 
 inline void W3d_Shader_Reset(W3dShaderStruct * s)									{	
 																										s->DepthCompare = W3DSHADER_DEPTHCOMPARE_PASS_LEQUAL;
@@ -1821,6 +1850,21 @@ struct W3dEmitterFrameKeyframeStruct
 	float32				Frame;
 };
 
+// W3D_CHUNK_EMITTER_BLUR_TIME_KEYFRAMES
+// Contains a W3dEmitterFrameHeaderStruct followed by a number of
+// frame keyframes (sub-texture indexing)
+struct W3dEmitterBlurTimeHeaderStruct
+{
+	uint32				KeyframeCount;
+	float32				Random;
+	uint32				Reserved[1];
+};
+
+struct W3dEmitterBlurTimeKeyframeStruct
+{
+	float32				Time;
+	float32				BlurTime;
+};
 
 // W3D_CHUNK_EMITTER_LINE_PROPERTIES
 // Contains a W3dEmitterLinePropertiesStruct.

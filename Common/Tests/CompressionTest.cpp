@@ -15,18 +15,15 @@ dolor in reprehenderit in voluptate velit esse cillum dolore eu
 fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, 
 sunt in culpa qui officia deserunt mollit anim id est laborum.)";
 
-class CompressionTest : public ::testing::TestWithParam<CompressionType>
-{
-};
+class CompressionTest : public ::testing::TestWithParam<CompressionType> {};
 
-TEST_P(CompressionTest, CompressData)
-{
+TEST_P(CompressionTest, CompressData) {
 	CompressionType format = GetParam();
-	int inputLength = strlen(testData);
-	int maxCompressedSize = CompressionManager::getMaxCompressedSize(inputLength, format);
+	Int inputLength = strlen(testData);
+	Int maxCompressedSize = CompressionManager::getMaxCompressedSize(inputLength, format);
 	EXPECT_GT(maxCompressedSize, 0) << "Max compressed size should be greater than 0 for format: " << format;
-	uint8_t *compressedData = new uint8_t[maxCompressedSize];
-	int compressedSize =
+	UnsignedByte *compressedData = new UnsignedByte[maxCompressedSize];
+	Int compressedSize =
 		CompressionManager::compressData(format, (void *)testData, strlen(testData), compressedData, maxCompressedSize);
 	EXPECT_GT(compressedSize, 0) << "Compression failed for format: " << format;
 	CompressionType detectedType = CompressionManager::getCompressionType(compressedData, compressedSize);
@@ -34,20 +31,20 @@ TEST_P(CompressionTest, CompressData)
 	delete[] compressedData;
 }
 
-TEST_P(CompressionTest, DecompressData)
-{
+TEST_P(CompressionTest, DecompressData) {
 	CompressionType format = GetParam();
-	int inputLength = strlen(testData);
-	int maxCompressedSize = CompressionManager::getMaxCompressedSize(inputLength, format);
-	uint8_t *compressedData = new uint8_t[maxCompressedSize];
-	int compressedSize =
+	Int inputLength = strlen(testData);
+	Int maxCompressedSize = CompressionManager::getMaxCompressedSize(inputLength, format);
+	UnsignedByte *compressedData = new UnsignedByte[maxCompressedSize];
+	Int compressedSize =
 		CompressionManager::compressData(format, (void *)testData, inputLength, compressedData, maxCompressedSize);
 
 	EXPECT_GT(compressedSize, 0) << "Compression failed for format: " << format;
 
-	uint8_t *decompressedData = new uint8_t[inputLength];
-	int decompressedSize =
-		CompressionManager::decompressData(compressedData, compressedSize, decompressedData, inputLength);
+	Int decompressedSize = CompressionManager::getUncompressedSize(compressedData, compressedSize);
+	UnsignedByte *decompressedData = new UnsignedByte[decompressedSize];
+	decompressedSize =
+		CompressionManager::decompressData(compressedData, compressedSize, decompressedData, decompressedSize);
 
 	EXPECT_EQ(decompressedSize, inputLength) << "Decompression size mismatch for format: " << format;
 	EXPECT_EQ(memcmp(decompressedData, testData, inputLength), 0)
@@ -57,8 +54,7 @@ TEST_P(CompressionTest, DecompressData)
 	delete[] decompressedData;
 }
 
-TEST_P(CompressionTest, CompressionTypeNames)
-{
+TEST_P(CompressionTest, CompressionTypeNames) {
 	CompressionType format = GetParam();
 	const char *name = CompressionManager::getCompressionNameByType(format);
 	EXPECT_NE(name, nullptr) << "Compression type name should not be null for format: " << format;
@@ -73,7 +69,8 @@ INSTANTIATE_TEST_CASE_P(CompressionTests, CompressionTest, ::testing::Range(COMP
 							// Remove any whitespaces
 							name.erase(std::remove_if(name.begin(), name.end(), isspace), name.end());
 							// And any brackets
-							name.erase(std::remove_if(name.begin(), name.end(), [](char c) { return c == '(' || c == ')'; }),
-									   name.end());
+							name.erase(
+								std::remove_if(name.begin(), name.end(), [](char c) { return c == '(' || c == ')'; }),
+								name.end());
 							return name;
 						});

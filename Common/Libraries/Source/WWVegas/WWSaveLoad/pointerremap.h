@@ -44,7 +44,7 @@
 #define POINTERREMAP_H
 
 #include "always.h"
-#include "Vector.H"
+#include "vector.h"
 
 class RefCountClass;
 

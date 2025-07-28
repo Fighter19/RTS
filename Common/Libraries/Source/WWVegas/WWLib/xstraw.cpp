@@ -16,36 +16,35 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/Library/XSTRAW.CPP                           $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/Library/XSTRAW.CPP                           $*
+ *                                                                                             *
  *                      $Author:: Greg_h                                                      $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 9/28/98 12:06p                                              $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 2                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  *   BufferStraw::Get -- Fetch data from the straw's buffer holding tank.                      *
  *   FileStraw::Get -- Fetch data from the file.                                               *
  *   FileStraw::~FileStraw -- The destructor for the file straw.                               *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"always.h"
-#include	"XSTRAW.H"
-#include	<stddef.h>
-#include	<string.h>
+#include "always.h"
+#include "xstraw.h"
+#include <stddef.h>
+#include <string.h>
 
 //---------------------------------------------------------------------------------------------------------
 // BufferStraw
 //---------------------------------------------------------------------------------------------------------
-
 
 /***********************************************************************************************
  * BufferStraw::Get -- Fetch data from the straw's buffer holding tank.                        *
@@ -65,8 +64,7 @@
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-int BufferStraw::Get(void * source, int slen)
-{
+int BufferStraw::Get(void *source, int slen) {
 	int total = 0;
 
 	if (Is_Valid() && source != NULL && slen > 0) {
@@ -77,22 +75,20 @@ int BufferStraw::Get(void * source, int slen)
 		}
 
 		if (len > 0) {
-			memmove(source, ((char*)BufferPtr.Get_Buffer()) + Index, len);
+			memmove(source, ((char *)BufferPtr.Get_Buffer()) + Index, len);
 		}
 
 		Index += len;
-//		Length -= len;
-//		BufferPtr = ((char *)BufferPtr) + len;
+		//		Length -= len;
+		//		BufferPtr = ((char *)BufferPtr) + len;
 		total += len;
 	}
-	return(total);
+	return (total);
 }
-
 
 //---------------------------------------------------------------------------------------------------------
 // FileStraw
 //---------------------------------------------------------------------------------------------------------
-
 
 /***********************************************************************************************
  * FileStraw::Get -- Fetch data from the file.                                                 *
@@ -112,20 +108,20 @@ int BufferStraw::Get(void * source, int slen)
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-int FileStraw::Get(void * source, int slen)
-{
+int FileStraw::Get(void *source, int slen) {
 	if (Valid_File() && source != NULL && slen > 0) {
 		if (!File->Is_Open()) {
 			HasOpened = true;
-			if (!File->Is_Available()) return(0);
-			if (!File->Open(FileClass::READ)) return(0);
+			if (!File->Is_Available())
+				return (0);
+			if (!File->Open(FileClass::READ))
+				return (0);
 		}
 
-		return(File->Read(source, slen));
+		return (File->Read(source, slen));
 	}
-	return(0);
+	return (0);
 }
-
 
 /***********************************************************************************************
  * FileStraw::~FileStraw -- The destructor for the file straw.                                 *
@@ -141,8 +137,7 @@ int FileStraw::Get(void * source, int slen)
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-FileStraw::~FileStraw(void)
-{
+FileStraw::~FileStraw(void) {
 	if (Valid_File() && HasOpened) {
 		File->Close();
 		HasOpened = false;

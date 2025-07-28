@@ -43,8 +43,8 @@
 #include "w3d_util.h"
 #include "chunkio.h"
 #include "w3derr.h"
-#include "INI.H"
-#include "XSTRAW.H"
+#include "ini.h"
+#include "xstraw.h"
 
 #include <stdio.h>
 #include <string.h>

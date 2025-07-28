@@ -36,7 +36,7 @@
 
 
 #include "twiddler.h"
-#include "RANDOM.H"
+#include "random.h"
 #include "saveloadids.h"
 #include "simpledefinitionfactory.h"
 #include "persistfactory.h"

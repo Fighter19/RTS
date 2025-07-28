@@ -16,54 +16,48 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/wwlib/rndstrng.cpp                           $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/wwlib/rndstrng.cpp                           $*
+ *                                                                                             *
  *                      $Author:: Byon_g                                                      $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 2/08/00 10:59a                                              $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 3                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
+ *---------------------------------------------------------------------------------------------*
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"rndstrng.h"
-#include	"wwstring.h"
+#include "rndstrng.h"
+#include "wwstring.h"
 
 /*
 **
 */
-RandomStringClass::RandomStringClass( void )
-{
-}
+RandomStringClass::RandomStringClass(void) {}
 
-RandomStringClass::~RandomStringClass( void )
-{
-	while ( Strings.Count() ) {
-		delete Strings[ 0 ];
-		Strings.Delete( 0 );
+RandomStringClass::~RandomStringClass(void) {
+	while (Strings.Count()) {
+		delete Strings[0];
+		Strings.Delete(0);
 	}
 }
 
-void RandomStringClass::Add_String( const char * str )
-{
-	StringClass	 * string = W3DNEW StringClass( str );
-	Strings.Add( string );
+void RandomStringClass::Add_String(const char *str) {
+	StringClass *string = W3DNEW StringClass(str);
+	Strings.Add(string);
 }
 
-const char * RandomStringClass::Get_String( void )
-{
-	if ( Strings.Count() == 0 ) {
+const char *RandomStringClass::Get_String(void) {
+	if (Strings.Count() == 0) {
 		return NULL;
 	}
 	unsigned int index = Randomizer();
 	index %= Strings.Count();
 	return *Strings[index];
 }
-

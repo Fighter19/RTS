@@ -28,7 +28,7 @@
 #include "texfcach.h"
 #include "assetmgr.h"
 #include "missingtexture.h"
-#include "TARGA.H"
+#include "targa.h"
 #include <cstdio>
 #include "wwmemlog.h"
 #include "texture.h"

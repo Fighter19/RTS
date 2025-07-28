@@ -34,33 +34,18 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"always.h"
-#include	"blitblit.h"
-#include	"convert.h"
-#include	"dsurface.h"
-#include	"hsv.h"
-#include	"rlerle.h"
+#include "always.h"
+#include "blitblit.h"
+#include "convert.h"
+#include "dsurface.h"
+#include "hsv.h"
+#include "rlerle.h"
 
-
-ConvertClass::ConvertClass(PaletteClass const & artpalette, PaletteClass const & screenpalette, Surface const & surface) :
-	BBP(surface.Bytes_Per_Pixel()),
-	PlainBlitter(NULL),
-	TransBlitter(NULL),
-	ShadowBlitter(NULL),
-	RemapBlitter(NULL),
-	Translucent1Blitter(NULL),
-	Translucent2Blitter(NULL),
-	Translucent3Blitter(NULL),
-	RLETransBlitter(NULL),
-	RLEShadowBlitter(NULL),
-	RLERemapBlitter(NULL),
-	RLETranslucent1Blitter(NULL),
-	RLETranslucent2Blitter(NULL),
-	RLETranslucent3Blitter(NULL),
-	Translator(NULL),
-	ShadowTable(NULL),
-	RemapTable(NULL)
-{
+ConvertClass::ConvertClass(PaletteClass const &artpalette, PaletteClass const &screenpalette, Surface const &surface)
+	: BBP(surface.Bytes_Per_Pixel()), PlainBlitter(NULL), TransBlitter(NULL), ShadowBlitter(NULL), RemapBlitter(NULL),
+	  Translucent1Blitter(NULL), Translucent2Blitter(NULL), Translucent3Blitter(NULL), RLETransBlitter(NULL),
+	  RLEShadowBlitter(NULL), RLERemapBlitter(NULL), RLETranslucent1Blitter(NULL), RLETranslucent2Blitter(NULL),
+	  RLETranslucent3Blitter(NULL), Translator(NULL), ShadowTable(NULL), RemapTable(NULL) {
 	/*
 	**	The draw data initialization is greatly dependant upon the pixel format
 	**	of the display surface. Check the pixel format and set the values accordingly.
@@ -71,7 +56,7 @@ ConvertClass::ConvertClass(PaletteClass const & artpalette, PaletteClass const &
 		**	Build the shadow table by creating a slightly darker version of
 		**	the color and then finding the closest match to it.
 		*/
-		ShadowTable = W3DNEWARRAY unsigned char [256];
+		ShadowTable = W3DNEWARRAY unsigned char[256];
 		ShadowTable[0] = 0;
 		for (int shadow = 1; shadow < 256; shadow++) {
 			HSVClass hsv = artpalette[shadow];
@@ -84,7 +69,7 @@ ConvertClass::ConvertClass(PaletteClass const & artpalette, PaletteClass const &
 		**	in the display palette from each color in the source art
 		**	palette.
 		*/
-		unsigned char * trans = W3DNEWARRAY unsigned char [256];
+		unsigned char *trans = W3DNEWARRAY unsigned char[256];
 		trans[0] = 0;
 		for (int index = 1; index < 256; index++) {
 			trans[index] = (unsigned char)screenpalette.Closest_Color(artpalette[index]);
@@ -109,9 +94,12 @@ ConvertClass::ConvertClass(PaletteClass const & artpalette, PaletteClass const &
 		RLETransBlitter = W3DNEW RLEBlitTransXlat<unsigned char>((unsigned char const *)Translator);
 		RLERemapBlitter = W3DNEW RLEBlitTransZRemapXlat<unsigned char>(&RemapTable, (unsigned char const *)Translator);
 		RLEShadowBlitter = W3DNEW RLEBlitTransRemapDest<unsigned char>(ShadowTable);
-		RLETranslucent1Blitter = W3DNEW RLEBlitTransRemapXlat<unsigned char>(ShadowTable, (unsigned char const *)Translator);
-		RLETranslucent2Blitter = W3DNEW RLEBlitTransRemapXlat<unsigned char>(ShadowTable, (unsigned char const *)Translator);
-		RLETranslucent3Blitter = W3DNEW RLEBlitTransRemapXlat<unsigned char>(ShadowTable, (unsigned char const *)Translator);
+		RLETranslucent1Blitter =
+			W3DNEW RLEBlitTransRemapXlat<unsigned char>(ShadowTable, (unsigned char const *)Translator);
+		RLETranslucent2Blitter =
+			W3DNEW RLEBlitTransRemapXlat<unsigned char>(ShadowTable, (unsigned char const *)Translator);
+		RLETranslucent3Blitter =
+			W3DNEW RLEBlitTransRemapXlat<unsigned char>(ShadowTable, (unsigned char const *)Translator);
 
 	} else {
 
@@ -119,8 +107,8 @@ ConvertClass::ConvertClass(PaletteClass const & artpalette, PaletteClass const &
 		**	The hicolor translation table is constructed according to the pixel
 		**	format of the display and the source art palette.
 		*/
-		//assert(surface.Is_Direct_Draw());
-		Translator = W3DNEWARRAY unsigned short [256];
+		// assert(surface.Is_Direct_Draw());
+		Translator = W3DNEWARRAY unsigned short[256];
 		((DSurface &)surface).Build_Remap_Table((unsigned short *)Translator, artpalette);
 
 		/*
@@ -138,25 +126,30 @@ ConvertClass::ConvertClass(PaletteClass const & artpalette, PaletteClass const &
 		TransBlitter = W3DNEW BlitTransXlat<unsigned short>((unsigned short const *)Translator);
 		RemapBlitter = W3DNEW BlitTransZRemapXlat<unsigned short>(&RemapTable, (unsigned short const *)Translator);
 		ShadowBlitter = W3DNEW BlitTransDarken<unsigned short>((unsigned short)maskhalf);
-		Translucent1Blitter = W3DNEW BlitTransLucent75<unsigned short>((unsigned short const *)Translator, (unsigned short)maskquarter);
-		Translucent2Blitter = W3DNEW BlitTransLucent50<unsigned short>((unsigned short const *)Translator, (unsigned short)maskhalf);
-		Translucent3Blitter = W3DNEW BlitTransLucent25<unsigned short>((unsigned short const *)Translator, (unsigned short)maskquarter);
+		Translucent1Blitter =
+			W3DNEW BlitTransLucent75<unsigned short>((unsigned short const *)Translator, (unsigned short)maskquarter);
+		Translucent2Blitter =
+			W3DNEW BlitTransLucent50<unsigned short>((unsigned short const *)Translator, (unsigned short)maskhalf);
+		Translucent3Blitter =
+			W3DNEW BlitTransLucent25<unsigned short>((unsigned short const *)Translator, (unsigned short)maskquarter);
 
 		/*
 		**	Create the RLE aware blitter objects.
 		*/
 		RLETransBlitter = W3DNEW RLEBlitTransXlat<unsigned short>((unsigned short const *)Translator);
-		RLERemapBlitter = W3DNEW RLEBlitTransZRemapXlat<unsigned short>(&RemapTable, (unsigned short const *)Translator);
+		RLERemapBlitter =
+			W3DNEW RLEBlitTransZRemapXlat<unsigned short>(&RemapTable, (unsigned short const *)Translator);
 		RLEShadowBlitter = W3DNEW RLEBlitTransDarken<unsigned short>((unsigned short)maskhalf);
-		RLETranslucent1Blitter = W3DNEW RLEBlitTransLucent75<unsigned short>((unsigned short const *)Translator, (unsigned short)maskquarter);
-		RLETranslucent2Blitter = W3DNEW RLEBlitTransLucent50<unsigned short>((unsigned short const *)Translator, (unsigned short)maskhalf);
-		RLETranslucent3Blitter = W3DNEW RLEBlitTransLucent25<unsigned short>((unsigned short const *)Translator, (unsigned short)maskquarter);
+		RLETranslucent1Blitter = W3DNEW RLEBlitTransLucent75<unsigned short>((unsigned short const *)Translator,
+																			 (unsigned short)maskquarter);
+		RLETranslucent2Blitter =
+			W3DNEW RLEBlitTransLucent50<unsigned short>((unsigned short const *)Translator, (unsigned short)maskhalf);
+		RLETranslucent3Blitter = W3DNEW RLEBlitTransLucent25<unsigned short>((unsigned short const *)Translator,
+																			 (unsigned short)maskquarter);
 	}
 }
 
-
-ConvertClass::~ConvertClass(void)
-{
+ConvertClass::~ConvertClass(void) {
 	delete PlainBlitter;
 	PlainBlitter = NULL;
 
@@ -178,10 +171,10 @@ ConvertClass::~ConvertClass(void)
 	delete Translucent3Blitter;
 	Translucent3Blitter = NULL;
 
-	delete [] Translator;
+	delete[] Translator;
 	Translator = NULL;
 
-	delete [] ShadowTable;
+	delete[] ShadowTable;
 	ShadowTable = NULL;
 
 	delete RLETransBlitter;
@@ -203,64 +196,62 @@ ConvertClass::~ConvertClass(void)
 	RLETranslucent3Blitter = NULL;
 }
 
-
-Blitter const * ConvertClass::Blitter_From_Flags(ShapeFlags_Type flags) const
-{
-	if (flags & SHAPE_REMAP) return(RemapBlitter);
+Blitter const *ConvertClass::Blitter_From_Flags(ShapeFlags_Type flags) const {
+	if (flags & SHAPE_REMAP)
+		return (RemapBlitter);
 
 	/*
 	**	Quick check to see if this is a translucent operation. If so, then no
 	**	further examination of the flags is necessary.
 	*/
 	switch (flags & (SHAPE_TRANSLUCENT25 | SHAPE_TRANSLUCENT50 | SHAPE_TRANSLUCENT75)) {
-		case SHAPE_TRANSLUCENT25:
-			return(Translucent3Blitter);
+	case SHAPE_TRANSLUCENT25:
+		return (Translucent3Blitter);
 
-		case SHAPE_TRANSLUCENT50:
-			return(Translucent2Blitter);
+	case SHAPE_TRANSLUCENT50:
+		return (Translucent2Blitter);
 
-		case SHAPE_TRANSLUCENT75:
-			return(Translucent1Blitter);
+	case SHAPE_TRANSLUCENT75:
+		return (Translucent1Blitter);
 	}
 
-	if (flags & SHAPE_DARKEN) return(ShadowBlitter);
+	if (flags & SHAPE_DARKEN)
+		return (ShadowBlitter);
 
-	if (flags & SHAPE_NOTRANS) return(PlainBlitter);
+	if (flags & SHAPE_NOTRANS)
+		return (PlainBlitter);
 
-	return(TransBlitter);
+	return (TransBlitter);
 }
 
-
-RLEBlitter const * ConvertClass::RLEBlitter_From_Flags(ShapeFlags_Type flags) const
-{
-	if (flags & SHAPE_REMAP) return(RLERemapBlitter);
+RLEBlitter const *ConvertClass::RLEBlitter_From_Flags(ShapeFlags_Type flags) const {
+	if (flags & SHAPE_REMAP)
+		return (RLERemapBlitter);
 
 	/*
 	**	Quick check to see if this is a translucent operation. If so, then no
 	**	further examination of the flags is necessary.
 	*/
 	switch (flags & (SHAPE_TRANSLUCENT25 | SHAPE_TRANSLUCENT50 | SHAPE_TRANSLUCENT75)) {
-		case SHAPE_TRANSLUCENT25:
-			return(RLETranslucent3Blitter);
+	case SHAPE_TRANSLUCENT25:
+		return (RLETranslucent3Blitter);
 
-		case SHAPE_TRANSLUCENT50:
-			return(RLETranslucent2Blitter);
+	case SHAPE_TRANSLUCENT50:
+		return (RLETranslucent2Blitter);
 
-		case SHAPE_TRANSLUCENT75:
-			return(RLETranslucent1Blitter);
+	case SHAPE_TRANSLUCENT75:
+		return (RLETranslucent1Blitter);
 	}
 
-	if (flags & SHAPE_DARKEN) return(RLEShadowBlitter);
+	if (flags & SHAPE_DARKEN)
+		return (RLEShadowBlitter);
 
 	// This should be fixed to return the RLEPlainBlitter when one is available
 	// but if you need to use this in the mean time just don't RLE compress the
 	// shape (since it only compresses transparent pixels and the reason we compress
 	// them is so we can skip them easily.)
-	if (flags & SHAPE_NOTRANS) return(RLETransBlitter);
+	if (flags & SHAPE_NOTRANS)
+		return (RLETransBlitter);
 
-	return(RLETransBlitter);
+	return (RLETransBlitter);
 }
-
-
-
-
