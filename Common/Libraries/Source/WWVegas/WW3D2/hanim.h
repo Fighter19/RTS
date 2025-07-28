@@ -50,8 +50,8 @@
 #include "hash.h"
 #include "mempool.h"
 #include <refcount.h>
-#include <SLIST.H>
-#include <Vector.H>
+#include <slist.h>
+#include <vector.h>
 
 struct NodeMotionStruct;
 class MotionChannelClass;

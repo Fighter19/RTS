@@ -16,29 +16,28 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Library/CSTRAW.CPP                                $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Library/CSTRAW.CPP                                $*
+ *                                                                                             *
  *                      $Author:: Greg_h                                                      $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 7/22/97 11:37a                                              $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 1                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  *   CacheStraw::Get -- Fetch data from the data source.                                       *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"always.h"
-#include	"cstraw.h"
-#include	<string.h>
-
+#include "always.h"
+#include "cstraw.h"
+#include <string.h>
 
 /***********************************************************************************************
  * CacheStraw::Get -- Fetch data from the data source.                                         *
@@ -61,8 +60,7 @@
  * HISTORY:                                                                                    *
  *   11/10/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-int CacheStraw::Get(void * source, int slen)
-{
+int CacheStraw::Get(void *source, int slen) {
 	int total = 0;
 
 	if (Is_Valid() && source != NULL && slen > 0) {
@@ -83,9 +81,10 @@ int CacheStraw::Get(void * source, int slen)
 				Index += tocopy;
 				total += tocopy;
 				Length -= tocopy;
-				source = (char*)source + tocopy;
+				source = (char *)source + tocopy;
 			}
-			if (slen == 0) break;
+			if (slen == 0)
+				break;
 
 			/*
 			**	Since there is more to be fulfilled yet the holding buffer is empty,
@@ -93,8 +92,9 @@ int CacheStraw::Get(void * source, int slen)
 			*/
 			Length = Straw::Get(BufferPtr, BufferPtr.Get_Size());
 			Index = 0;
-			if (Length == 0) break;
+			if (Length == 0)
+				break;
 		}
 	}
-	return(total);
+	return (total);
 }

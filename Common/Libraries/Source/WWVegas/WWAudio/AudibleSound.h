@@ -49,9 +49,9 @@
 #include "vector3.h"
 #include "matrix3d.h"
 #include "refcount.h"
-#include "RAWFILE.H"
+#include "rawfile.h"
 #include "soundsceneobj.h"
-#include "Vector.H"
+#include "vector.h"
 #include "wwstring.h"
 #include "definition.h"
 

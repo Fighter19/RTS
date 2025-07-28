@@ -16,22 +16,22 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/wwlib/ffactory.h                     $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/wwlib/ffactory.h                     $*
+ *                                                                                             *
  *                      $Author:: Jani_p                                                      $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 8/24/01 11:50a                                              $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 13                                                          $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #if _MSC_VER >= 1000
@@ -46,74 +46,59 @@
 #endif
 
 #include "mutex.h"
-#include "Vector.H"
+#include "vector.h"
 #include "wwstring.h"
 
 /*
 **
 */
-#include	"RAWFILE.H"
-class	FileClass;
+#include "rawfile.h"
+class FileClass;
 
 /*
 ** FileFactoryClass is a pure virtual class used to
 ** create FileClasses.
 */
-class	FileFactoryClass {
+class FileFactoryClass {
 
-public:
-	virtual FileClass * Get_File( char const *filename ) = 0;
-	virtual void Return_File( FileClass *file ) = 0;
+  public:
+	virtual FileClass *Get_File(char const *filename) = 0;
+	virtual void Return_File(FileClass *file) = 0;
 };
-
-
-
 
 //
 // Handy auto pointer class.  Prevents you from having to call Return_File manually
 //
-class file_auto_ptr 
-{
-public:
-	explicit	file_auto_ptr(FileFactoryClass *fac, const char *filename);
-				~file_auto_ptr();
+class file_auto_ptr {
+  public:
+	explicit file_auto_ptr(FileFactoryClass *fac, const char *filename);
+	~file_auto_ptr();
 
-	operator FileClass*(void) const
-		{return (get()); }
+	operator FileClass *(void) const { return (get()); }
 
-	FileClass& operator*() const 
-		{return (*get()); }
+	FileClass &operator*() const { return (*get()); }
 
-	FileClass *operator->() const
-		{return (get()); }
+	FileClass *operator->() const { return (get()); }
 
-	FileClass *get() const
-		{return (_Ptr); }
+	FileClass *get() const { return (_Ptr); }
 
-private:
+  private:
 	// prevent these from getting auto-generated or used
-						file_auto_ptr(const file_auto_ptr &other);
-	file_auto_ptr	&operator=(const file_auto_ptr &other);
+	file_auto_ptr(const file_auto_ptr &other);
+	file_auto_ptr &operator=(const file_auto_ptr &other);
 
-
-	FileClass			*_Ptr;
-	FileFactoryClass	*_Fac;
+	FileClass *_Ptr;
+	FileFactoryClass *_Fac;
 };
-
-
-
-
-
-
 
 /*
 ** RawFileFactoryClass is a derived FileFactoryClass which
 ** gives RawFileClass objects
 */
-class	RawFileFactoryClass {
-public:
-	RawFileClass * Get_File( char const *filename );
-	void Return_File( FileClass *file );
+class RawFileFactoryClass {
+  public:
+	RawFileClass *Get_File(char const *filename);
+	void Return_File(FileClass *file);
 };
 
 #define no_SIMPLE_FILE
@@ -124,37 +109,36 @@ public:
 ** it currently creates BufferedFileClass objects instead of RawFileClass
 ** objects.
 */
-class	SimpleFileFactoryClass : public FileFactoryClass {
+class SimpleFileFactoryClass : public FileFactoryClass {
 
-public:
-	SimpleFileFactoryClass( void );
-	~SimpleFileFactoryClass( void )	{}
+  public:
+	SimpleFileFactoryClass(void);
+	~SimpleFileFactoryClass(void) {}
 
-	virtual FileClass *	Get_File( char const *filename );
-	virtual void			Return_File( FileClass *file );
+	virtual FileClass *Get_File(char const *filename);
+	virtual void Return_File(FileClass *file);
 
 	// sub_directory may be a semicolon seperated search path.  New files will always
 	//   go in the last dir in the path.
-	void						Get_Sub_Directory( StringClass& new_dir ) const;
-	void						Set_Sub_Directory( const char * sub_directory );
-	void						Prepend_Sub_Directory( const char * sub_directory );
-	void						Append_Sub_Directory( const char * sub_directory );
-	bool						Get_Strip_Path( void ) const								{ return IsStripPath; }
-	void						Set_Strip_Path( bool set )									{ IsStripPath = set; }
+	void Get_Sub_Directory(StringClass &new_dir) const;
+	void Set_Sub_Directory(const char *sub_directory);
+	void Prepend_Sub_Directory(const char *sub_directory);
+	void Append_Sub_Directory(const char *sub_directory);
+	bool Get_Strip_Path(void) const { return IsStripPath; }
+	void Set_Strip_Path(bool set) { IsStripPath = set; }
 
-protected:
-	StringClass				SubDirectory;
-	bool						IsStripPath;
+  protected:
+	StringClass SubDirectory;
+	bool IsStripPath;
 
 	// Mutex must be mutable because const functions lock on it.
-	mutable CriticalSectionClass	Mutex;
+	mutable CriticalSectionClass Mutex;
 };
 
-
-extern FileFactoryClass	*	_TheFileFactory;
-extern RawFileFactoryClass	*	_TheWritingFileFactory;
+extern FileFactoryClass *_TheFileFactory;
+extern RawFileFactoryClass *_TheWritingFileFactory;
 
 // No simple file factory.  jba.
-//extern SimpleFileFactoryClass	*	_TheSimpleFileFactory;
+// extern SimpleFileFactoryClass	*	_TheSimpleFileFactory;
 
 #endif

@@ -1,4 +1,5 @@
 #pragma once
+#include <alloca.h>
 #include <cstdint>
 
 struct MEMORYSTATUS
@@ -25,3 +26,5 @@ inline void GlobalMemoryStatus(MEMORYSTATUS *lpBuffer)
     lpBuffer->dwTotalVirtual = 0; // Total virtual memory
     lpBuffer->dwAvailVirtual = 0; // Available virtual memory
 }
+
+#define _alloca alloca

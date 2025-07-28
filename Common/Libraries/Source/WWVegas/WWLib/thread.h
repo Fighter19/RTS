@@ -28,7 +28,6 @@
 
 #include "always.h"
 
-
 // ****************************************************************************
 //
 // To create a new thread just derive a new class from this and define
@@ -40,12 +39,11 @@
 // will clear the flag and expect you to exit from the thread. If you are
 // not exiting in certain time (defined as a parameter to Stop()) it will
 // force-kill the thread to prevent the program from halting.
-// 
+//
 // ****************************************************************************
 
-class ThreadClass
-{
-public:
+class ThreadClass {
+  public:
 	ThreadClass();
 	virtual ~ThreadClass();
 
@@ -56,10 +54,10 @@ public:
 	void Set_Priority(int priority);
 
 	// Stop thread execution. Kill after ms milliseconds if not responding.
-	void Stop(unsigned ms=3000);
+	void Stop(unsigned ms = 3000);
 
 	// Put current thread sleep for ms milliseconds (can be called from any thread, ThreadClass or other)
-	static void Sleep_Ms(unsigned ms=0);
+	static void Sleep_Ms(unsigned ms = 0);
 
 	// Put current thread in sleep and switch to next one (Useful for balansing the thread switches with game update)
 	static void Switch_Thread();
@@ -70,15 +68,14 @@ public:
 	// Returns true if the thread is running.
 	bool Is_Running();
 
-protected:
-
+  protected:
 	// User defined thread function. The thread function should check for "running" flag every now and then
 	// and exit the thread if running is false.
 	virtual void Thread_Function() = 0;
 	volatile bool running;
 
-private:
-	static void __cdecl Internal_Thread_Function(void*);
+  private:
+	static void __cdecl Internal_Thread_Function(void *);
 	volatile unsigned long handle;
 	int thread_priority;
 };

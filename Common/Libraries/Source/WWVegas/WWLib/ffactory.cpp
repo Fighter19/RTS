@@ -16,30 +16,30 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/wwlib/ffactory.cpp                           $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/wwlib/ffactory.cpp                           $*
+ *                                                                                             *
  *                      $Author:: Jani_p                                                      $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 8/24/01 11:50a                                              $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 17                                                          $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
+ *---------------------------------------------------------------------------------------------*
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"ffactory.h"
-#include	"RAWFILE.H"
+#include "ffactory.h"
+#include "rawfile.h"
 #include "bufffile.h"
 #include "realcrc.h"
-#include	<stdio.h>
+#include <stdio.h>
 #include <stdlib.h>
-#include	<assert.h>
+#include <assert.h>
 #include <string.h>
 
 /*
@@ -47,65 +47,44 @@
 ** NOTE: If _TheFileFactory is ever changed to point to an object of a different class which does
 ** not derive from SimpleFileFactoryClass, _TheSimpleFileFactory should be set to NULL.
 */
-SimpleFileFactoryClass		_DefaultFileFactory;
-FileFactoryClass *			_TheFileFactory = &_DefaultFileFactory;
+SimpleFileFactoryClass _DefaultFileFactory;
+FileFactoryClass *_TheFileFactory = &_DefaultFileFactory;
 
-RawFileFactoryClass		_DefaultWritingFileFactory;
-RawFileFactoryClass *			_TheWritingFileFactory = &_DefaultWritingFileFactory;
+RawFileFactoryClass _DefaultWritingFileFactory;
+RawFileFactoryClass *_TheWritingFileFactory = &_DefaultWritingFileFactory;
 
 /*
 **
 */
-file_auto_ptr::file_auto_ptr(FileFactoryClass *fac, const char *filename) :
-	_Ptr(NULL), _Fac(fac)
-{
+file_auto_ptr::file_auto_ptr(FileFactoryClass *fac, const char *filename) : _Ptr(NULL), _Fac(fac) {
 	assert(_Fac);
-	_Ptr=_Fac->Get_File(filename);
-	if ( _Ptr == NULL ) {
+	_Ptr = _Fac->Get_File(filename);
+	if (_Ptr == NULL) {
 		_Ptr = W3DNEW BufferedFileClass();
 	}
 }
 
-file_auto_ptr::~file_auto_ptr()
-{
-	_Fac->Return_File(_Ptr);
-}
-
-
+file_auto_ptr::~file_auto_ptr() { _Fac->Return_File(_Ptr); }
 
 /*
 ** RawFileFactoryClass implementation
 */
-RawFileClass * RawFileFactoryClass::Get_File( char const *filename )
-{
-	return W3DNEW RawFileClass( filename );
-}
+RawFileClass *RawFileFactoryClass::Get_File(char const *filename) { return W3DNEW RawFileClass(filename); }
 
-void RawFileFactoryClass::Return_File( FileClass *file )
-{
-	delete file;
-}
-
-
+void RawFileFactoryClass::Return_File(FileClass *file) { delete file; }
 
 /*
 ** SimpleFileFactoryClass implementation
 */
 
-SimpleFileFactoryClass::SimpleFileFactoryClass( void ) :
-	IsStripPath( false ),
-	Mutex( )
-{
-}
+SimpleFileFactoryClass::SimpleFileFactoryClass(void) : IsStripPath(false), Mutex() {}
 
-
-void SimpleFileFactoryClass::Get_Sub_Directory( StringClass& new_dir ) const
-{
+void SimpleFileFactoryClass::Get_Sub_Directory(StringClass &new_dir) const {
 	// BEGIN SERIALIZATION
 
 	// We cannot return a const char * here because the StringClass
 	// may reallocate its buffer during a call to Set_Sub_Directory.
-	// I opted to return a StringClass instead of a reference to 
+	// I opted to return a StringClass instead of a reference to
 	// StringClass because it seems like that would behave more
 	// reasonably. (no sudden changes from or to empty string in
 	// the middle of a calling function.) (DRM, 04/19/01)
@@ -115,13 +94,11 @@ void SimpleFileFactoryClass::Get_Sub_Directory( StringClass& new_dir ) const
 	// destination StringClass object and modify that.
 
 	CriticalSectionClass::LockClass lock(Mutex);
-	new_dir=SubDirectory;
+	new_dir = SubDirectory;
 	// END SERIALIZATION
 }
 
-
-void SimpleFileFactoryClass::Set_Sub_Directory( const char * sub_directory )
-{
+void SimpleFileFactoryClass::Set_Sub_Directory(const char *sub_directory) {
 	// BEGIN SERIALIZATION
 
 	// StringClass makes no guarantees on the atomicity of assignment.
@@ -133,9 +110,7 @@ void SimpleFileFactoryClass::Set_Sub_Directory( const char * sub_directory )
 	// END SERIALIZATION
 }
 
-
-void SimpleFileFactoryClass::Prepend_Sub_Directory( const char * sub_directory )
-{
+void SimpleFileFactoryClass::Prepend_Sub_Directory(const char *sub_directory) {
 	int sub_len = strlen(sub_directory);
 	// Overflow prevention
 	if (sub_len > 1021) {
@@ -168,9 +143,7 @@ void SimpleFileFactoryClass::Prepend_Sub_Directory( const char * sub_directory )
 	// END SERIALIZATION
 }
 
-
-void SimpleFileFactoryClass::Append_Sub_Directory( const char * sub_directory )
-{
+void SimpleFileFactoryClass::Append_Sub_Directory(const char *sub_directory) {
 	int sub_len = strlen(sub_directory);
 	// Overflow prevention
 	if (sub_len > 1022) {
@@ -207,17 +180,14 @@ void SimpleFileFactoryClass::Append_Sub_Directory( const char * sub_directory )
 	// END SERIALIZATION
 }
 
-
 /*
 **	Is_Full_Path
 */
-static bool
-Is_Full_Path (const char *path)
-{
+static bool Is_Full_Path(const char *path) {
 	bool retval = false;
 
 	if (path != NULL && path[0] != 0) {
-		
+
 		// Check for drive designation
 		retval = bool(path[1] == ':');
 
@@ -231,14 +201,13 @@ Is_Full_Path (const char *path)
 /*
 **
 */
-FileClass * SimpleFileFactoryClass::Get_File( char const *filename )
-{
+FileClass *SimpleFileFactoryClass::Get_File(char const *filename) {
 	// strip off the path (if needed). Note that if path stripping is off, and the requested file
 	// has a path in its name, and the current subdirectory is not empty, the paths will just be
 	// concatenated which may not produce reasonable results.
 	StringClass stripped_name(true);
 	if (IsStripPath) {
-		const char * ptr = ::strrchr( filename, '\\' );
+		const char *ptr = ::strrchr(filename, '\\');
 
 		if (ptr != 0) {
 			ptr++;
@@ -250,14 +219,14 @@ FileClass * SimpleFileFactoryClass::Get_File( char const *filename )
 		stripped_name = filename;
 	}
 
-	RawFileClass *file = W3DNEW BufferedFileClass();// new RawWritingFileClass();
-	assert( file );
+	RawFileClass *file = W3DNEW BufferedFileClass(); // new RawWritingFileClass();
+	assert(file);
 
 	//
 	//	Do we need to find the path for this file request?
 	//
-	StringClass new_name(stripped_name,true);
-	if (Is_Full_Path ( new_name ) == false) {
+	StringClass new_name(stripped_name, true);
+	if (Is_Full_Path(new_name) == false) {
 
 		// BEGIN SERIALIZATION
 
@@ -276,35 +245,30 @@ FileClass * SimpleFileFactoryClass::Get_File( char const *filename )
 			// the search path.  Therefore newly created files will always go in the
 			// last dir in the search path.
 			//
-			StringClass subdir(SubDirectory,true);
+			StringClass subdir(SubDirectory, true);
 
-			if (strchr(subdir,';'))
-			{
-				char *tokstart=subdir.Peek_Buffer();
+			if (strchr(subdir, ';')) {
+				char *tokstart = subdir.Peek_Buffer();
 				const char *tok;
-				while((tok=strtok(tokstart, ";")) != NULL) {
-					tokstart=NULL;
-					new_name.Format("%s%s",tok,stripped_name.Peek_Buffer());
-					file->Set_Name( new_name );	// Call Set_Name to force an allocated name
+				while ((tok = strtok(tokstart, ";")) != NULL) {
+					tokstart = NULL;
+					new_name.Format("%s%s", tok, stripped_name.Peek_Buffer());
+					file->Set_Name(new_name); // Call Set_Name to force an allocated name
 					if (file->Open()) {
 						file->Close();
 						break;
 					}
 				}
 			} else {
-				new_name.Format("%s%s",SubDirectory.Peek_Buffer(),stripped_name.Peek_Buffer());
+				new_name.Format("%s%s", SubDirectory.Peek_Buffer(), stripped_name.Peek_Buffer());
 			}
 		}
 
 		// END SERIALIZATION
 	}
-	
-	file->Set_Name( new_name );	// Call Set_Name to force an allocated name
+
+	file->Set_Name(new_name); // Call Set_Name to force an allocated name
 	return file;
 }
 
-void SimpleFileFactoryClass::Return_File( FileClass *file )
-{
-	delete file;
-}
-
+void SimpleFileFactoryClass::Return_File(FileClass *file) { delete file; }

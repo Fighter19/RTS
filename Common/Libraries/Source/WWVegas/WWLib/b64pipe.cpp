@@ -1,5 +1,6 @@
 /*
 **	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -16,31 +17,30 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Library/B64PIPE.CPP                               $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Library/B64PIPE.CPP                               $*
+ *                                                                                             *
  *                      $Author:: Greg_h                                                      $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 7/22/97 11:37a                                              $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 1                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  *   Base64Pipe::Flush -- Flushes the final pending data through the pipe.                     *
  *   Base64Pipe::Put -- Processes a block of data through the pipe.                            *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"always.h"
-#include	"b64pipe.h"
-#include	"base64.h"
-#include	<string.h>
-
+#include "always.h"
+#include "b64pipe.h"
+#include "base64.h"
+#include <string.h>
 
 /***********************************************************************************************
  * Base64Pipe::Put -- Processes a block of data through the pipe.                              *
@@ -61,17 +61,16 @@
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-int Base64Pipe::Put(void const * source, int slen)
-{
+int Base64Pipe::Put(void const *source, int slen) {
 	if (source == NULL || slen < 1) {
-		return(Pipe::Put(source, slen));
+		return (Pipe::Put(source, slen));
 	}
 
 	int total = 0;
 
-	char * from;
+	char *from;
 	int fromsize;
-	char * to;
+	char *to;
 	int tosize;
 
 	if (Control == ENCODE) {
@@ -87,7 +86,7 @@ int Base64Pipe::Put(void const * source, int slen)
 	}
 
 	if (Counter > 0) {
-		int len = (slen < (fromsize-Counter)) ? slen : (fromsize-Counter);
+		int len = (slen < (fromsize - Counter)) ? slen : (fromsize - Counter);
 		memmove(&from[Counter], source, len);
 		Counter += len;
 		slen -= len;
@@ -122,9 +121,8 @@ int Base64Pipe::Put(void const * source, int slen)
 		Counter = slen;
 	}
 
-	return(total);
+	return (total);
 }
-
 
 /***********************************************************************************************
  * Base64Pipe::Flush -- Flushes the final pending data through the pipe.                       *
@@ -142,8 +140,7 @@ int Base64Pipe::Put(void const * source, int slen)
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-int Base64Pipe::Flush(void)
-{
+int Base64Pipe::Flush(void) {
 	int len = 0;
 
 	if (Counter) {
@@ -157,8 +154,5 @@ int Base64Pipe::Flush(void)
 		Counter = 0;
 	}
 	len += Pipe::Flush();
-	return(len);
+	return (len);
 }
-
-
-

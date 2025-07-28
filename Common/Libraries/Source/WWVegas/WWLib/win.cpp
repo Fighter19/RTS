@@ -20,8 +20,8 @@
 #include "win.h"
 #include "wwdebug.h"
 
-HINSTANCE	ProgramInstance;
-HWND			MainWindow;
+HINSTANCE ProgramInstance;
+HWND MainWindow;
 bool GameInFocus = false;
 
 /***********************************************************************************************
@@ -37,15 +37,12 @@ bool GameInFocus = false;
  *   6/21/01    DEL : Created.                                                                 *
  *=============================================================================================*/
 #ifdef _DEBUG
-void __cdecl Print_Win32Error(unsigned long win32Error)
-{
+void __cdecl Print_Win32Error(unsigned long win32Error) {
 	LPVOID lpMsgBuf;
-	FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
-			FORMAT_MESSAGE_IGNORE_INSERTS, NULL, win32Error, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-			(LPTSTR)&lpMsgBuf, 0, NULL);
+	FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL,
+				  win32Error, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR)&lpMsgBuf, 0, NULL);
 
-	WWDEBUG_SAY(((const char*)lpMsgBuf));
+	WWDEBUG_SAY(((const char *)lpMsgBuf));
 	LocalFree(lpMsgBuf);
 }
 #endif
-

@@ -42,7 +42,7 @@
 #define RCFILE_H
 
 #include "always.h"
-#include "WWFILE.H"
+#include "wwfile.h"
 #include "win.h"
 
 /*
@@ -53,43 +53,38 @@
 ** IDR_FILE1 to "MyFile.w3d") and then you will be able to access it by using this
 ** class.
 */
-class ResourceFileClass : public FileClass
-{
-	public:
+class ResourceFileClass : public FileClass {
+  public:
+	ResourceFileClass(HMODULE hmodule, char const *filename);
+	virtual ~ResourceFileClass(void);
 
-		ResourceFileClass(HMODULE hmodule, char const *filename);
-		virtual ~ResourceFileClass(void);
-		
-		virtual char const * File_Name(void) const					{ return ResourceName; }
-		virtual char const * Set_Name(char const *filename);
-		virtual int Create(void)											{ return false; }
-		virtual int Delete(void)											{ return false; }
-		virtual bool Is_Available(int /*forced=false*/)				{ return Is_Open (); }
-		virtual bool Is_Open(void) const									{ return (FileBytes != NULL); } 
-		
-		virtual int Open(char const * /*fname*/, int /*rights=READ*/)	{ return Is_Open(); }
-		virtual int Open(int /*rights=READ*/)							{ return Is_Open(); }
+	virtual char const *File_Name(void) const { return ResourceName; }
+	virtual char const *Set_Name(char const *filename);
+	virtual int Create(void) { return false; }
+	virtual int Delete(void) { return false; }
+	virtual bool Is_Available(int /*forced=false*/) { return Is_Open(); }
+	virtual bool Is_Open(void) const { return (FileBytes != NULL); }
 
-		virtual int Read(void *buffer, int size);
-		virtual int Seek(int pos, int dir=SEEK_CUR);
-		virtual int Size(void);
-		virtual int Write(void const * /*buffer*/, int /*size*/)	{ return 0; }
-		virtual void Close(void)											{ }
-		virtual void Error(int error, int canretry = false, char const * filename=NULL);
+	virtual int Open(char const * /*fname*/, int /*rights=READ*/) { return Is_Open(); }
+	virtual int Open(int /*rights=READ*/) { return Is_Open(); }
 
-		virtual unsigned char *Peek_Data(void) const					{ return FileBytes; }
+	virtual int Read(void *buffer, int size);
+	virtual int Seek(int pos, int dir = SEEK_CUR);
+	virtual int Size(void);
+	virtual int Write(void const * /*buffer*/, int /*size*/) { return 0; }
+	virtual void Close(void) {}
+	virtual void Error(int error, int canretry = false, char const *filename = NULL);
 
-	protected:
+	virtual unsigned char *Peek_Data(void) const { return FileBytes; }
 
-		char *				ResourceName;
+  protected:
+	char *ResourceName;
 
-		HMODULE				hModule;
-		
-		unsigned char *	FileBytes;
-		unsigned char *	FilePtr;
-		unsigned char *	EndOfFile;
+	HMODULE hModule;
 
+	unsigned char *FileBytes;
+	unsigned char *FilePtr;
+	unsigned char *EndOfFile;
 };
-
 
 #endif

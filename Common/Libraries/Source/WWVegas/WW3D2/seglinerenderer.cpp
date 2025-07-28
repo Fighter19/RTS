@@ -44,7 +44,7 @@
 #include "sortingrenderer.h"
 #include "vp.h"
 #include "vector3i.h"
-#include "RANDOM.H"
+#include "random.h"
 #include "v3_rnd.h"
 #include "w3d_file.h"
 

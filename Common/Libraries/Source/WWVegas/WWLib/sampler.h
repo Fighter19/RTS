@@ -63,17 +63,14 @@ class Random4Class;
 // all these sampling algoriths modify a vector of length Dimensions
 // they all return a value between 0..1
 // Hector Yee 6/11/01
-class SamplingClass
-{
-public:
-	SamplingClass(unsigned int dimensions, unsigned char divisions):
-		Dimensions(dimensions),
-		Divisions(divisions)
-		{};	
+class SamplingClass {
+  public:
+	SamplingClass(unsigned int dimensions, unsigned char divisions) : Dimensions(dimensions), Divisions(divisions) {};
 	virtual void Reset() {};
-	virtual void Sample(float *target)=0;
+	virtual void Sample(float *target) = 0;
 	virtual ~SamplingClass() {};
-protected:
+
+  protected:
 	unsigned int Dimensions;
 	unsigned char Divisions;
 };
@@ -81,37 +78,36 @@ protected:
 // Samples randomly in the dimensions using Mesenne Twister
 // divisions ignored
 // Hector Yee 6/11/01
-class RandomSamplingClass : public SamplingClass
-{
-public:
-	RandomSamplingClass(unsigned int dimensions, unsigned char divisions=0);
+class RandomSamplingClass : public SamplingClass {
+  public:
+	RandomSamplingClass(unsigned int dimensions, unsigned char divisions = 0);
 	virtual void Reset() {};
-	virtual void Sample(float *target);	
+	virtual void Sample(float *target);
 };
 
 // samples over a regular hypergrid
 // Hector Yee 6/11/01
-class RegularSamplingClass : public SamplingClass
-{
-public:
-	RegularSamplingClass(unsigned int dimensions, unsigned char divisions=3);
+class RegularSamplingClass : public SamplingClass {
+  public:
+	RegularSamplingClass(unsigned int dimensions, unsigned char divisions = 3);
 	virtual void Reset();
 	virtual void Sample(float *target);
 	virtual ~RegularSamplingClass();
-protected:
+
+  protected:
 	unsigned char *index;
 };
 
 // samples over a regular hypergrid with random perturbations
 // Hector Yee 6/11/01
-class StratifiedSamplingClass : public SamplingClass
-{
-public:
-	StratifiedSamplingClass(unsigned int dimensions, unsigned char divisions=3);
+class StratifiedSamplingClass : public SamplingClass {
+  public:
+	StratifiedSamplingClass(unsigned int dimensions, unsigned char divisions = 3);
 	virtual void Reset();
 	virtual void Sample(float *target);
 	virtual ~StratifiedSamplingClass();
-protected:
+
+  protected:
 	unsigned char *index;
 };
 
@@ -119,15 +115,14 @@ protected:
 // divisions ignored
 // based on the Halton-Hammersly sequence which is in turn based on the inverse radical function
 // Hector Yee 6/11/01
-class QMCSamplingClass : public SamplingClass
-{
-public:
-	QMCSamplingClass(unsigned int dimensions, unsigned char divisions=0);
-	virtual void Reset() {index=0;};
+class QMCSamplingClass : public SamplingClass {
+  public:
+	QMCSamplingClass(unsigned int dimensions, unsigned char divisions = 0);
+	virtual void Reset() { index = 0; };
 	virtual void Sample(float *target);
-protected:
+
+  protected:
 	unsigned int index;
 };
-
 
 #endif

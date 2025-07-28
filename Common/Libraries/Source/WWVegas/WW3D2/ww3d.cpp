@@ -98,7 +98,7 @@
 #include "statistics.h"
 #include "pointgr.h"
 #include "ffactory.h"
-#include "INI.H"
+#include "ini.h"
 #include "dazzle.h"
 #include "meshmdl.h"
 #include "render2d.h"
@@ -106,7 +106,7 @@
 #include "rddesc.h"
 #include "vector3i.h"
 #include <cstdio>
-#include "TARGA.H"
+#include "targa.h"
 #include "sortingrenderer.h"
 #include "thread.h"
 #include "cpudetect.h"

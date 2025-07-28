@@ -16,34 +16,32 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /G/wwlib/PIPE.CPP                                           $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /G/wwlib/PIPE.CPP                                           $*
+ *                                                                                             *
  *                      $Author:: Eric_c                                                      $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 4/15/99 10:15a                                              $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 2                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  *   Pipe::Put_To -- Connect a pipe to flow data into from this pipe.                          *
  *   Pipe::Flush -- Flush all pending data out the pipe.                                       *
  *   Pipe::Put -- Feed some data through the pipe.                                             *
  *   Pipe::~Pipe -- Destructor for pipe class object.                                          *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#include	"always.h"
-#include	"PIPE.H"
-#include	<stddef.h>
-//#include	<string.h>
-
+#include "always.h"
+#include "pipe.h"
+#include <stddef.h>
+// #include	<string.h>
 
 /***********************************************************************************************
  * Pipe::~Pipe -- Destructor for pipe class object.                                            *
@@ -60,8 +58,7 @@
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-Pipe::~Pipe(void)
-{
+Pipe::~Pipe(void) {
 	if (ChainTo != NULL) {
 		ChainTo->ChainFrom = ChainFrom;
 	}
@@ -72,7 +69,6 @@ Pipe::~Pipe(void)
 	ChainFrom = NULL;
 	ChainTo = NULL;
 }
-
 
 /***********************************************************************************************
  * Pipe::Put_To -- Connect a pipe to flow data into from this pipe.                            *
@@ -89,8 +85,7 @@ Pipe::~Pipe(void)
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-void Pipe::Put_To(Pipe * pipe)
-{
+void Pipe::Put_To(Pipe *pipe) {
 	if (ChainTo != pipe) {
 		if (pipe != NULL && pipe->ChainFrom != NULL) {
 			pipe->ChainFrom->Put_To(NULL);
@@ -108,7 +103,6 @@ void Pipe::Put_To(Pipe * pipe)
 		}
 	}
 }
-
 
 /***********************************************************************************************
  * Pipe::Put -- Feed some data through the pipe.                                               *
@@ -128,14 +122,12 @@ void Pipe::Put_To(Pipe * pipe)
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-int Pipe::Put(void const * source, int length)
-{
+int Pipe::Put(void const *source, int length) {
 	if (ChainTo != NULL) {
-		return(ChainTo->Put(source, length));
+		return (ChainTo->Put(source, length));
 	}
-	return(length);
+	return (length);
 }
-
 
 /***********************************************************************************************
  * Pipe::Flush -- Flush all pending data out the pipe.                                         *
@@ -155,12 +147,9 @@ int Pipe::Put(void const * source, int length)
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-int Pipe::Flush(void)
-{
+int Pipe::Flush(void) {
 	if (ChainTo != NULL) {
-		return(ChainTo->Flush());
+		return (ChainTo->Flush());
 	}
-	return(0);
+	return (0);
 }
-
-

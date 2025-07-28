@@ -60,360 +60,286 @@
 //	operations are performed on wide character strings.
 //
 //////////////////////////////////////////////////////////////////////
-class WideStringClass
-{
-public:
-
+class WideStringClass {
+  public:
 	////////////////////////////////////////////////////////////
 	//	Public constructors/destructors
 	////////////////////////////////////////////////////////////
-	WideStringClass (int initial_len = 0,				bool hint_temporary = false);
-	WideStringClass (const WideStringClass &string,	bool hint_temporary = false);
-	WideStringClass (const WCHAR *string,				bool hint_temporary = false);
-	WideStringClass (WCHAR ch,								bool hint_temporary = false);
-	WideStringClass (const char *string,				bool hint_temporary = false);
-	~WideStringClass (void);
+	WideStringClass(int initial_len = 0, bool hint_temporary = false);
+	WideStringClass(const WideStringClass &string, bool hint_temporary = false);
+	WideStringClass(const WCHAR *string, bool hint_temporary = false);
+	WideStringClass(WCHAR ch, bool hint_temporary = false);
+	WideStringClass(const char *string, bool hint_temporary = false);
+	~WideStringClass(void);
 
 	////////////////////////////////////////////////////////////
 	//	Public operators
-	////////////////////////////////////////////////////////////	
-	bool operator== (const WCHAR *rvalue) const;
-	bool operator!= (const WCHAR *rvalue) const;
+	////////////////////////////////////////////////////////////
+	bool operator==(const WCHAR *rvalue) const;
+	bool operator!=(const WCHAR *rvalue) const;
 
-	inline const WideStringClass &operator= (const WideStringClass &string);
-	inline const WideStringClass &operator= (const WCHAR *string);
-	inline const WideStringClass &operator= (WCHAR ch);
-	inline const WideStringClass &operator= (const char *string);
+	inline const WideStringClass &operator=(const WideStringClass &string);
+	inline const WideStringClass &operator=(const WCHAR *string);
+	inline const WideStringClass &operator=(WCHAR ch);
+	inline const WideStringClass &operator=(const char *string);
 
-	const WideStringClass &operator+= (const WideStringClass &string);
-	const WideStringClass &operator+= (const WCHAR *string);
-	const WideStringClass &operator+= (WCHAR ch);
+	const WideStringClass &operator+=(const WideStringClass &string);
+	const WideStringClass &operator+=(const WCHAR *string);
+	const WideStringClass &operator+=(WCHAR ch);
 
-	friend WideStringClass operator+ (const WideStringClass &string1, const WideStringClass &string2);
-	friend WideStringClass operator+ (const WCHAR *string1, const WideStringClass &string2);
-	friend WideStringClass operator+ (const WideStringClass &string1, const WCHAR *string2);
+	friend WideStringClass operator+(const WideStringClass &string1, const WideStringClass &string2);
+	friend WideStringClass operator+(const WCHAR *string1, const WideStringClass &string2);
+	friend WideStringClass operator+(const WideStringClass &string1, const WCHAR *string2);
 
-	bool operator < (const WCHAR *string) const;
-	bool operator <= (const WCHAR *string) const;
-	bool operator > (const WCHAR *string) const;
-	bool operator >= (const WCHAR *string) const;
+	bool operator<(const WCHAR *string) const;
+	bool operator<=(const WCHAR *string) const;
+	bool operator>(const WCHAR *string) const;
+	bool operator>=(const WCHAR *string) const;
 
-	WCHAR operator[] (int index) const;
-	operator const WCHAR * (void) const;
+	WCHAR operator[](int index) const;
+	operator const WCHAR *(void) const;
 
 	////////////////////////////////////////////////////////////
 	//	Public methods
 	////////////////////////////////////////////////////////////
-	int			Compare (const WCHAR *string) const;
-	int			Compare_No_Case (const WCHAR *string) const;
-	
-	inline int	Get_Length (void) const;
-	bool			Is_Empty (void) const;
+	int Compare(const WCHAR *string) const;
+	int Compare_No_Case(const WCHAR *string) const;
 
-	void			Erase (int start_index, int char_count);
-	int _cdecl  Format (const WCHAR *format, ...);
-	int _cdecl  Format_Args (const WCHAR *format, va_list arg_list );
-	void			Convert_From (const char *text);
-	void			Convert_To (StringClass &string);
-	void			Convert_To (StringClass &string) const;
+	inline int Get_Length(void) const;
+	bool Is_Empty(void) const;
 
-	WCHAR *		Get_Buffer (int new_length);
-	WCHAR *		Peek_Buffer (void);
+	void Erase(int start_index, int char_count);
+	int _cdecl Format(const WCHAR *format, ...);
+	int _cdecl Format_Args(const WCHAR *format, va_list arg_list);
+	void Convert_From(const char *text);
+	void Convert_To(StringClass &string);
+	void Convert_To(StringClass &string) const;
+
+	WCHAR *Get_Buffer(int new_length);
+	WCHAR *Peek_Buffer(void);
 
 	////////////////////////////////////////////////////////////
 	//	Static methods
 	////////////////////////////////////////////////////////////
-	static void	Release_Resources (void);
+	static void Release_Resources(void);
 
-private:
-
+  private:
 	////////////////////////////////////////////////////////////
 	//	Private structures
 	////////////////////////////////////////////////////////////
-	typedef struct _HEADER
-	{
-		int	allocated_length;
-		int	length;
+	typedef struct _HEADER {
+		int allocated_length;
+		int length;
 	} HEADER;
 
 	////////////////////////////////////////////////////////////
 	//	Private constants
 	////////////////////////////////////////////////////////////
-	enum
-	{
-		MAX_TEMP_STRING	= 4,
-		MAX_TEMP_LEN		= 256,
-		MAX_TEMP_BYTES		= (MAX_TEMP_LEN * sizeof (WCHAR)) + sizeof (HEADER),
+	enum {
+		MAX_TEMP_STRING = 4,
+		MAX_TEMP_LEN = 256,
+		MAX_TEMP_BYTES = (MAX_TEMP_LEN * sizeof(WCHAR)) + sizeof(HEADER),
 	};
 
 	////////////////////////////////////////////////////////////
 	//	Private methods
 	////////////////////////////////////////////////////////////
-	void			Get_String (int length, bool is_temp);
-	WCHAR *		Allocate_Buffer (int length);
-	void			Resize (int size);
-	void			Uninitialised_Grow (int length);
-	void			Free_String (void);
+	void Get_String(int length, bool is_temp);
+	WCHAR *Allocate_Buffer(int length);
+	void Resize(int size);
+	void Uninitialised_Grow(int length);
+	void Free_String(void);
 
-	inline void	Store_Length (int length);
-	inline void	Store_Allocated_Length (int allocated_length);
-	inline HEADER * Get_Header (void) const;
-	int			Get_Allocated_Length (void) const;
+	inline void Store_Length(int length);
+	inline void Store_Allocated_Length(int allocated_length);
+	inline HEADER *Get_Header(void) const;
+	int Get_Allocated_Length(void) const;
 
-	void			Set_Buffer_And_Allocated_Length (WCHAR *buffer, int length);
+	void Set_Buffer_And_Allocated_Length(WCHAR *buffer, int length);
 
 	////////////////////////////////////////////////////////////
 	//	Private member data
 	////////////////////////////////////////////////////////////
-	WCHAR *		m_Buffer;
+	WCHAR *m_Buffer;
 
 	////////////////////////////////////////////////////////////
 	//	Static member data
 	////////////////////////////////////////////////////////////
-	static char		m_TempString1[MAX_TEMP_BYTES];
-	static char		m_TempString2[MAX_TEMP_BYTES];
-	static char		m_TempString3[MAX_TEMP_BYTES];
-	static char		m_TempString4[MAX_TEMP_BYTES];
-	static WCHAR *	m_FreeTempPtr[MAX_TEMP_STRING];
-	static WCHAR *	m_ResTempPtr[MAX_TEMP_STRING];
+	static char m_TempString1[MAX_TEMP_BYTES];
+	static char m_TempString2[MAX_TEMP_BYTES];
+	static char m_TempString3[MAX_TEMP_BYTES];
+	static char m_TempString4[MAX_TEMP_BYTES];
+	static WCHAR *m_FreeTempPtr[MAX_TEMP_STRING];
+	static WCHAR *m_ResTempPtr[MAX_TEMP_STRING];
 
-	static int		m_UsedTempStringCount;
+	static int m_UsedTempStringCount;
 	static CriticalSectionClass m_TempMutex;
 
-	static WCHAR	m_NullChar;
-	static WCHAR *	m_EmptyString;
+	static WCHAR m_NullChar;
+	static WCHAR *m_EmptyString;
 };
 
 ///////////////////////////////////////////////////////////////////
 //	WideStringClass
 ///////////////////////////////////////////////////////////////////
-inline
-WideStringClass::WideStringClass (int initial_len, bool hint_temporary)
-	:	m_Buffer (m_EmptyString)
-{
-	Get_String (initial_len, hint_temporary);
-	m_Buffer[0]	= m_NullChar;
+inline WideStringClass::WideStringClass(int initial_len, bool hint_temporary) : m_Buffer(m_EmptyString) {
+	Get_String(initial_len, hint_temporary);
+	m_Buffer[0] = m_NullChar;
 
-	return ;
+	return;
 }
 
 ///////////////////////////////////////////////////////////////////
 //	WideStringClass
 ///////////////////////////////////////////////////////////////////
-inline
-WideStringClass::WideStringClass (WCHAR ch, bool hint_temporary)
-	:	m_Buffer (m_EmptyString)
-{
-	Get_String (2, hint_temporary);
+inline WideStringClass::WideStringClass(WCHAR ch, bool hint_temporary) : m_Buffer(m_EmptyString) {
+	Get_String(2, hint_temporary);
 	(*this) = ch;
-	return ;
+	return;
 }
 
 ///////////////////////////////////////////////////////////////////
 //	WideStringClass
 ///////////////////////////////////////////////////////////////////
-inline
-WideStringClass::WideStringClass (const WideStringClass &string, bool hint_temporary)
- 	:	m_Buffer (m_EmptyString)
-{
-	if (hint_temporary || (string.Get_Length()>1)) {
-		Get_String(string.Get_Length()+1, hint_temporary);
+inline WideStringClass::WideStringClass(const WideStringClass &string, bool hint_temporary) : m_Buffer(m_EmptyString) {
+	if (hint_temporary || (string.Get_Length() > 1)) {
+		Get_String(string.Get_Length() + 1, hint_temporary);
 	}
 
 	(*this) = string;
-	return ;
+	return;
 }
 
 ///////////////////////////////////////////////////////////////////
 //	WideStringClass
 ///////////////////////////////////////////////////////////////////
-inline
-WideStringClass::WideStringClass (const WCHAR *string, bool hint_temporary)
-	:	m_Buffer (m_EmptyString)
-{
-	int len=string ? wcslen(string) : 0;
-	if (hint_temporary || len>0) {
-		Get_String (len+1, hint_temporary);
+inline WideStringClass::WideStringClass(const WCHAR *string, bool hint_temporary) : m_Buffer(m_EmptyString) {
+	int len = string ? wcslen(string) : 0;
+	if (hint_temporary || len > 0) {
+		Get_String(len + 1, hint_temporary);
 	}
 
 	(*this) = string;
-	return ;
+	return;
 }
-
 
 ///////////////////////////////////////////////////////////////////
 //	WideStringClass
 ///////////////////////////////////////////////////////////////////
-inline
-WideStringClass::WideStringClass (const char *string, bool hint_temporary)
-	:	m_Buffer (m_EmptyString)
-{
-	if (hint_temporary || (string && strlen(string)>0)) {
-		Get_String (strlen(string) + 1, hint_temporary);
+inline WideStringClass::WideStringClass(const char *string, bool hint_temporary) : m_Buffer(m_EmptyString) {
+	if (hint_temporary || (string && strlen(string) > 0)) {
+		Get_String(strlen(string) + 1, hint_temporary);
 	}
 
 	(*this) = string;
-	return ;
+	return;
 }
 
 ///////////////////////////////////////////////////////////////////
 //	~WideStringClass
 ///////////////////////////////////////////////////////////////////
-inline
-WideStringClass::~WideStringClass (void)
-{
-	Free_String ();
-	return ;
+inline WideStringClass::~WideStringClass(void) {
+	Free_String();
+	return;
 }
-
 
 ///////////////////////////////////////////////////////////////////
 //	Is_Empty
 ///////////////////////////////////////////////////////////////////
-inline bool
-WideStringClass::Is_Empty (void) const
-{
-	return (m_Buffer[0] == m_NullChar);
-}
+inline bool WideStringClass::Is_Empty(void) const { return (m_Buffer[0] == m_NullChar); }
 
 ///////////////////////////////////////////////////////////////////
 //	Compare
 ///////////////////////////////////////////////////////////////////
-inline int
-WideStringClass::Compare (const WCHAR *string) const
-{
-	return wcscmp (m_Buffer, string);
-}
+inline int WideStringClass::Compare(const WCHAR *string) const { return wcscmp(m_Buffer, string); }
 
 ///////////////////////////////////////////////////////////////////
 //	Compare_No_Case
 ///////////////////////////////////////////////////////////////////
-inline int
-WideStringClass::Compare_No_Case (const WCHAR *string) const
-{
-	return _wcsicmp (m_Buffer, string);
-}
+inline int WideStringClass::Compare_No_Case(const WCHAR *string) const { return _wcsicmp(m_Buffer, string); }
 
 ///////////////////////////////////////////////////////////////////
 //	operator[]
 ///////////////////////////////////////////////////////////////////
-inline WCHAR
-WideStringClass::operator[] (int index) const
-{
-	WWASSERT (index >= 0 && index < Get_Length ());
+inline WCHAR WideStringClass::operator[](int index) const {
+	WWASSERT(index >= 0 && index < Get_Length());
 	return m_Buffer[index];
 }
 
 ///////////////////////////////////////////////////////////////////
 //	operator const WCHAR *
 ///////////////////////////////////////////////////////////////////
-inline
-WideStringClass::operator const WCHAR * (void) const
-{
-	return m_Buffer;
-}
+inline WideStringClass::operator const WCHAR *(void) const { return m_Buffer; }
 
 ///////////////////////////////////////////////////////////////////
 //	operator==
 ///////////////////////////////////////////////////////////////////
-inline bool
-WideStringClass::operator== (const WCHAR *rvalue) const
-{
-	return (Compare (rvalue) == 0);
-}
+inline bool WideStringClass::operator==(const WCHAR *rvalue) const { return (Compare(rvalue) == 0); }
 
 ///////////////////////////////////////////////////////////////////
 //	operator!=
 ///////////////////////////////////////////////////////////////////
-inline bool
-WideStringClass::operator!= (const WCHAR *rvalue) const
-{
-	return (Compare (rvalue) != 0);
-}
+inline bool WideStringClass::operator!=(const WCHAR *rvalue) const { return (Compare(rvalue) != 0); }
 
 ///////////////////////////////////////////////////////////////////
 //	operator=
 ///////////////////////////////////////////////////////////////////
-inline const WideStringClass &
-WideStringClass::operator= (const WideStringClass &string)
-{	
-	return operator= ((const WCHAR *)string);
+inline const WideStringClass &WideStringClass::operator=(const WideStringClass &string) {
+	return operator=((const WCHAR *)string);
 }
 
 ///////////////////////////////////////////////////////////////////
 //	operator <
 ///////////////////////////////////////////////////////////////////
-inline bool
-WideStringClass::operator < (const WCHAR *string) const
-{
-	return (wcscmp (m_Buffer, string) < 0);
-}
+inline bool WideStringClass::operator<(const WCHAR *string) const { return (wcscmp(m_Buffer, string) < 0); }
 
 ///////////////////////////////////////////////////////////////////
 //	operator <=
 ///////////////////////////////////////////////////////////////////
-inline bool
-WideStringClass::operator <= (const WCHAR *string) const
-{
-	return (wcscmp (m_Buffer, string) <= 0);
-}
+inline bool WideStringClass::operator<=(const WCHAR *string) const { return (wcscmp(m_Buffer, string) <= 0); }
 
 ///////////////////////////////////////////////////////////////////
 //	operator >
 ///////////////////////////////////////////////////////////////////
-inline bool
-WideStringClass::operator > (const WCHAR *string) const
-{
-	return (wcscmp (m_Buffer, string) > 0);
-}
+inline bool WideStringClass::operator>(const WCHAR *string) const { return (wcscmp(m_Buffer, string) > 0); }
 
 ///////////////////////////////////////////////////////////////////
 //	operator >=
 ///////////////////////////////////////////////////////////////////
-inline bool
-WideStringClass::operator >= (const WCHAR *string) const
-{
-	return (wcscmp (m_Buffer, string) >= 0);
-}
-
+inline bool WideStringClass::operator>=(const WCHAR *string) const { return (wcscmp(m_Buffer, string) >= 0); }
 
 ///////////////////////////////////////////////////////////////////
 //	Erase
 ///////////////////////////////////////////////////////////////////
-inline void
-WideStringClass::Erase (int start_index, int char_count)
-{
-	int len = Get_Length ();
+inline void WideStringClass::Erase(int start_index, int char_count) {
+	int len = Get_Length();
 
 	if (start_index < len) {
-		
+
 		if (start_index + char_count > len) {
 			char_count = len - start_index;
 		}
 
-		::memmove (	&m_Buffer[start_index],
-						&m_Buffer[start_index + char_count],
-						(len - (start_index + char_count) + 1) * sizeof (WCHAR));
+		::memmove(&m_Buffer[start_index], &m_Buffer[start_index + char_count],
+				  (len - (start_index + char_count) + 1) * sizeof(WCHAR));
 
-		Store_Length( wcslen(m_Buffer) );
+		Store_Length(wcslen(m_Buffer));
 	}
 
-	return ;
+	return;
 }
 
 ///////////////////////////////////////////////////////////////////
 //	operator=
 ///////////////////////////////////////////////////////////////////
-inline const WideStringClass &
-WideStringClass::operator= (const WCHAR *string)
-{
+inline const WideStringClass &WideStringClass::operator=(const WCHAR *string) {
 	if (string != 0) {
 
-		int len = wcslen (string);
-		Uninitialised_Grow (len + 1);
-		Store_Length (len);
+		int len = wcslen(string);
+		Uninitialised_Grow(len + 1);
+		Store_Length(len);
 
-		::memcpy (m_Buffer, string, (len + 1) * sizeof (WCHAR));		
+		::memcpy(m_Buffer, string, (len + 1) * sizeof(WCHAR));
 	}
 
 	return (*this);
@@ -422,9 +348,7 @@ WideStringClass::operator= (const WCHAR *string)
 ///////////////////////////////////////////////////////////////////
 //	operator=
 ///////////////////////////////////////////////////////////////////
-inline const WideStringClass &
-WideStringClass::operator= (const char *string)
-{
+inline const WideStringClass &WideStringClass::operator=(const char *string) {
 	if (string != 0) {
 		Convert_From(string);
 	}
@@ -435,14 +359,12 @@ WideStringClass::operator= (const char *string)
 ///////////////////////////////////////////////////////////////////
 //	operator=
 ///////////////////////////////////////////////////////////////////
-inline const WideStringClass &
-WideStringClass::operator= (WCHAR ch)
-{
-	Uninitialised_Grow (2);
+inline const WideStringClass &WideStringClass::operator=(WCHAR ch) {
+	Uninitialised_Grow(2);
 
 	m_Buffer[0] = ch;
 	m_Buffer[1] = m_NullChar;
-	Store_Length (1);
+	Store_Length(1);
 
 	return (*this);
 }
@@ -450,42 +372,38 @@ WideStringClass::operator= (WCHAR ch)
 ///////////////////////////////////////////////////////////////////
 //	operator+=
 ///////////////////////////////////////////////////////////////////
-inline const WideStringClass &
-WideStringClass::operator+= (const WCHAR *string)
-{
-	WWASSERT (string != NULL);
+inline const WideStringClass &WideStringClass::operator+=(const WCHAR *string) {
+	WWASSERT(string != NULL);
 
-	int cur_len = Get_Length ();
-	int src_len = wcslen (string);
+	int cur_len = Get_Length();
+	int src_len = wcslen(string);
 	int new_len = cur_len + src_len;
 
 	//
 	//	Make sure our buffer is large enough to hold the new string
 	//
-	Resize (new_len + 1);
-	Store_Length (new_len);
+	Resize(new_len + 1);
+	Store_Length(new_len);
 
 	//
 	//	Copy the new string onto our the end of our existing buffer
 	//
-	::memcpy (&m_Buffer[cur_len], string, (src_len + 1) * sizeof (WCHAR));
+	::memcpy(&m_Buffer[cur_len], string, (src_len + 1) * sizeof(WCHAR));
 	return (*this);
 }
 
 ///////////////////////////////////////////////////////////////////
 //	operator+=
 ///////////////////////////////////////////////////////////////////
-inline const WideStringClass &
-WideStringClass::operator+= (WCHAR ch)
-{
-	int cur_len = Get_Length ();
-	Resize (cur_len + 2);
+inline const WideStringClass &WideStringClass::operator+=(WCHAR ch) {
+	int cur_len = Get_Length();
+	Resize(cur_len + 2);
 
-	m_Buffer[cur_len]			= ch;
-	m_Buffer[cur_len + 1]	= m_NullChar;
-	
+	m_Buffer[cur_len] = ch;
+	m_Buffer[cur_len + 1] = m_NullChar;
+
 	if (ch != m_NullChar) {
-		Store_Length (cur_len + 1);
+		Store_Length(cur_len + 1);
 	}
 
 	return (*this);
@@ -494,10 +412,8 @@ WideStringClass::operator+= (WCHAR ch)
 ///////////////////////////////////////////////////////////////////
 //	Get_Buffer
 ///////////////////////////////////////////////////////////////////
-inline WCHAR *
-WideStringClass::Get_Buffer (int new_length)
-{
-	Uninitialised_Grow (new_length);
+inline WCHAR *WideStringClass::Get_Buffer(int new_length) {
+	Uninitialised_Grow(new_length);
 
 	return m_Buffer;
 }
@@ -505,33 +421,27 @@ WideStringClass::Get_Buffer (int new_length)
 ///////////////////////////////////////////////////////////////////
 //	Peek_Buffer
 ///////////////////////////////////////////////////////////////////
-inline WCHAR *
-WideStringClass::Peek_Buffer (void)
-{
-	return m_Buffer;
-}
+inline WCHAR *WideStringClass::Peek_Buffer(void) { return m_Buffer; }
 
 ///////////////////////////////////////////////////////////////////
 //	operator+=
 ///////////////////////////////////////////////////////////////////
-inline const WideStringClass &
-WideStringClass::operator+= (const WideStringClass &string)
-{
+inline const WideStringClass &WideStringClass::operator+=(const WideStringClass &string) {
 	int src_len = string.Get_Length();
 	if (src_len > 0) {
-		int cur_len = Get_Length ();
+		int cur_len = Get_Length();
 		int new_len = cur_len + src_len;
 
 		//
 		//	Make sure our buffer is large enough to hold the new string
 		//
-		Resize (new_len + 1);
-		Store_Length (new_len);
+		Resize(new_len + 1);
+		Store_Length(new_len);
 
 		//
 		//	Copy the new string onto our the end of our existing buffer
 		//
-		::memcpy (&m_Buffer[cur_len], (const WCHAR *)string, (src_len + 1) * sizeof (WCHAR));				
+		::memcpy(&m_Buffer[cur_len], (const WCHAR *)string, (src_len + 1) * sizeof(WCHAR));
 	}
 
 	return (*this);
@@ -540,9 +450,7 @@ WideStringClass::operator+= (const WideStringClass &string)
 ///////////////////////////////////////////////////////////////////
 //	operator+=
 ///////////////////////////////////////////////////////////////////
-inline WideStringClass
-operator+ (const WideStringClass &string1, const WideStringClass &string2)
-{
+inline WideStringClass operator+(const WideStringClass &string1, const WideStringClass &string2) {
 	WideStringClass new_string(string1, true);
 	new_string += string2;
 	return new_string;
@@ -551,9 +459,7 @@ operator+ (const WideStringClass &string1, const WideStringClass &string2)
 ///////////////////////////////////////////////////////////////////
 //	operator+=
 ///////////////////////////////////////////////////////////////////
-inline WideStringClass
-operator+ (const WCHAR *string1, const WideStringClass &string2)
-{
+inline WideStringClass operator+(const WCHAR *string1, const WideStringClass &string2) {
 	WideStringClass new_string(string1, true);
 	new_string += string2;
 	return new_string;
@@ -562,9 +468,7 @@ operator+ (const WCHAR *string1, const WideStringClass &string2)
 ///////////////////////////////////////////////////////////////////
 //	operator+=
 ///////////////////////////////////////////////////////////////////
-inline WideStringClass
-operator+ (const WideStringClass &string1, const WCHAR *string2)
-{
+inline WideStringClass operator+(const WideStringClass &string1, const WCHAR *string2) {
 	WideStringClass new_string(string1, true);
 	new_string += string2;
 	return new_string;
@@ -575,17 +479,15 @@ operator+ (const WideStringClass &string1, const WCHAR *string2)
 //
 //	Return allocated size of the string buffer
 ///////////////////////////////////////////////////////////////////
-inline int
-WideStringClass::Get_Allocated_Length (void) const
-{
+inline int WideStringClass::Get_Allocated_Length(void) const {
 	int allocated_length = 0;
 
 	//
 	//	Read the allocated length from the header
 	//
-	if (m_Buffer != m_EmptyString) {		
-		HEADER *header		= Get_Header ();
-		allocated_length	= header->allocated_length;		
+	if (m_Buffer != m_EmptyString) {
+		HEADER *header = Get_Header();
+		allocated_length = header->allocated_length;
 	}
 
 	return allocated_length;
@@ -599,26 +501,24 @@ WideStringClass::Get_Allocated_Length (void) const
 // quite a lot cpu time if a lot of string combining operations are
 // performed.
 ///////////////////////////////////////////////////////////////////
-inline int
-WideStringClass::Get_Length (void) const
-{
+inline int WideStringClass::Get_Length(void) const {
 	int length = 0;
 
 	if (m_Buffer != m_EmptyString) {
-		
+
 		//
 		//	Read the length from the header
 		//
-		HEADER *header	= Get_Header ();
-		length			= header->length;
-		
+		HEADER *header = Get_Header();
+		length = header->length;
+
 		//
 		//	Hmmm, a zero length was stored in the header,
 		// we better manually get the string length.
 		//
 		if (length == 0) {
-			length = wcslen (m_Buffer);
-			((WideStringClass *)this)->Store_Length (length);
+			length = wcslen(m_Buffer);
+			((WideStringClass *)this)->Store_Length(length);
 		}
 	}
 
@@ -631,73 +531,65 @@ WideStringClass::Get_Length (void) const
 // Set buffer pointer and init size variable. Length is set to 0
 // as the contents of the new buffer are not necessarily defined.
 ///////////////////////////////////////////////////////////////////
-inline void
-WideStringClass::Set_Buffer_And_Allocated_Length (WCHAR *buffer, int length)
-{
-	Free_String ();
+inline void WideStringClass::Set_Buffer_And_Allocated_Length(WCHAR *buffer, int length) {
+	Free_String();
 	m_Buffer = buffer;
 
 	//
 	//	Update the header (if necessary)
 	//
 	if (m_Buffer != m_EmptyString) {
-		Store_Allocated_Length (length);
-		Store_Length (0);		
+		Store_Allocated_Length(length);
+		Store_Length(0);
 	} else {
-		WWASSERT (length == 0);
+		WWASSERT(length == 0);
 	}
 
-	return ;
+	return;
 }
 
 ///////////////////////////////////////////////////////////////////
 // Allocate_Buffer
 ///////////////////////////////////////////////////////////////////
-inline WCHAR *
-WideStringClass::Allocate_Buffer (int length)
-{
+inline WCHAR *WideStringClass::Allocate_Buffer(int length) {
 	//
 	//	Allocate a buffer that is 'length' characters long, plus the
 	// bytes required to hold the header.
 	//
-	char *buffer = W3DNEWARRAY char[(sizeof (WCHAR) * length) + sizeof (WideStringClass::_HEADER)];
-	
+	char *buffer = W3DNEWARRAY char[(sizeof(WCHAR) * length) + sizeof(WideStringClass::_HEADER)];
+
 	//
 	//	Fill in the fields of the header
 	//
-	HEADER *header					= reinterpret_cast<HEADER *>(buffer);
-	header->length					= 0;
-	header->allocated_length	= length;
+	HEADER *header = reinterpret_cast<HEADER *>(buffer);
+	header->length = 0;
+	header->allocated_length = length;
 
 	//
 	//	Return the buffer as if it was a WCHAR pointer
 	//
-	return reinterpret_cast<WCHAR *>(buffer + sizeof (WideStringClass::_HEADER));
+	return reinterpret_cast<WCHAR *>(buffer + sizeof(WideStringClass::_HEADER));
 }
 
 ///////////////////////////////////////////////////////////////////
 // Get_Header
 ///////////////////////////////////////////////////////////////////
-inline WideStringClass::HEADER *
-WideStringClass::Get_Header (void) const
-{
-	return reinterpret_cast<HEADER *>(((char *)m_Buffer) - sizeof (WideStringClass::_HEADER));
+inline WideStringClass::HEADER *WideStringClass::Get_Header(void) const {
+	return reinterpret_cast<HEADER *>(((char *)m_Buffer) - sizeof(WideStringClass::_HEADER));
 }
 
 ///////////////////////////////////////////////////////////////////
 // Store_Allocated_Length
 ///////////////////////////////////////////////////////////////////
-inline void
-WideStringClass::Store_Allocated_Length (int allocated_length)
-{
+inline void WideStringClass::Store_Allocated_Length(int allocated_length) {
 	if (m_Buffer != m_EmptyString) {
-		HEADER *header					= Get_Header ();
-		header->allocated_length	= allocated_length;
+		HEADER *header = Get_Header();
+		header->allocated_length = allocated_length;
 	} else {
-		WWASSERT (allocated_length == 0);
+		WWASSERT(allocated_length == 0);
 	}
 
-	return ;
+	return;
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -706,52 +598,44 @@ WideStringClass::Store_Allocated_Length (int allocated_length)
 // Set length... The caller of this (private) function better
 // be sure that the len is correct.
 ///////////////////////////////////////////////////////////////////
-inline void
-WideStringClass::Store_Length (int length)
-{
+inline void WideStringClass::Store_Length(int length) {
 	if (m_Buffer != m_EmptyString) {
-		HEADER *header		= Get_Header ();
-		header->length		= length;
+		HEADER *header = Get_Header();
+		header->length = length;
 	} else {
-		WWASSERT (length == 0);
+		WWASSERT(length == 0);
 	}
 
-	return ;
+	return;
 }
-
 
 ///////////////////////////////////////////////////////////////////
 // Convert_From
 ///////////////////////////////////////////////////////////////////
-inline void	
-WideStringClass::Convert_From(const char * text)
-{
-	int len = ::strlen ( text );
-	Uninitialised_Grow ( len + 1 );
-	if ( len != 0 ) {
-		WCHAR * ptr = m_Buffer;
-		while ( *text != 0 ) {
+inline void WideStringClass::Convert_From(const char *text) {
+	int len = ::strlen(text);
+	Uninitialised_Grow(len + 1);
+	if (len != 0) {
+		WCHAR *ptr = m_Buffer;
+		while (*text != 0) {
 			*ptr++ = *text++;
 		}
 		*ptr++ = 0;
 	}
 
-	return ;
+	return;
 }
-
 
 ///////////////////////////////////////////////////////////////////
 // Convert_To
 ///////////////////////////////////////////////////////////////////
-inline void	
-WideStringClass::Convert_To (StringClass &string)
-{
+inline void WideStringClass::Convert_To(StringClass &string) {
 	//
 	//	Resize the destination string
 	//
-	int len				= Get_Length ();
-	char *dest_buffer	= string.Get_Buffer (len + 1);
-		
+	int len = Get_Length();
+	char *dest_buffer = string.Get_Buffer(len + 1);
+
 	//
 	//	Copy the strings
 	//
@@ -763,19 +647,16 @@ WideStringClass::Convert_To (StringClass &string)
 		*dest_buffer++ = 0;
 	}
 
-	return ;
+	return;
 }
 
-
-inline void	
-WideStringClass::Convert_To (StringClass &string) const
-{
+inline void WideStringClass::Convert_To(StringClass &string) const {
 	//
 	//	Resize the destination string
 	//
-	int len				= Get_Length ();
-	char *dest_buffer	= string.Get_Buffer (len + 1);
-		
+	int len = Get_Length();
+	char *dest_buffer = string.Get_Buffer(len + 1);
+
 	//
 	//	Copy the strings
 	//
@@ -787,8 +668,7 @@ WideStringClass::Convert_To (StringClass &string) const
 		*dest_buffer++ = 0;
 	}
 
-	return ;
+	return;
 }
 
 #endif //__WIDESTRING_H
-

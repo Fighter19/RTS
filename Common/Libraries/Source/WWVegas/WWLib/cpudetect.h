@@ -48,17 +48,15 @@
 
 #ifdef WIN32
 typedef signed __int64 sint64;
-#elif defined (_UNIX)
+#elif defined(_UNIX)
 typedef signed long long sint64;
 #endif
 
 class CPUDetectInitClass;
 
-class CPUDetectClass
-{
-public:
-	typedef enum
-	{
+class CPUDetectClass {
+  public:
+	typedef enum {
 		MANUFACTURER_UNKNOWN = 0,
 		MANUFACTURER_INTEL,
 		MANUFACTURER_UMC,
@@ -70,8 +68,7 @@ public:
 		MANUFACTURER_TRANSMETA
 	} ProcessorManufacturerType;
 
-	typedef enum
-	{
+	typedef enum {
 		INTEL_PROCESSOR_UNKNOWN,
 		INTEL_PROCESSOR_80386,
 		INTEL_PROCESSOR_80486DX,
@@ -104,8 +101,7 @@ public:
 		INTEL_PROCESSOR_PENTIUM4
 	} IntelProcessorType;
 
-	typedef enum
-	{
+	typedef enum {
 		AMD_PROCESSOR_UNKNOWN,
 		AMD_PROCESSOR_486DX2,
 		AMD_PROCESSOR_486DX4,
@@ -128,8 +124,7 @@ public:
 		AMD_PROCESSOR_ATHLON
 	} AMDProcessorType;
 
-	typedef enum
-	{
+	typedef enum {
 		VIA_PROCESSOR_UNKNOWN,
 		VIA_PROCESSOR_IDT_C6_WINCHIP,
 		VIA_PROCESSOR_IDT_C6_WINCHIP2,
@@ -137,8 +132,7 @@ public:
 		VIA_PROCESSOR_CYRIX_III_SAMUEL
 	} VIAProcessorType;
 
-	typedef enum
-	{
+	typedef enum {
 		RISE_PROCESSOR_UNKNOWN,
 		RISE_PROCESSOR_DRAGON_025,
 		RISE_PROCESSOR_DRAGON_018,
@@ -146,8 +140,8 @@ public:
 		RISE_PROCESSOR_DRAGON2_018
 	} RiseProcessorType;
 
-	inline static ProcessorManufacturerType Get_Processor_Manufacturer() {return ProcessorManufacturer;}
-	static const char* Get_Processor_Manufacturer_Name();
+	inline static ProcessorManufacturerType Get_Processor_Manufacturer() { return ProcessorManufacturer; }
+	static const char *Get_Processor_Manufacturer_Name();
 
 	inline static bool Has_CPUID_Instruction() { return HasCPUIDInstruction; }
 	inline static bool Has_RDTSC_Instruction() { return HasRDTSCInstruction; }
@@ -168,8 +162,10 @@ public:
 	// Note that processor speed is only calculated at start and could change during execution, so
 	// this number is not to be relied on!
 	inline static int Get_Processor_Speed() { return ProcessorSpeed; }
-	inline static sint64 Get_Processor_Ticks_Per_Second() { return ProcessorTicksPerSecond; }	// Ticks per second
-	inline static double Get_Inv_Processor_Ticks_Per_Second() { return InvProcessorTicksPerSecond; }	// 1.0 / Ticks per second
+	inline static sint64 Get_Processor_Ticks_Per_Second() { return ProcessorTicksPerSecond; } // Ticks per second
+	inline static double Get_Inv_Processor_Ticks_Per_Second() {
+		return InvProcessorTicksPerSecond;
+	} // 1.0 / Ticks per second
 
 	static unsigned Get_Feature_Bits() { return FeatureBits; }
 	static unsigned Get_Extended_Feature_Bits() { return ExtendedFeatureBits; }
@@ -203,19 +199,14 @@ public:
 
 	static unsigned Get_Processor_Type() { return ProcessorType; }
 
-	inline static const char* Get_Processor_String() { return ProcessorString; }
-	inline static const StringClass& Get_Processor_Log() { return ProcessorLog; }
-	inline static const StringClass& Get_Compact_Log() { return CompactLog; }
+	inline static const char *Get_Processor_String() { return ProcessorString; }
+	inline static const StringClass &Get_Processor_Log() { return ProcessorLog; }
+	inline static const StringClass &Get_Compact_Log() { return CompactLog; }
 
-	static bool CPUID(
-		unsigned& u_eax_,
-		unsigned& u_ebx_,
-		unsigned& u_ecx_,
-		unsigned& u_edx_,
-		unsigned cpuid_type);
+	static bool CPUID(unsigned &u_eax_, unsigned &u_ebx_, unsigned &u_ecx_, unsigned &u_edx_, unsigned cpuid_type);
 
-private:
-//	static void Detect_CPU_Type();
+  private:
+	//	static void Detect_CPU_Type();
 	static void Init_CPUID_Instruction();
 	static void Init_Processor_Speed();
 	static void Init_Processor_String();
@@ -248,8 +239,8 @@ private:
 	static int ProcessorModel;
 	static int ProcessorRevision;
 	static int ProcessorSpeed;
-	static sint64 ProcessorTicksPerSecond;	// Ticks per second
-	static double InvProcessorTicksPerSecond;	// 1.0 / Ticks per second
+	static sint64 ProcessorTicksPerSecond;	  // Ticks per second
+	static double InvProcessorTicksPerSecond; // 1.0 / Ticks per second
 
 	static ProcessorManufacturerType ProcessorManufacturer;
 	static IntelProcessorType IntelProcessor;
@@ -302,24 +293,20 @@ private:
 	static bool HasExtended3DNowSupport;
 	static char VendorID[20];
 	static char ProcessorString[48];
-
 };
 
-struct CPUIDStruct
-{
+struct CPUIDStruct {
 	unsigned Eax;
 	unsigned Ebx;
 	unsigned Ecx;
 	unsigned Edx;
-	CPUIDStruct(unsigned cpuid_type)
-	{
+	CPUIDStruct(unsigned cpuid_type) {
 		if (!CPUDetectClass::Has_CPUID_Instruction()) {
-			Eax=Ebx=Ecx=Edx=0;
+			Eax = Ebx = Ecx = Edx = 0;
 			return;
 		}
-		CPUDetectClass::CPUID(Eax,Ebx,Ecx,Edx,cpuid_type);
+		CPUDetectClass::CPUID(Eax, Ebx, Ecx, Edx, cpuid_type);
 	}
 };
-
 
 #endif // WWLIB_CPU_DETECT_H__

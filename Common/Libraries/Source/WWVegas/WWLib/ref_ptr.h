@@ -34,7 +34,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #if defined(_MSC_VER)
 #pragma once
 #endif
@@ -48,7 +47,7 @@
 
 /*
 	RefCountPtr<T> is a smart pointer for reference counted objects.
-	
+
 	  RefCountPtr<T> is designed to support objects derived from RefCountClass, although any class
 	  supporting the required interface may also be used.
 
@@ -72,7 +71,7 @@
 
   Using RefCountPtr<T>
 		Example of usage :
-				
+
 				class MyClass : public RefCountClass
 				{
 					public:
@@ -151,10 +150,10 @@
 		care and typically requires the client to Add_Ref/Release_Ref the Peek'd object.
 
 		Rewrapping and Peeking reference counted objects is primarily useful when converting old code to
-		use RefCountPtr instead of manually managing the reference count.  These two functions are designed 
+		use RefCountPtr instead of manually managing the reference count.  These two functions are designed
 		for safety, NOT convenience.
 
-		Automatic construction of a RefCountPtr from a raw pointer is enabled if 
+		Automatic construction of a RefCountPtr from a raw pointer is enabled if
 		ALLOW_AUTOMATIC_REF_COUNT_PTR_CONSTRUCTION is defined.
 		This may be useful when migrating existing code to use RefCountPtr, but is completely safe,
 		since it is not possible to determine if the pointer is being Get'd or Peek'd.
@@ -203,7 +202,7 @@
 							// Get using an OUT parameter
 							void Get(RefCountPtr<T> & thing)
 							{
-								thing = MyThing;								
+								thing = MyThing;
 							}
 
 							// Get using a return value.  Preferable to above
@@ -216,221 +215,163 @@
 
 class DummyPtrType;
 
-template <class T>
-class RefCountPtr
-{
-	public:
-		friend RefCountPtr<T> Create_NEW(T *t) 
-		{
-		  return RefCountPtr<T>(t, RefCountPtr<T>::GET);
-		}
+template <class T> class RefCountPtr {
+  public:
+	friend RefCountPtr<T> Create_NEW(T *t) { return RefCountPtr<T>(t, RefCountPtr<T>::GET); }
 
-		friend RefCountPtr<T> Create_Get(T *t)
-		{
-			return RefCountPtr<T>(t, RefCountPtr<T>::GET);
-		}
+	friend RefCountPtr<T> Create_Get(T *t) { return RefCountPtr<T>(t, RefCountPtr<T>::GET); }
 
-		friend RefCountPtr<T> Create_Peek(T *t)
-		{
-			return RefCountPtr<T>(t, RefCountPtr<T>::PEEK);
-		}
+	friend RefCountPtr<T> Create_Peek(T *t) { return RefCountPtr<T>(t, RefCountPtr<T>::PEEK); }
 
-		RefCountPtr(void) 
-			: Referent(0)
-		{
-		}
+	RefCountPtr(void) : Referent(0) {}
 
 #ifdef ALLOW_AUTOMATIC_REF_COUNT_PTR_CONSTRUCTION
-		RefCountPtr(T * referent)
-			: Referent(referent)
-		{
-			if (Referent) {
-				Referent->Add_Ref();
-			}
+	RefCountPtr(T *referent) : Referent(referent) {
+		if (Referent) {
+			Referent->Add_Ref();
 		}
+	}
 #else
-		// This allows construction of the smart pointer from 0 (null)
-		// Without allows unwanted conversions from T * (and related types, including void *)
-		RefCountPtr(DummyPtrType * dummy)
-			: Referent(0)
-		{
-			G_ASSERT(dummy == 0);
-		}
+	// This allows construction of the smart pointer from 0 (null)
+	// Without allows unwanted conversions from T * (and related types, including void *)
+	RefCountPtr(DummyPtrType *dummy) : Referent(0) { G_ASSERT(dummy == 0); }
 #endif
 
-		template <class RHS>
-			RefCountPtr(const RefCountPtr<RHS> & rhs)
-			: Referent(rhs.Peek())
-		{
-			if (Referent) {
-				Referent->Add_Ref();
-			}
+	template <class RHS> RefCountPtr(const RefCountPtr<RHS> &rhs) : Referent(rhs.Peek()) {
+		if (Referent) {
+			Referent->Add_Ref();
 		}
+	}
 
-		RefCountPtr(const RefCountPtr & rhs)
-			: Referent(rhs.Referent)
-		{
-			if (Referent) {
-				Referent->Add_Ref();
-			}
+	RefCountPtr(const RefCountPtr &rhs) : Referent(rhs.Referent) {
+		if (Referent) {
+			Referent->Add_Ref();
 		}
+	}
 
 #ifdef ALLOW_AUTOMATIC_REF_COUNT_PTR_CONSTRUCTION
-		const RefCountPtr<T> & operator =(T * object)
-		{
-			if (Referent == object) {
-				return *this;
-			}
-
-			Referent = object;
-
-			if (Referent) {
-				Referent->Add_Ref();
-			}
-
+	const RefCountPtr<T> &operator=(T *object) {
+		if (Referent == object) {
 			return *this;
 		}
-#else
-		const RefCountPtr<T> & operator =(DummyPtrType * dummy_ptr)
-		{
-			if (Referent) {
-				Referent->Release_Ref();
-			}
 
+		Referent = object;
+
+		if (Referent) {
+			Referent->Add_Ref();
+		}
+
+		return *this;
+	}
+#else
+	const RefCountPtr<T> &operator=(DummyPtrType *dummy_ptr) {
+		if (Referent) {
+			Referent->Release_Ref();
+		}
+
+		Referent = 0;
+
+		return *this;
+	}
+#endif
+
+	template <class RHS> const RefCountPtr<T> &operator=(const RefCountPtr<RHS> &rhs) {
+		if (rhs.Peek()) {
+			rhs.Peek()->Add_Ref();
+		}
+
+		if (Referent) {
+			Referent->Release_Ref();
+		}
+
+		Referent = rhs.Peek();
+
+		return *this;
+	}
+
+	const RefCountPtr<T> &operator=(const RefCountPtr &rhs) {
+		if (rhs.Referent) {
+			rhs.Referent->Add_Ref();
+		}
+
+		if (Referent) {
+			Referent->Release_Ref();
+		}
+
+		Referent = rhs.Referent;
+		return *this;
+	}
+
+	~RefCountPtr(void) {
+		if (Referent) {
+			Referent->Release_Ref();
 			Referent = 0;
-
-			return *this;
 		}
-#endif
+	}
 
-		template <class RHS>
-		const RefCountPtr<T> & operator =(const RefCountPtr<RHS> & rhs)
-		{
-			if (rhs.Peek()) {
-				rhs.Peek()->Add_Ref();
-			}
+	// This strange conversion allows us to test pointers against null (0) without
+	// providing an unsafe conversion to T * (very unsafe) or bool (which can be silently
+	//  converted to int, defeating type-safety in some cases).
+	//  The compiler will convert our smart pointer to this raw pointer of an undefined
+	// class automatically when trying to compare against 0 or with !my_ptr
+	// However, the compiler will not perform conversions from DummyPtrType *
+	//  (except to void *, which is probably acceptable).
+	operator const DummyPtrType *(void) const { return (DummyPtrType *)(Referent); }
 
-			if (Referent) {
-				Referent->Release_Ref();
-			}
-
-			Referent = rhs.Peek();
-
-			return *this;
+	void Clear(void) {
+		if (Referent) {
+			Referent->Release_Ref();
 		}
+	}
 
-		const RefCountPtr<T> & operator =(const RefCountPtr & rhs)
-		{
-			if (rhs.Referent) {
-				rhs.Referent->Add_Ref();
-			}
+	T *operator->(void) const { return Referent; }
 
+	T &operator*(void) const {
+		G_ASSERT(0 != Referent);
+		return *Referent;
+	}
 
-			if (Referent) {
-				Referent->Release_Ref();
-			}
+	// Note : This should typiccally only be used when mixing code that uses RefCountPtr and
+	//   manually managed ref counts on raw points.
+	// Code that consistently uses RefCountPtr should never get ahold of a raw T*
+	T *Peek(void) const { return Referent; }
 
-			Referent = rhs.Referent;
-			return *this;
+  private:
+	enum ReferenceHandling { GET, PEEK };
+
+	RefCountPtr(T *referent, ReferenceHandling reference_handling) : Referent(referent) {
+		if (reference_handling == PEEK && 0 != referent) {
+			referent->Add_Ref();
 		}
+	}
 
-		~RefCountPtr(void)
-		{
-			if (Referent) {
-				Referent->Release_Ref();
-				Referent = 0;
-			}
-		}
-
-		// This strange conversion allows us to test pointers against null (0) without
-		// providing an unsafe conversion to T * (very unsafe) or bool (which can be silently
-		//  converted to int, defeating type-safety in some cases).
-		//  The compiler will convert our smart pointer to this raw pointer of an undefined
-		// class automatically when trying to compare against 0 or with !my_ptr
-		// However, the compiler will not perform conversions from DummyPtrType *
-		//  (except to void *, which is probably acceptable).
-		operator const DummyPtrType *(void) const
-		{
-			return (DummyPtrType *)(Referent);
-		}
-
-		void Clear(void)
-		{
-			if (Referent) {
-				Referent->Release_Ref();
-			}
-		}
-
-		T * operator ->(void) const
-		{
-			return Referent;
-		}
-
-		T & operator *(void) const
-		{
-			G_ASSERT(0 != Referent);
-			return *Referent;
-		}
-
-		// Note : This should typiccally only be used when mixing code that uses RefCountPtr and 
-		//   manually managed ref counts on raw points.
-		// Code that consistently uses RefCountPtr should never get ahold of a raw T*
-		T * Peek(void) const
-		{
-			return Referent;
-		}
-
-	private:
-		enum ReferenceHandling { GET, PEEK};
-
-		RefCountPtr(T * referent, ReferenceHandling reference_handling)
-			: Referent(referent)
-		{
-			if (reference_handling == PEEK && 0 != referent) {
-				referent->Add_Ref();
-			}
-		}
-
-		T * Referent;
+	T *Referent;
 };
 
 // LHS and RHS should be related or compiler will barf
 // this follows same rules as LHS * lhs; RHS * rhs; lhs==rhs;
-template <class LHS, class RHS>
-bool operator ==(const RefCountPtr<LHS> & lhs, const RefCountPtr<RHS> & rhs)
-{
+template <class LHS, class RHS> bool operator==(const RefCountPtr<LHS> &lhs, const RefCountPtr<RHS> &rhs) {
 	return lhs.Peek() == rhs.Peek();
 }
 
-template <class LHS, class RHS>
-bool operator <(const RefCountPtr<LHS> & lhs, const RefCountPtr<RHS> & rhs)
-{
+template <class LHS, class RHS> bool operator<(const RefCountPtr<LHS> &lhs, const RefCountPtr<RHS> &rhs) {
 	return lhs.Peek() < rhs.Peek();
 }
 
 // This comparison allows us to test our smart pointer against 0 using
 //  0 == my_ptr
-template <class RHS>
-bool operator ==(DummyPtrType * dummy, const RefCountPtr<RHS> & rhs)
-{
-	FAIL_IF(0 != dummy) {
-		return false;
-	}
+template <class RHS> bool operator==(DummyPtrType *dummy, const RefCountPtr<RHS> &rhs) {
+	FAIL_IF(0 != dummy) { return false; }
 
 	return 0 == rhs.Peek();
 }
 
 // This comparison allows us to test our smart pointer against 0 using
 //  0 != my_ptr
-template <class RHS>
-bool operator !=(DummyPtrType * dummy, const RefCountPtr<RHS> & rhs)
-{
-	FAIL_IF(0 != dummy) {
-		return true;
-	}
+template <class RHS> bool operator!=(DummyPtrType *dummy, const RefCountPtr<RHS> &rhs) {
+	FAIL_IF(0 != dummy) { return true; }
 
-	return 0 != rhs.Peek();	
+	return 0 != rhs.Peek();
 }
-
 
 #endif

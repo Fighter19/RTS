@@ -16,30 +16,29 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Library/B64STRAW.CPP                              $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Library/B64STRAW.CPP                              $*
+ *                                                                                             *
  *                      $Author:: Greg_h                                                      $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 7/22/97 11:37a                                              $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 1                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  *   Base64Straw::Get -- Fetch data and convert it to/from base 64 encoding.                   *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"always.h"
-#include	"b64straw.h"
-#include	"base64.h"
-#include	<string.h>
-
+#include "always.h"
+#include "b64straw.h"
+#include "base64.h"
+#include <string.h>
 
 /***********************************************************************************************
  * Base64Straw::Get -- Fetch data and convert it to/from base 64 encoding.                     *
@@ -60,13 +59,12 @@
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-int Base64Straw::Get(void * source, int slen)
-{
+int Base64Straw::Get(void *source, int slen) {
 	int total = 0;
 
-	char * from;
+	char *from;
 	int fromsize;
-	char * to;
+	char *to;
 	int tosize;
 
 	if (Control == ENCODE) {
@@ -92,13 +90,14 @@ int Base64Straw::Get(void * source, int slen)
 		*/
 		if (Counter > 0) {
 			int len = (slen < Counter) ? slen : Counter;
-			memmove(source, &to[tosize-Counter], len);
+			memmove(source, &to[tosize - Counter], len);
 			Counter -= len;
 			slen -= len;
 			source = ((char *)source) + len;
 			total += len;
 		}
-		if (slen == 0) break;
+		if (slen == 0)
+			break;
 
 		/*
 		**	More bytes are needed, so fetch and process another base 64 block.
@@ -109,8 +108,9 @@ int Base64Straw::Get(void * source, int slen)
 		} else {
 			Counter = Base64_Decode(from, incount, to, tosize);
 		}
-		if (Counter == 0) break;
+		if (Counter == 0)
+			break;
 	}
 
-	return(total);
+	return (total);
 }

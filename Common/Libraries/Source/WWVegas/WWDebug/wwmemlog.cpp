@@ -41,7 +41,7 @@
 
 #include "wwmemlog.h"
 #include "wwdebug.h"
-#include "Vector.H"
+#include "vector.h"
 #ifdef _UNIX
 #include <pthread.h>
 #else

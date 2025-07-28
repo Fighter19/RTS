@@ -44,10 +44,10 @@
 #define ASSETMGR_H
 
 #include "always.h"
-#include "Vector.H"
+#include "vector.h"
 #include "htreemgr.h"
 #include "hanimmgr.h"
-#include "SLIST.H"
+#include "slist.h"
 #include "texture.h"
 #include "hashtemplate.h"
 #include "simplevec.h"

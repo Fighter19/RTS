@@ -104,7 +104,7 @@
 #include "dazzle.h"
 #include "metalmap.h"
 #include "w3dexclusionlist.h"
-#include <INI.H>
+#include <ini.h>
 #include <stdio.h>
 #ifdef _WIN32
 #include "dx8wrapper.h"

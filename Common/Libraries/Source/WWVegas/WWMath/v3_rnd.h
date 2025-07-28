@@ -42,7 +42,7 @@
 
 #include "always.h"
 #include "vector3.h"
-#include "RANDOM.H"
+#include "random.h"
 #include <limits.h>
 
 /*

@@ -16,21 +16,21 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/wwlib/rndstrng.h                             $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/wwlib/rndstrng.h                             $*
+ *                                                                                             *
  *                      $Author:: Byon_g                                                      $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 11/03/99 2:26p                                              $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 2                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
+ *---------------------------------------------------------------------------------------------*
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #if _MSC_VER >= 1000
@@ -40,31 +40,30 @@
 #ifndef RNDSTRNG_H
 #define RNDSTRNG_H
 
-#include	"Vector.H"
-#include	"RANDOM.H"
+#include "vector.h"
+#include "random.h"
 
-class	StringClass;
+class StringClass;
 
 /*
 **
 */
-class	RandomStringClass {
+class RandomStringClass {
 
-public:
-	RandomStringClass( void );
-	~RandomStringClass( void );
+  public:
+	RandomStringClass(void);
+	~RandomStringClass(void);
 
-	// Add a string to the class.  
+	// Add a string to the class.
 	// (future version may have a weight parameter)
-	void Add_String( const char * str );
+	void Add_String(const char *str);
 
 	// Get a random string from the class
-	const char * Get_String( void );
+	const char *Get_String(void);
 
-private:
-	DynamicVectorClass<StringClass*>	Strings;
-	Random2Class							Randomizer;
+  private:
+	DynamicVectorClass<StringClass *> Strings;
+	Random2Class Randomizer;
 };
 
 #endif // RNDSTRNG_H
-

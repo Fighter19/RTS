@@ -28,7 +28,7 @@
 
 #include <time.h>
 
-#include "RAWFILE.H"
+#include "rawfile.h"
 #include "wwdebug.h"
 #include "win.h"
 #include "mmsys.h"
@@ -323,4 +323,4 @@ int cMiscUtil::Get_Exe_Key(void)
 }
 */
 
-//#include "CRC.H"
+//#include "crc.h"

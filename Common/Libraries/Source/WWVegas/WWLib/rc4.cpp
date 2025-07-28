@@ -24,24 +24,24 @@
 #include <memory.h>
 
 static unsigned char RC4_Temp_Byte;
-#define RC4_SWAP_BYTE(a,b) RC4_Temp_Byte=a; a=b; b=RC4_Temp_Byte
+#define RC4_SWAP_BYTE(a, b) \
+	RC4_Temp_Byte = a;      \
+	a = b;                  \
+	b = RC4_Temp_Byte
 
 //
 // Don't rely on this to zero the key
 //
-RC4Class::RC4Class()
-{
+RC4Class::RC4Class() {
 	memset(Key.State, 0, 256);
-	Key.X=0;
-	Key.Y=0;
+	Key.X = 0;
+	Key.Y = 0;
 }
-
 
 //
 // Setup the encryption key.  This must be called before you encrypt/decrypt!
 //
-void RC4Class::Prepare_Key(const unsigned char *key_data_ptr, int key_data_len)
-{
+void RC4Class::Prepare_Key(const unsigned char *key_data_ptr, int key_data_len) {
 	unsigned char index1;
 	unsigned char index2;
 	unsigned char *state;
@@ -61,14 +61,12 @@ void RC4Class::Prepare_Key(const unsigned char *key_data_ptr, int key_data_len)
 	}
 }
 
-
 //
 // RC4 in standard mode.
 //
 // This will XOR the buffer with the RC4 stream (like a one time pad).
 //
-void RC4Class::RC4(unsigned char *buffer_ptr, int buffer_len)
-{
+void RC4Class::RC4(unsigned char *buffer_ptr, int buffer_len) {
 	unsigned char x;
 	unsigned char y;
 	unsigned char *state;

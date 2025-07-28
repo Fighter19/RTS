@@ -1,5 +1,9 @@
-BasedOnStyle: Microsoft
+BasedOnStyle: LLVM
 UseTab: Always
 IndentWidth: 4
 TabWidth: 4
 SortIncludes: false
+AlignConsecutiveMacros: AcrossEmptyLinesAndComments
+AlignEscapedNewlines: Left
+AllowShortEnumsOnASingleLine: true
+ColumnLimit: 120

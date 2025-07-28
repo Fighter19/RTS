@@ -47,7 +47,7 @@
 #endif
 
 #ifndef VECTOR_H
-#include "Vector.H"
+#include "vector.h"
 #endif
 
 #ifndef VECTOR3_H

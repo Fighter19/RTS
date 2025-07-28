@@ -46,7 +46,7 @@
 #include "always.h"
 #include "pointerremap.h"
 #include "bittype.h"
-#include "SLIST.H"
+#include "slist.h"
 
 class RefCountClass;
 class SaveLoadSubSystemClass;

@@ -1,5 +1,6 @@
 /*
 **	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -17,27 +18,27 @@
 */
 
 /* $Header: /VSS_Sync/wwlib/argv.cpp 11    8/29/01 10:25p Vss_sync $ */
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Library                                                      * 
- *                                                                                             * 
- *                     $Archive:: /VSS_Sync/wwlib/argv.cpp                                    $* 
- *                                                                                             * 
- *                      $Author:: Vss_sync                                                    $* 
- *                                                                                             * 
- *                     $Modtime:: 8/29/01 10:24p                                              $* 
- *                                                                                             * 
- *                    $Revision:: 11                                                          $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
- *   CurrentPos -- Create an instance to parse argv with.                                      * 
- *   ArgvClass::Free -- Release data allocated.                                                * 
- *   ArgvClass::Load_File -- Load args from a file.                                            * 
- *   *ArgvClass::Find_Value -- Find value of argument given prefix.                            * 
- *   *ArgvClass::Get_Cur_Value -- Get value of current argugment.                              * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Library                                                      *
+ *                                                                                             *
+ *                     $Archive:: /VSS_Sync/wwlib/argv.cpp                                    $*
+ *                                                                                             *
+ *                      $Author:: Vss_sync                                                    $*
+ *                                                                                             *
+ *                     $Modtime:: 8/29/01 10:24p                                              $*
+ *                                                                                             *
+ *                    $Revision:: 11                                                          $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
+ *   CurrentPos -- Create an instance to parse argv with.                                      *
+ *   ArgvClass::Free -- Release data allocated.                                                *
+ *   ArgvClass::Load_File -- Load args from a file.                                            *
+ *   *ArgvClass::Find_Value -- Find value of argument given prefix.                            *
+ *   *ArgvClass::Get_Cur_Value -- Get value of current argugment.                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #include "argv.h"
 
@@ -47,49 +48,44 @@
 #include <stdlib.h>
 #include <string.h>
 #include "ffactory.h"
-#include "RAWFILE.H"
-int   	 ArgvClass::Argc = 0;
-char 		*ArgvClass::Argv[MAX_ARGC];
+#include "rawfile.h"
+int ArgvClass::Argc = 0;
+char *ArgvClass::Argv[MAX_ARGC];
 
-/*********************************************************************************************** 
- * CurrentPos -- Create an instance to parse argv with.                                        * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
+/***********************************************************************************************
+ * CurrentPos -- Create an instance to parse argv with.                                        *
+ *                                                                                             *
+ * INPUT:                                                                                      *
  *    	bool case_sensitive - Do you want to perform a case sensitive search (stricmp)?		  *
  *			bool exact_size     - Do you want string of same lenght (strncmp) ?						  *
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/18/1999 SKB : Created.                                                                 * 
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/18/1999 SKB : Created.                                                                 *
  *=============================================================================================*/
-ArgvClass::ArgvClass(bool case_sensitive, bool exact_size):
-	Flags(0),
-	LastArg(0),
-	CurrentPos(-1)
-{
+ArgvClass::ArgvClass(bool case_sensitive, bool exact_size) : Flags(0), LastArg(0), CurrentPos(-1) {
 	Case_Sensitive(case_sensitive);
 	Exact_Size(exact_size);
 }
 
-/*********************************************************************************************** 
- * *ArgvClass::Find_Again -- Search for a string given the flags.                              * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *      const char *arg - String to search for. If NULL, LastArg will be used.                 * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *      const char *string found (null if not found)														  *	
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/17/1999 SKB : Created.                                                                 * 
+/***********************************************************************************************
+ * *ArgvClass::Find_Again -- Search for a string given the flags.                              *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *      const char *arg - String to search for. If NULL, LastArg will be used.                 *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *      const char *string found (null if not found)														  *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/17/1999 SKB : Created.                                                                 *
  *=============================================================================================*/
-const char *ArgvClass::Find_Again(const char *arg)
-{						
+const char *ArgvClass::Find_Again(const char *arg) {
 	if (arg) {
 		LastArg = arg;
 	} else {
@@ -99,7 +95,7 @@ const char *ArgvClass::Find_Again(const char *arg)
 	// Make sure user has given us something to work with here.
 	assert(LastArg);
 
-	CurrentPos++;							  
+	CurrentPos++;
 	if (CurrentPos < Argc) {
 		if (Is_Case_Sensitive()) {
 			if (Is_Exact_Size()) {
@@ -111,7 +107,7 @@ const char *ArgvClass::Find_Again(const char *arg)
 				}
 			} else {
 				// Case Sensitive, Match first strlen(arg).
-				int len = strlen(arg);			   
+				int len = strlen(arg);
 				for (; CurrentPos < Argc; CurrentPos++) {
 					if (!strncmp(arg, Argv[CurrentPos], len)) {
 						return Argv[CurrentPos];
@@ -140,29 +136,28 @@ const char *ArgvClass::Find_Again(const char *arg)
 	return NULL;
 }
 
-/*********************************************************************************************** 
- * ArgvClass::Init -- Setup the command line.                                                  * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
+/***********************************************************************************************
+ * ArgvClass::Init -- Setup the command line.                                                  *
+ *                                                                                             *
+ * INPUT:                                                                                      *
  *			LPSTR lpCmdLine - A string of white space seperated strings.  Quotes force spaces to  *
- *                         be ignored.                                                         * 
+ *                         be ignored.                                                         *
  *			char *fileprefix - A prefix on an arguement telling system to load postfix file name  *
- *                          as command line params.                                            * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *      This may be called multible times with different strings.                              * 
- *      Once Argc reaches MAX_ARGC, no more will be added.                                     * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/17/1999 SKB : Created.                                                                 * 
- *   07/15/2001 SKB : Put file arguements in the correct order they were included.             * 
+ *                          as command line params.                                            *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *      This may be called multible times with different strings.                              *
+ *      Once Argc reaches MAX_ARGC, no more will be added.                                     *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/17/1999 SKB : Created.                                                                 *
+ *   07/15/2001 SKB : Put file arguements in the correct order they were included.             *
  *=============================================================================================*/
-int ArgvClass::Init(char *lpCmdLine, const char *fileprefix)
-{
+int ArgvClass::Init(char *lpCmdLine, const char *fileprefix) {
 	// Get pointer to command line.
-   char	*ptr = lpCmdLine; 
+	char *ptr = lpCmdLine;
 	if (!ptr || !*ptr) {
 		return 0;
 	}
@@ -172,9 +167,9 @@ int ArgvClass::Init(char *lpCmdLine, const char *fileprefix)
 	// Save original Argc for return.
 	int origargc = Argc;
 
-	while (*ptr) {	
-		char  *eos;
-		char  save;
+	while (*ptr) {
+		char *eos;
+		char save;
 
 		// Keep anything within quotes as one string.
 		if (*ptr == '"') {
@@ -218,7 +213,8 @@ int ArgvClass::Init(char *lpCmdLine, const char *fileprefix)
 		}
 
 		// If save is null, then we are at the end and we can bail out.
-		if (!save) break;
+		if (!save)
+			break;
 
 		// resore whitespace.
 		*eos = save;
@@ -226,27 +222,26 @@ int ArgvClass::Init(char *lpCmdLine, const char *fileprefix)
 	}
 
 	// Return number of params read in.
-	return(Argc - origargc);
+	return (Argc - origargc);
 }
 
-/*********************************************************************************************** 
- * ArgvClass::Load_File -- Load args from a file.                                              * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *     	const char *fname - file to load.                                                     * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/18/1999 SKB : Created.                                                                 * 
+/***********************************************************************************************
+ * ArgvClass::Load_File -- Load args from a file.                                              *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *     	const char *fname - file to load.                                                     *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/18/1999 SKB : Created.                                                                 *
  *=============================================================================================*/
-bool ArgvClass::Load_File(const char *fname)
-{
+bool ArgvClass::Load_File(const char *fname) {
 	FILE *fp = fopen(fname, "r");
 
-	if (fp)  {							
+	if (fp) {
 		while (Argc < MAX_ARGC) {
 			const int maxstrlen = 255;
 			char string[maxstrlen + 1];
@@ -257,12 +252,12 @@ bool ArgvClass::Load_File(const char *fname)
 			}
 
 			// Check for comments.
-			if ((*string != '#') && (*string != ';'))  {
+			if ((*string != '#') && (*string != ';')) {
 				// Make sure null terminated.
 				string[maxstrlen - 1] = '\0';
 
 				char *ptr = string + (strlen(string) - 1);
-				while (*ptr <= ' ')  {
+				while (*ptr <= ' ') {
 					*ptr = 0;
 
 					// Is it just a blank line?
@@ -280,87 +275,84 @@ bool ArgvClass::Load_File(const char *fname)
 			}
 		}
 		fclose(fp);
-		return(true);
-	}				  
-	return(false);
-}	
+		return (true);
+	}
+	return (false);
+}
 
-/*********************************************************************************************** 
- * ArgvClass::Free -- Release data allocated.                                                  * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/18/1999 SKB : Created.                                                                 * 
+/***********************************************************************************************
+ * ArgvClass::Free -- Release data allocated.                                                  *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/18/1999 SKB : Created.                                                                 *
  *=============================================================================================*/
-void ArgvClass::Free()
-{
+void ArgvClass::Free() {
 	for (int lp = 0; lp < Argc; lp++) {
 		free(Argv[lp]);
 		Argv[lp] = 0;
 	}
 	Argc = -1;
 }
-				  
 
-/*********************************************************************************************** 
- * *ArgvClass::Find_Value -- Find value of argument given prefix.                              * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   08/23/1999 SKB : Created.                                                                 * 
+/***********************************************************************************************
+ * *ArgvClass::Find_Value -- Find value of argument given prefix.                              *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   08/23/1999 SKB : Created.                                                                 *
  *=============================================================================================*/
-const char *ArgvClass::Find_Value(const char *arg)
-{			
+const char *ArgvClass::Find_Value(const char *arg) {
 	if (arg && *arg) {
 		const char *ptr = Find(arg);
 		if (ptr) {
-			return(Get_Cur_Value(strlen(arg)));
-		}		  
+			return (Get_Cur_Value(strlen(arg)));
+		}
 	}
-	return(NULL);
-}	
-		
-/*********************************************************************************************** 
- * *ArgvClass::Get_Cur_Value -- Get value of current argugment.                                * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   08/23/1999 SKB : Created.                                                                 * 
- *   06/25/2001 SKB : add flag user can check to see if value was extracted from next location.* 
+	return (NULL);
+}
+
+/***********************************************************************************************
+ * *ArgvClass::Get_Cur_Value -- Get value of current argugment.                                *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   08/23/1999 SKB : Created.                                                                 *
+ *   06/25/2001 SKB : add flag user can check to see if value was extracted from next location.*
  *=============================================================================================*/
-const char *ArgvClass::Get_Cur_Value(unsigned prefixlen, bool * val_in_next)
-{	 
-	if (val_in_next) *val_in_next = false;
+const char *ArgvClass::Get_Cur_Value(unsigned prefixlen, bool *val_in_next) {
+	if (val_in_next)
+		*val_in_next = false;
 	if (CurrentPos < 0) {
 		return NULL;
 	}
 	char *ptr = Argv[CurrentPos];
-	
+
 	if (strlen(ptr) < prefixlen) {
-		return(NULL);
-	}					  
+		return (NULL);
+	}
 
 	ptr += prefixlen;
 
 	// Look for non white space (or eol).
 	while (*ptr && !isgraph(*ptr)) {
 		ptr++;
-	}					
+	}
 	if (*ptr) {
 		return ptr;
 	}
@@ -373,129 +365,105 @@ const char *ArgvClass::Get_Cur_Value(unsigned prefixlen, bool * val_in_next)
 
 	while (*ptr) {
 		if (isgraph(*ptr)) {
-			if (val_in_next) *val_in_next = true;
+			if (val_in_next)
+				*val_in_next = true;
 			return ptr;
 		}
 		ptr++;
-	}			  
+	}
 	return (NULL);
-}	
+}
 
-
-
-
-/*********************************************************************************************** 
- * void ArgvClass::Update_Value -- Add/Replace a value                                         * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
+/***********************************************************************************************
+ * void ArgvClass::Update_Value -- Add/Replace a value                                         *
+ *                                                                                             *
+ * INPUT:                                                                                      *
  *			attrib = cmd line attrib to add/replace                                               *
  *			value = new value for attrib                                                          *
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:    Not Tested!                                                                    * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   12/13/1999 NAK : Created.                                                                 * 
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:    Not Tested!                                                                    *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   12/13/1999 NAK : Created.                                                                 *
  *=============================================================================================*/
-void ArgvClass::Update_Value(const char *attrib, const char *value)
-{
-	if ((Find_Value(attrib))!=NULL)
-	{
-		if (((CurrentPos+1) < Argc) && (Argv[CurrentPos+1][0] != '-'))  // update old value
+void ArgvClass::Update_Value(const char *attrib, const char *value) {
+	if ((Find_Value(attrib)) != NULL) {
+		if (((CurrentPos + 1) < Argc) && (Argv[CurrentPos + 1][0] != '-')) // update old value
 		{
-			free(Argv[CurrentPos+1]);
-			Argv[CurrentPos+1]=strdup(value);
-		}
-		else  // add new value
+			free(Argv[CurrentPos + 1]);
+			Argv[CurrentPos + 1] = strdup(value);
+		} else // add new value
 		{
 			// shift vals down to make room
-			memmove(&(Argv[CurrentPos+2]),&(Argv[CurrentPos+1]),sizeof(char *) * (MAX_ARGC-CurrentPos-2));
-			Argv[CurrentPos+1]=strdup(value);
+			memmove(&(Argv[CurrentPos + 2]), &(Argv[CurrentPos + 1]), sizeof(char *) * (MAX_ARGC - CurrentPos - 2));
+			Argv[CurrentPos + 1] = strdup(value);
 			Argc++;
 		}
-	}
-	else  // just add the new stuff
+	} else // just add the new stuff
 		Add_Value(attrib, value);
 }
 
-
-/*********************************************************************************************** 
- * void ArgvClass::Add_Value -- Add a value                                                    * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
+/***********************************************************************************************
+ * void ArgvClass::Add_Value -- Add a value                                                    *
+ *                                                                                             *
+ * INPUT:                                                                                      *
  *			attrib = thing to add                                                                 *
  *			value = new optional value                                                            *
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   12/13/1999 NAK : Created.                                                                 * 
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   12/13/1999 NAK : Created.                                                                 *
  *=============================================================================================*/
-void ArgvClass::Add_Value(const char *attrib, const char *value)
-{
-	if (attrib)
-	{
-		Argv[Argc]=strdup(attrib);
+void ArgvClass::Add_Value(const char *attrib, const char *value) {
+	if (attrib) {
+		Argv[Argc] = strdup(attrib);
 		Argc++;
 
-		if (value)
-		{
-			Argv[Argc]=strdup(value);
+		if (value) {
+			Argv[Argc] = strdup(value);
 			Argc++;
 		}
 	}
 }
 
-
-/*********************************************************************************************** 
- * bool ArgvClass::Remove_Value -- Remove a value                                              * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
+/***********************************************************************************************
+ * bool ArgvClass::Remove_Value -- Remove a value                                              *
+ *                                                                                             *
+ * INPUT:                                                                                      *
  *			attrib = thing to remove                                                              *
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
  *       THIS CONTAINS A POTENTIAL BUG - I don't want to fix it because it might be a desired  *
- *			behavior.  Given:																							  *
- *				Argv[0] = "-i test" "*.txt" as values in Argv, 															  *
- *       calling Remove_Value("-i") will remove *.txt	as well.											  *
+ *			behavior.  Given: * Argv[0] = "-i test" "*.txt" as values in Argv,
+ ** calling Remove_Value("-i") will remove *.txt	as well.											  *
  *																															  *
- * HISTORY:                                                                                    * 
- *   12/13/1999 NAK : Created.                                                                 * 
- *   06/25/2001 SKB : WARNINGS message                                                         * 
+ * HISTORY:                                                                                    *
+ *   12/13/1999 NAK : Created.                                                                 *
+ *   06/25/2001 SKB : WARNINGS message                                                         *
  *=============================================================================================*/
-bool ArgvClass::Remove_Value(const char *attrib)
-{
-	int        removeCount=1;
+bool ArgvClass::Remove_Value(const char *attrib) {
+	int removeCount = 1;
 
-	if ((Find_Value(attrib))!=NULL)
-	{
+	if ((Find_Value(attrib)) != NULL) {
 		free(Argv[CurrentPos]);
-		if (((CurrentPos+1) < Argc)&&(Argv[CurrentPos+1][0]!='-'))  // value for this arg
+		if (((CurrentPos + 1) < Argc) && (Argv[CurrentPos + 1][0] != '-')) // value for this arg
 		{
-			free(Argv[CurrentPos+1]);
-			removeCount=2;
+			free(Argv[CurrentPos + 1]);
+			removeCount = 2;
 		}
-		memmove(&(Argv[CurrentPos]),&(Argv[CurrentPos+removeCount]),sizeof(char *) * (MAX_ARGC-CurrentPos-removeCount));
+		memmove(&(Argv[CurrentPos]), &(Argv[CurrentPos + removeCount]),
+				sizeof(char *) * (MAX_ARGC - CurrentPos - removeCount));
 
-		Argc-=removeCount;
+		Argc -= removeCount;
 
-		return(true);
+		return (true);
 	}
-	return(false);
+	return (false);
 }
-
-
-
-
-
-
-
-
-
-
-

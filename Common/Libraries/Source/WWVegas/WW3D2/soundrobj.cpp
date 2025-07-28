@@ -40,7 +40,7 @@
 #include "sound3d.h"
 #include "wwaudio.h"
 #include "ffactory.h"
-#include "WWFILE.H"
+#include "wwfile.h"
 #include "chunkio.h"
 #include "scene.h"
 
