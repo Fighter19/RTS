@@ -1,4 +1,4 @@
-add_library(g_wwsaveload STATIC
+add_library(c_wwsaveload STATIC
     definition.cpp
     definition.h
     definitionclassids.h
@@ -36,7 +36,7 @@ add_library(g_wwsaveload STATIC
 )
 
 ### Target configurations
-set_target_properties(g_wwsaveload PROPERTIES OUTPUT_NAME WWSaveLoad)
-target_link_libraries(g_wwsaveload PUBLIC g_wwlib g_wwmath_include g_libraries_include)
-target_include_directories(g_wwsaveload PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
-add_library(Gen::WWSaveLoad ALIAS g_wwsaveload)
+set_target_properties(c_wwsaveload PROPERTIES OUTPUT_NAME WWSaveLoad)
+target_link_libraries(c_wwsaveload PUBLIC c_wwlib c_wwmath_include g_libraries_include)
+target_include_directories(c_wwsaveload PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
+add_library(Gen::WWSaveLoad ALIAS c_wwsaveload)

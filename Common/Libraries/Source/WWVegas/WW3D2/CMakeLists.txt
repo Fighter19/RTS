@@ -1,6 +1,6 @@
-add_library(g_ww3d2 STATIC)
+add_library(c_ww3d2 STATIC)
 
-target_sources(g_ww3d2 PRIVATE
+target_sources(c_ww3d2 PRIVATE
     aabtree.cpp
     aabtreebuilder.cpp
     agg_def.cpp
@@ -200,7 +200,7 @@ target_sources(g_ww3d2 PRIVATE
 )
 
 if(WIN32)
-    target_sources(g_ww3d2 PRIVATE
+    target_sources(c_ww3d2 PRIVATE
         dx8caps.cpp
         dx8fvf.cpp
         dx8indexbuffer.cpp
@@ -226,11 +226,11 @@ if(WIN32)
         sortingrenderer.h
     )
 
-    target_link_libraries(g_ww3d2 PUBLIC d3d8 d3d8lib d3dx8)
+    target_link_libraries(c_ww3d2 PUBLIC d3d8 d3d8lib d3dx8)
 endif()
 
 ### Target configurations
-set_target_properties(g_ww3d2 PROPERTIES OUTPUT_NAME WW3D2)
-target_link_libraries(g_ww3d2 PUBLIC g_wwlib g_wwmath g_wwmath)
-target_include_directories(g_ww3d2 PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
-add_library(Gen::WW3D2 ALIAS g_ww3d2)
+set_target_properties(c_ww3d2 PROPERTIES OUTPUT_NAME WW3D2)
+target_link_libraries(c_ww3d2 PUBLIC c_wwlib c_wwmath c_wwmath)
+target_include_directories(c_ww3d2 PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
+add_library(Gen::WW3D2 ALIAS c_ww3d2)

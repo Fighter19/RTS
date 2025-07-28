@@ -1068,7 +1068,7 @@ target_precompile_headers(g_gameengine PRIVATE Include/Precompiled/PreRTS.h)
 
 ### Target configuration
 set_target_properties(g_gameengine PROPERTIES OUTPUT_NAME GameEngine)
-target_link_libraries(g_gameengine PUBLIC g_wwvegas gamespy::gamespy c_compression g_browserdispatch g_browserengine)
+target_link_libraries(g_gameengine PUBLIC c_wwvegas gamespy::gamespy c_compression g_browserdispatch g_browserengine)
 target_include_directories(g_gameengine PUBLIC 
     "${CMAKE_CURRENT_SOURCE_DIR}/Include"
     "${CMAKE_CURRENT_SOURCE_DIR}/Include/Precompiled")

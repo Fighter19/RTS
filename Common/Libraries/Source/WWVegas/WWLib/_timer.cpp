@@ -1,5 +1,6 @@
 /*
 **	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -22,25 +23,30 @@
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
  *                                                                                             *
- *                     $Archive:: /Commando/Code/Library/_Convert.cpp                         $*
+ *                     $Archive:: /Commando/Library/_Timer.cpp                                $*
  *                                                                                             *
- *                      $Author:: Byon_g                                                      $*
+ *                      $Author:: Greg_h                                                      $*
  *                                                                                             *
- *                     $Modtime:: 2/10/98 4:20p                                               $*
+ *                     $Modtime:: 7/22/97 11:37a                                              $*
  *                                                                                             *
- *                    $Revision:: 2                                                           $*
+ *                    $Revision:: 1                                                           $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include	"always.h"
-#include	"_convert.h"
+#include	"_timer.h"
 
-ConvertClass * VoxelDrawer = NULL;
-ConvertClass * UnitDrawer = NULL;
-ConvertClass * TerrainDrawer = NULL;
-ConvertClass * AnimDrawer = NULL;
-ConvertClass * NormalDrawer = NULL;
-ConvertClass * IsometricDrawer = NULL;
+
+/***************************************************************************
+**	Game frame timer (this is synced between processes).
+*/
+CDTimerClass<SystemTimerClass> FrameTimer;
+
+/***************************************************************************
+** Tick Count global timer object.
+*/
+TTimerClass<SystemTimerClass> TickCount = 0;
+
 

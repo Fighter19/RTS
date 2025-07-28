@@ -1,4 +1,4 @@
-add_library(g_wwlib STATIC
+add_library(c_wwlib STATIC
     always.h
     argv.cpp
     argv.h
@@ -144,7 +144,7 @@ add_library(g_wwlib STATIC
 )
 
 ### Target configuration
-set_target_properties(g_wwlib PROPERTIES OUTPUT_NAME WWLib)
-target_link_libraries(g_wwlib PUBLIC g_wwdebug_include g_libraries_include)
-target_include_directories(g_wwlib PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
-add_library(Gen::WWLib ALIAS g_wwlib)
+set_target_properties(c_wwlib PROPERTIES OUTPUT_NAME WWLib)
+target_link_libraries(c_wwlib PUBLIC c_wwdebug_include g_libraries_include)
+target_include_directories(c_wwlib PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
+add_library(Common::WWLib ALIAS c_wwlib)

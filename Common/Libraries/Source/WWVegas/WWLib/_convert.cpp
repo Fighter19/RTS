@@ -1,5 +1,6 @@
 /*
 **	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -22,28 +23,25 @@
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
  *                                                                                             *
- *                     $Archive:: /Commando/Library/_Convert.h                                $*
+ *                     $Archive:: /Commando/Code/Library/_Convert.cpp                         $*
  *                                                                                             *
- *                      $Author:: Greg_h                                                      $*
+ *                      $Author:: Byon_g                                                      $*
  *                                                                                             *
- *                     $Modtime:: 7/22/97 11:37a                                              $*
+ *                     $Modtime:: 2/10/98 4:20p                                               $*
  *                                                                                             *
- *                    $Revision:: 1                                                           $*
+ *                    $Revision:: 2                                                           $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef _CONVERT_H
-#define _CONVERT_H
+#include	"always.h"
+#include	"_convert.h"
 
-#include	"Convert.h"
+ConvertClass * VoxelDrawer = NULL;
+ConvertClass * UnitDrawer = NULL;
+ConvertClass * TerrainDrawer = NULL;
+ConvertClass * AnimDrawer = NULL;
+ConvertClass * NormalDrawer = NULL;
+ConvertClass * IsometricDrawer = NULL;
 
-extern ConvertClass * VoxelDrawer;
-extern ConvertClass * UnitDrawer;
-extern ConvertClass * TerrainDrawer;
-extern ConvertClass * AnimDrawer;
-extern ConvertClass * NormalDrawer;
-extern ConvertClass * IsometricDrawer;
-
-#endif
