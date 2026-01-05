@@ -36,7 +36,7 @@ static void drawFramerateBar(void);
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #include <stdlib.h>
 #include <windows.h>
-#include <io.h>
+//#include <io.h>
 #include <time.h>
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -58,6 +58,7 @@ static void drawFramerateBar(void);
 #include "GameClient/GraphDraw.h"
 #include "GameClient/Line2D.h"
 #include "GameClient/Mouse.h"
+#include "GameClient/Keyboard.h"
 #include "GameClient/GlobalLanguage.h"
 #include "GameClient/Water.h"
 
@@ -79,25 +80,25 @@ static void drawFramerateBar(void);
 #include "W3DDevice/GameClient/W3DDebugDisplay.h"
 #include "W3DDevice/GameClient/W3DProjectedShadow.h"
 #include "W3DDevice/GameClient/W3DShroud.h"
-#include "WWMath/WWMath.h"
-#include "WWLib/Registry.h"
-#include "WW3D2/WW3D.h"
-#include "WW3D2/PredLod.h"
-#include "WW3D2/Part_Emt.h"
-#include "WW3D2/Part_Ldr.h"
-#include "WW3D2/DX8Caps.h"
-#include "WW3D2/WW3DFormat.h"
+#include "WWMath/wwmath.h"
+#include "WWLib/registry.h"
+#include "WW3D2/ww3d.h"
+#include "WW3D2/predlod.h"
+#include "WW3D2/part_emt.h"
+#include "WW3D2/part_ldr.h"
+#include "WW3D2/dx8caps.h"
+#include "WW3D2/ww3dformat.h"
 #include "WW3D2/agg_def.h"
-#include "WW3D2/Render2DSentence.h"
-#include "WW3D2/SortingRenderer.h"
-#include "WW3D2/Textureloader.h"
-#include "WW3D2/DX8WebBrowser.h"
-#include "WW3D2/Mesh.h"
-#include "WW3D2/HLOD.h"
-#include "WW3D2/Meshmatdesc.h"
-#include "WW3D2/Meshmdl.h"
+#include "WW3D2/render2dsentence.h"
+#include "WW3D2/sortingrenderer.h"
+#include "WW3D2/textureloader.h"
+#include "WW3D2/dx8webbrowser.h"
+#include "WW3D2/mesh.h"
+#include "WW3D2/hlod.h"
+#include "WW3D2/meshmatdesc.h"
+#include "WW3D2/meshmdl.h"
 #include "WW3D2/rddesc.h"
-#include "TARGA.H"
+#include "targa.h"
 #include "Lib/BaseType.h"
 
 #include "GameLogic/ScriptEngine.h"		// For TheScriptEngine - jkmcd
@@ -107,6 +108,13 @@ static void drawFramerateBar(void);
 #endif
 
 #include "WinMain.h"
+
+#ifndef _WIN32
+static bool IsIconic(HWND hWnd)
+{
+	return false;
+}
+#endif
 
 #ifdef _INTERNAL
 // for occasional debugging...
@@ -327,14 +335,22 @@ W3DAssetManager *W3DDisplay::m_assetManager = NULL;
 inline Int64 getPerformanceCounter()
 {
 	Int64 tmp;
+#ifdef _WIN32
 	QueryPerformanceCounter((LARGE_INTEGER*)&tmp);
+#else 
+	tmp = _rdtsc();
+#endif
 	return tmp;
 }
 
 inline Int64 getPerformanceCounterFrequency()
 {
 	Int64 tmp;
+#ifdef _WIN32
 	QueryPerformanceFrequency((LARGE_INTEGER*)&tmp);
+#else
+	tmp = 1000; // assume 1 MHz for non-Win32 builds
+#endif
 	return tmp;
 }
 
@@ -485,6 +501,7 @@ void W3DDisplay::setGamma(Real gamma, Real bright, Real contrast, Bool calibrate
 /*Giant hack in order to keep the game from getting stuck when alt-tabbing*/
 void Reset_D3D_Device(bool active)
 {
+#ifdef _WIN32
 	if (TheDisplay && WW3D::Is_Initted() && !TheDisplay->getWindowed())
 	{
 		if (active)
@@ -508,6 +525,7 @@ void Reset_D3D_Device(bool active)
 			WW3D::Set_Render_Device( WW3D::Get_Render_Device(),TheDisplay->getWidth(),TheDisplay->getHeight(),TheDisplay->getBitDepth(),TheDisplay->getWindowed(),true, true, false);
 		}
 	}
+#endif
 }
 
 /** Set resolution of display */
@@ -1374,7 +1392,7 @@ void W3DDisplay::gatherDebugStats( void )
 
 			unibuffer.concat( L"\nModelStates: " );
 			ModelConditionFlags mcFlags = draw->getModelConditionFlags();
-			const numEntriesPerLine = 4;
+			const int numEntriesPerLine = 4;
 			int lineCount = 0;
 
 			for( int i = 0; i < MODELCONDITION_COUNT; i++ )
@@ -1470,7 +1488,7 @@ void W3DDisplay::drawCurrentDebugDisplay( void )
 		if ( m_debugDisplay && m_debugDisplayCallback )
 		{
 			m_debugDisplay->reset();
-			m_debugDisplayCallback( m_debugDisplay, m_debugDisplayUserData );
+			m_debugDisplayCallback( m_debugDisplay, m_debugDisplayUserData, NULL );
 		}
 	}
 }  // end drawCurrentDebugDisplay
@@ -2775,6 +2793,7 @@ void W3DDisplay::setShroudLevel( Int x, Int y, CellShroudStatus setting )
 ///Utility function to dump data into a .BMP file
 static void CreateBMPFile(LPTSTR pszFile, char *image, Int width, Int height)
 { 
+#ifdef _WIN32
      HANDLE hf;                 // file handle 
     BITMAPFILEHEADER hdr;       // bitmap file-header 
     PBITMAPINFOHEADER pbih;     // bitmap info-header 
@@ -2844,6 +2863,9 @@ static void CreateBMPFile(LPTSTR pszFile, char *image, Int width, Int height)
 
     // Free memory. 
 	LocalFree( (HLOCAL) pbmi);
+#else
+#pragma message("CreateBMPFile not implemented for this platform")
+#endif
 }
 
 ///Save Screen Capture to a file

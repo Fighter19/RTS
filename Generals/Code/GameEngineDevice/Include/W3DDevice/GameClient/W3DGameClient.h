@@ -48,12 +48,15 @@
 #include "W3DDevice/GameClient/W3DGameWindowManager.h"
 #include "W3DDevice/GameClient/W3DGameFont.h"
 #include "W3DDevice/GameClient/W3DDisplayStringManager.h"
-#include "VideoDevice/Bink/BinkVideoPlayer.h"
+#ifdef _WIN32
 #include "Win32Device/GameClient/Win32DIKeyboard.h"
 #include "Win32Device/GameClient/Win32DIMouse.h"
+#endif
 #include "Win32Device/GameClient/Win32Mouse.h"
 #include "W3DDevice/GameClient/W3DMouse.h"
-
+#ifdef RTS_USE_BINK
+#include "VideoDevice/Bink/BinkVideoPlayer.h"
+#endif
 class ThingTemplate;
 
 extern Win32Mouse *TheWin32Mouse;
@@ -109,8 +112,12 @@ protected:
 
   /// Manager for display strings
 	virtual DisplayStringManager *createDisplayStringManager( void ) { return NEW W3DDisplayStringManager; }
-
+#ifdef RTS_USE_BINK
 	virtual VideoPlayerInterface *createVideoPlayer( void ) { return NEW BinkVideoPlayer; }
+#else
+	virtual VideoPlayerInterface *createVideoPlayer( void ) { return NULL; }
+#endif
+
 	/// factory for creating the TerrainVisual
 	virtual TerrainVisual *createTerrainVisual( void ) { return NEW W3DTerrainVisual; }
 
@@ -118,7 +125,11 @@ protected:
 
 };  // end class W3DGameClient
 
+#ifdef _WIN32
 inline Keyboard *W3DGameClient::createKeyboard( void ) { return NEW DirectInputKeyboard; }
+#else
+inline Keyboard *W3DGameClient::createKeyboard( void ) { return NULL; }
+#endif
 inline Mouse *W3DGameClient::createMouse( void )
 {
 	//return new DirectInputMouse;

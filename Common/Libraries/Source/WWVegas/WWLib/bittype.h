@@ -50,11 +50,13 @@ typedef signed int sint;
 typedef float float32;
 typedef double float64;
 
-typedef unsigned long DWORD;
-typedef unsigned short WORD;
-typedef unsigned char BYTE;
+#include <cstdint>
+
+typedef uint32_t DWORD;
+typedef uint16_t WORD;
+typedef uint8_t BYTE;
 typedef int BOOL;
-typedef unsigned short USHORT;
+typedef uint16_t USHORT;
 typedef const char *LPCSTR;
-typedef unsigned int UINT;
-typedef unsigned long ULONG;
+typedef uint32_t UINT;
+typedef uint32_t ULONG;

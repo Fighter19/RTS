@@ -32,8 +32,10 @@
 #include "always.h"
 #include "rendobj.h"
 #include "w3d_file.h"
+#ifdef RTS_USE_DX8
 #include "dx8vertexbuffer.h"			 
 #include "dx8indexbuffer.h"
+#endif
 #include "shader.h"
 #include "vertmaterial.h"
 #include "light.h"
@@ -257,8 +259,8 @@ protected:
 	void cleanupJbaWaterShader(void);
 
 	//Methods used for GeForce3 specific water
-	HRESULT WaterRenderObjClass::generateIndexBuffer(int sizeX, int sizeY);	///<Generate static index buufer
-	HRESULT WaterRenderObjClass::generateVertexBuffer( Int sizeX, Int sizeY, Int vertexSize, Bool doFill);///<Generate static vertex buffer
+	HRESULT generateIndexBuffer(int sizeX, int sizeY);	///<Generate static index buufer
+	HRESULT generateVertexBuffer( Int sizeX, Int sizeY, Int vertexSize, Bool doFill);///<Generate static vertex buffer
 
 	// snapshot methods for save/load
 	virtual void crc( Xfer *xfer );

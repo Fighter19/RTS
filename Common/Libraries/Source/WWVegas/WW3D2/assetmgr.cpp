@@ -106,10 +106,10 @@
 #include "w3dexclusionlist.h"
 #include <ini.h>
 #include <stdio.h>
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 #include "dx8wrapper.h"
 #include "dx8renderer.h"
-#include <D3dx8core.h>
+#include <d3dx8core.h>
 #include <windows.h>
 #endif
 #include "texture.h"

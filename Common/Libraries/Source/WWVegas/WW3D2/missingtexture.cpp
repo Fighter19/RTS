@@ -18,9 +18,9 @@
 
 #include "missingtexture.h"
 #include "texture.h"
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 #include "dx8wrapper.h"
-#include <D3dx8core.h>
+#include <d3dx8core.h>
 #endif
 
 static unsigned missing_image_width=128;

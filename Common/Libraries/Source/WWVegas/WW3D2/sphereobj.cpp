@@ -81,7 +81,7 @@
 #include "sortingrenderer.h"
 #include "visrasterizer.h"
 
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 #include "dx8wrapper.h"
 #include "dx8vertexbuffer.h"
 #include "dx8indexbuffer.h"

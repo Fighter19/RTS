@@ -86,6 +86,7 @@ inline char* strupr(char* s)
 #define _vsnprintf vsnprintf
 #define _snprintf snprintf
 #define _stricmp strcasecmp
+#define _strnicmp strncasecmp
 #define _strdup strdup
 #define stricmp strcasecmp
 #define strnicmp strncasecmp

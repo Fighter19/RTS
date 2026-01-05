@@ -1074,4 +1074,4 @@ target_include_directories(g_gameengine PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}/Include/Precompiled")
 target_include_directories(g_gameengine PRIVATE 
     "${CMAKE_CURRENT_SOURCE_DIR}/Source")
-add_library(Gen::GameEngine ALIAS g_gameengine)
+add_library(Common::GameEngine ALIAS g_gameengine)

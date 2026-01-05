@@ -37,10 +37,10 @@
 #include "ddsfile.h"
 #include "bitmaphandler.h"
 
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 #include "dx8wrapper.h"
 #include "dx8caps.h"
-#include <D3dx8tex.h>
+#include <d3dx8tex.h>
 #endif
 
 static TextureLoadTaskClass* LoadListHead;

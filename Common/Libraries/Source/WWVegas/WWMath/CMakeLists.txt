@@ -84,7 +84,7 @@ add_library(c_wwmath STATIC
 set_target_properties(c_wwmath PROPERTIES OUTPUT_NAME WWMath)
 target_link_libraries(c_wwmath PUBLIC c_wwlib c_wwsaveload)
 target_include_directories(c_wwmath PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/../")
-add_library(Gen::WWMath ALIAS c_wwmath)
+add_library(Common::WWMath ALIAS c_wwmath)
 
 ### Dependencies
 find_package(glm CONFIG REQUIRED)

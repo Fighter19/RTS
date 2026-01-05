@@ -50,7 +50,7 @@
 
 #ifdef _WIN32
 #include <d3d8.h>
-#include <D3dx8core.h>
+#include <d3dx8core.h>
 #include "dx8wrapper.h"
 #include "dx8caps.h"
 #include "dx8texman.h"

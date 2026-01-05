@@ -145,6 +145,6 @@ add_library(c_wwlib STATIC
 
 ### Target configuration
 set_target_properties(c_wwlib PROPERTIES OUTPUT_NAME WWLib)
-target_link_libraries(c_wwlib PUBLIC c_wwdebug_include g_libraries_include)
+target_link_libraries(c_wwlib PUBLIC c_wwdebug_include c_libraries_include)
 target_include_directories(c_wwlib PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 add_library(Common::WWLib ALIAS c_wwlib)

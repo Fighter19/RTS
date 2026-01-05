@@ -21,12 +21,12 @@
 #include "texture.h"
 #include "statistics.h"
 
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 #include "dx8vertexbuffer.h"
 #include "dx8indexbuffer.h"
 #include "dx8wrapper.h"
-#include "d3d8.h"
-#include "D3dx8math.h"
+#include <d3d8.h>
+#include <d3dx8math.h>
 #endif
 
 bool SortingRendererClass::_EnableTriangleDraw=true;

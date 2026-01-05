@@ -26,7 +26,7 @@
 // July 2002 Bryan Cleveland
 
 #include "W3DDevice/GameClient/W3DWebBrowser.h"
-#include "WW3D2/Texture.h"
+#include "WW3D2/texture.h"
 #include "WW3D2/TextureLoader.h"
 #include "WW3D2/SurfaceClass.h"
 #include "GameClient/Image.h"

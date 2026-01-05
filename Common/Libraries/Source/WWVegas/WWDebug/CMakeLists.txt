@@ -11,4 +11,4 @@ add_library(c_wwdebug STATIC
 ### Target configuration
 set_target_properties(c_wwdebug PROPERTIES OUTPUT_NAME WWDebug)
 target_link_libraries(c_wwdebug PUBLIC c_wwlib_include g_libraries_include)
-add_library(Gen::WWDebug ALIAS c_wwdebug)
+add_library(Common::WWDebug ALIAS c_wwdebug)

@@ -199,7 +199,7 @@ target_sources(c_ww3d2 PRIVATE
     ww3dtrig.h
 )
 
-if(WIN32)
+if(RTS_USE_DX8)
     target_sources(c_ww3d2 PRIVATE
         dx8caps.cpp
         dx8fvf.cpp
@@ -210,7 +210,7 @@ if(WIN32)
         dx8vertexbuffer.cpp
         dx8webbrowser.cpp
         dx8wrapper.cpp
-        FramGrab.cpp
+        #FramGrab.cpp
         sortingrenderer.cpp
         dx8caps.h
         dx8fvf.h
@@ -225,12 +225,22 @@ if(WIN32)
         framgrab.h
         sortingrenderer.h
     )
-
-    target_link_libraries(c_ww3d2 PUBLIC d3d8 d3d8lib d3dx8)
+    if(WIN32)
+        target_link_libraries(c_ww3d2 PUBLIC d3d8 d3d8lib d3dx8)
+    else() 
+         FetchContent_Declare(
+            dxvk
+            URL        https://github.com/doitsujin/dxvk/releases/download/v2.7.1/dxvk-native-2.7.1-steamrt-sniper.tar.gz
+        )
+        FetchContent_MakeAvailable(dxvk)
+        message(STATUS "DXVK include dir: ${dxvk_SOURCE_DIR}/include/dxvk")
+        target_include_directories(c_ww3d2 PUBLIC ${dxvk_SOURCE_DIR}/include/dxvk)
+    endif()
+    target_compile_definitions(c_ww3d2 PUBLIC RTS_USE_DX8)
 endif()
 
 ### Target configurations
 set_target_properties(c_ww3d2 PROPERTIES OUTPUT_NAME WW3D2)
 target_link_libraries(c_ww3d2 PUBLIC c_wwlib c_wwmath c_wwmath)
 target_include_directories(c_ww3d2 PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
-add_library(Gen::WW3D2 ALIAS c_ww3d2)
+add_library(Common::WW3D2 ALIAS c_ww3d2)

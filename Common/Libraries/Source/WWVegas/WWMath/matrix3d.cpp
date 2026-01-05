@@ -66,7 +66,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #else
-#include "D3dx8math.h"
+#include <d3dx8math.h>
 #endif
 
 // some static matrices which are sometimes useful

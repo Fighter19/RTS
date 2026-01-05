@@ -37,7 +37,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #include "formconv.h"
 
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 
 D3DFORMAT WW3DFormatToD3DFormatConversionArray[WW3D_FORMAT_COUNT] = {
 	D3DFMT_UNKNOWN,

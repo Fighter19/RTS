@@ -134,6 +134,7 @@ typedef bool							Bool;							//
 // note, the types below should use "long long", but MSVC doesn't support it yet
 typedef __int64						Int64;							// 8 bytes 
 typedef unsigned __int64	UnsignedInt64;	  	// 8 bytes 
+typedef intptr_t 				IntPtr;			// 4 or 8 bytes, depending on platform
 typedef uintptr_t 				UnsignedIntPtr;			// 4 or 8 bytes, depending on platform
 
 #include "Lib/Trig.h"

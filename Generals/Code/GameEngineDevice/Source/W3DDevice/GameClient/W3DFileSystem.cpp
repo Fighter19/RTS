@@ -48,9 +48,9 @@
 #include "Common/Registry.h"
 #include "W3DDevice/GameClient/W3DFileSystem.h"
 // DEFINES ////////////////////////////////////////////////////////////////////////////////////////
-
+#ifdef _WIN32
 #include <io.h>
-
+#endif
 //-------------------------------------------------------------------------------------------------
 /** Game file access.  At present this allows us to access test assets, assets from
 	* legacy GDI assets, and the current flat directory access for textures, models etc */

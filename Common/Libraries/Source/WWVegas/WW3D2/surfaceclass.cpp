@@ -56,7 +56,7 @@
 #include "bound.h"
 #include "wwdebug.h"
 
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 #include "dx8wrapper.h"
 #include <d3dx8.h>
 #endif

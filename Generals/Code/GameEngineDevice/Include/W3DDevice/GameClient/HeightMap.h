@@ -31,13 +31,15 @@
 #include "always.h"
 #include "rendobj.h"
 #include "w3d_file.h"
+#ifdef RTS_USE_DX8
 #include "dx8vertexbuffer.h"
 #include "dx8indexbuffer.h"
 #include "dx8wrapper.h"
+#endif
 #include "shader.h"
 #include "vertmaterial.h"
 #include "Lib/BaseType.h"
-#include "common/GameType.h"
+#include "Common/GameType.h"
 #include "WorldHeightMap.h"
 
 #define MAX_ENABLED_DYNAMIC_LIGHTS 20

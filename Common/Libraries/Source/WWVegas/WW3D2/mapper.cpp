@@ -42,7 +42,7 @@
 #include "matinfo.h"
 #include "rendobj.h"
 #include "mesh.h"
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 #include "dx8wrapper.h"
 inline DWORD F2DW( FLOAT f ) { return *((DWORD*)&f); }
 #endif

@@ -45,7 +45,7 @@
 
 #include "ww3dformat.h"
 
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 #include <d3d8.h>
 
 /*

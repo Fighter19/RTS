@@ -39,4 +39,4 @@ add_library(c_wwsaveload STATIC
 set_target_properties(c_wwsaveload PROPERTIES OUTPUT_NAME WWSaveLoad)
 target_link_libraries(c_wwsaveload PUBLIC c_wwlib c_wwmath_include g_libraries_include)
 target_include_directories(c_wwsaveload PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
-add_library(Gen::WWSaveLoad ALIAS c_wwsaveload)
+add_library(Common::WWSaveLoad ALIAS c_wwsaveload)

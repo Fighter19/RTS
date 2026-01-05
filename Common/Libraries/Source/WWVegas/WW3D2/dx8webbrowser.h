@@ -45,6 +45,10 @@
 
 #if ENABLE_EMBEDDED_BROWSER
 
+#ifndef WIN32
+#define LPDISPATCH void*
+#endif
+
 // These options must match the browser option bits defined in the BrowserEngine code.
 // Look in febrowserengine.h
 #define BROWSEROPTION_SCROLLBARS		0x0001

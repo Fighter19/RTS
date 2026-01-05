@@ -53,7 +53,9 @@
 //
 //-----------------------------------------------------------------------------
 
+#ifdef RTS_USE_DX8
 #include "dx8wrapper.h"
+#endif
 #include "assetmgr.h"
 #include "Lib/BaseType.h"
 #include "Common/File.h"
@@ -62,17 +64,17 @@
 #include "W3DDevice/GameClient/W3DShroud.h"
 #include "W3DDevice/GameClient/HeightMap.h"
 #include "W3DDevice/GameClient/W3DCustomScene.h"
-#include "GameClient/view.h"
+#include "GameClient/View.h"
 #include "GameClient/CommandXlat.h"
-#include "GameClient/display.h"
+#include "GameClient/Display.h"
 #include "GameClient/Water.h"
 #include "GameLogic/GameLogic.h"
-#include "common/GlobalData.h"
-#include "common/GameLOD.h"
+#include "Common/GlobalData.h"
+#include "Common/GameLOD.h"
 #include "d3dx8tex.h"
 #include "dx8caps.h"
-#include "common/gamelod.h"
-#include "Benchmark.h"
+#include "Common/GameLOD.h"
+#include "benchmark.h"
 
 #ifdef _INTERNAL
 // for occasional debugging...
@@ -2444,7 +2446,7 @@ void W3DShaderManager::shutdown(void)
 		}
 	}
 
- 	for ( i=0; i < FT_MAX; i++)
+ 	for (Int i=0; i < FT_MAX; i++)
  	{	
  		if (W3DFilters[i])
  		{
@@ -2760,7 +2762,7 @@ HRESULT W3DShaderManager::LoadAndCreateD3DShader(char* strFilePath, const DWORD*
 		TheFileSystem->getFileInfo(AsciiString(strFilePath), &fileInfo);
 		DWORD dwFileSize = fileInfo.sizeLow;
 
-		const DWORD* pShader = (DWORD*)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, dwFileSize);
+		const DWORD* pShader = new DWORD[dwFileSize];
 		if (!pShader)
 		{
 			OutputDebugString( "Failed to allocate memory to load shader\n " );
@@ -2781,7 +2783,7 @@ HRESULT W3DShaderManager::LoadAndCreateD3DShader(char* strFilePath, const DWORD*
 			hr = DX8Wrapper::_Get_D3D_Device8()->CreatePixelShader(pShader, pHandle);
 		}
 
-		HeapFree(GetProcessHeap(), 0, (void*)pShader);
+		delete [] pShader;
 
 		if (FAILED(hr))
 		{
@@ -2881,9 +2883,14 @@ Real W3DShaderManager::GetCPUBenchTime(void)
 	float ztot, yran, ymult, ymod, x, y, z, pi, prod;
     long int low, ixran, itot, j, iprod;
 
-  	__int64 endTime64,freq64,startTime64;
+  	Int64 endTime64,freq64,startTime64;
+#ifdef _WIN32
 	QueryPerformanceFrequency((LARGE_INTEGER *)&freq64);
 	QueryPerformanceCounter((LARGE_INTEGER *)&startTime64);
+#else
+	startTime64 = _rdtsc();
+	freq64 = 1000; //dummy value
+#endif
 
     ztot = 0.0;
     low = 1;
@@ -2909,7 +2916,10 @@ Real W3DShaderManager::GetCPUBenchTime(void)
 		}
 	}
 	pi = 4.0 * (float)low/(float)itot;
-
+#ifdef _WIN32
 	QueryPerformanceCounter((LARGE_INTEGER *)&endTime64);
+#else
+	endTime64 = _rdtsc();
+#endif
 	return ((double)(endTime64-startTime64)/(double)(freq64));
 }

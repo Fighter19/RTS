@@ -43,15 +43,15 @@
 //			  and alpha.
 //-----------------------------------------------------------------------------
 
-#include "W3DDevice/GameClient/heightmap.h"
+#include "W3DDevice/GameClient/HeightMap.h"
 #include "W3DDevice/GameClient/W3DWaterTracks.h"
 #include "W3DDevice/GameClient/W3DShaderManager.h"
 #include "W3DDevice/GameClient/W3DShroud.h"
 #include "GameClient/InGameUI.h"
 #include "GameClient/Water.h"
 #include "GameLogic/TerrainLogic.h"
-#include "common/GlobalData.h"
-#include "common/UnicodeString.h"
+#include "Common/GlobalData.h"
+#include "Common/UnicodeString.h"
 #include "Common/File.h"
 #include "Common/FileSystem.h"
 #include "texture.h"
@@ -60,7 +60,7 @@
 #include "rinfo.h"
 #include "camera.h"
 #include "assetmgr.h"
-#include "WW3D2/DX8Wrapper.h"
+#include "WW3D2/dx8wrapper.h"
 
 //#pragma optimize("", off)
 
@@ -178,7 +178,7 @@ Int WaterTracksObj::freeWaterTracksResources(void)
 *	the specified texture.
  */
 //=============================================================================
-void WaterTracksObj::init( Real width, Real length, Vector2 &start, Vector2 &end, Char *texturename, Int waveTimeOffset)
+void WaterTracksObj::init( Real width, Real length, const Vector2 &start, const Vector2 &end, Char *texturename, Int waveTimeOffset)
 {	
 	freeWaterTracksResources();	//free old resources used by this track
 

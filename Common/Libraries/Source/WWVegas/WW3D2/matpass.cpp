@@ -50,7 +50,7 @@
 #include "shader.h"
 #include "texture.h"
 #include "statistics.h"
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 #include "dx8wrapper.h"
 #endif
 

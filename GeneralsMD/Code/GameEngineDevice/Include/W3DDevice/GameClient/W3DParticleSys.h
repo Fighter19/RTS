@@ -33,7 +33,7 @@
 #include "GameClient/ParticleSys.h"
 #include "WW3D2/PointGr.h"
 #include "WW3D2/streak.h"
-#include "WW3D2/RInfo.h"
+#include "WW3D2/rinfo.h"
 #include "WWLib/BitType.h"
 
 //=============================================================================
