@@ -209,6 +209,26 @@ if(RTS_USE_MILES)
     target_compile_definitions(g_gameenginedevice PRIVATE RTS_USE_MILES)
 endif()
 
+### SDL3 Windowing & Input
+if(RTS_USE_SDL3)
+    target_sources(g_gameenginedevice PRIVATE
+        Include/SDL3Device/Common/SDL3CDManager.h
+        Include/SDL3Device/Common/SDL3GameEngine.h
+        Include/SDL3Device/GameClient/SDL3Keyboard.h
+        Include/SDL3Device/GameClient/SDL3Mouse.h
+        Source/SDL3Device/Common/SDL3CDManager.cpp
+        Source/SDL3Device/Common/SDL3GameEngine.cpp
+    )
+    target_compile_definitions(g_gameenginedevice PUBLIC RTS_USE_SDL3)
+    find_package(SDL3 REQUIRED)
+    target_link_libraries(g_gameenginedevice PUBLIC SDL3::SDL3)
+endif()
+
+### C++ 17 Standard
+if(RTS_USE_STDFS)
+    target_compile_definitions(g_gameenginedevice PUBLIC RTS_USE_STDFS)
+endif()
+
 ### Target configuration
 set_target_properties(g_gameenginedevice PROPERTIES OUTPUT_NAME GameEngineDevice)
 target_link_libraries(g_gameenginedevice PUBLIC g_gameengine c_wwvegas c_benchmark)

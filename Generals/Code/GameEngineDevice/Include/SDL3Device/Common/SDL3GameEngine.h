@@ -105,7 +105,7 @@ inline GameClient *SDL3GameEngine::createGameClient( void ) { return NEW W3DGame
 inline ModuleFactory *SDL3GameEngine::createModuleFactory( void ) { return NEW W3DModuleFactory; }
 inline ThingFactory *SDL3GameEngine::createThingFactory( void ) { return NEW W3DThingFactory; }
 inline FunctionLexicon *SDL3GameEngine::createFunctionLexicon( void ) { return NEW W3DFunctionLexicon; }
-#ifdef SAGE_USE_STDFS
+#ifdef RTS_USE_STDFS
 inline LocalFileSystem *SDL3GameEngine::createLocalFileSystem( void ) { return NEW StdLocalFileSystem; }
 inline ArchiveFileSystem *SDL3GameEngine::createArchiveFileSystem( void ) { return NEW StdBIGFileSystem; }
 #elif _WIN32
@@ -118,8 +118,10 @@ inline ParticleSystemManager* SDL3GameEngine::createParticleSystemManager( void 
 
 inline NetworkInterface *SDL3GameEngine::createNetwork( void ) { return NetworkInterface::createNetwork(); }
 inline Radar *SDL3GameEngine::createRadar( void ) { return NEW W3DRadar; }
-#if defined(SAGE_USE_OPENAL)
+#if defined(RTS_USE_OPENAL)
 inline AudioManager *SDL3GameEngine::createAudioManager( void ) { return NEW OpenALAudioManager; }
-#elif defined(SAGE_USE_MILES)
+#elif defined(RTS_USE_MILES)
 inline AudioManager* SDL3GameEngine::createAudioManager(void) { return NEW MilesAudioManager; }
+#else 
+inline AudioManager* SDL3GameEngine::createAudioManager(void) { return NULL; }
 #endif

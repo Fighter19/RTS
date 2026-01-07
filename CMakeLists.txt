@@ -39,6 +39,8 @@ cpack_add_component(BFME DISPLAY_NAME "Battle for middleearth"
 include(FeatureSummary)
 option(RTS_USE_GLM "Use GLM for math operations" ON)
 add_feature_info(GLM RTS_USE_GLM "Use GLM for math operations")
+option(RTS_USE_STDFS "Use standard filesystem for file operations" ON)
+add_feature_info(STDFS RTS_USE_STDFS "Use standard filesystem for file operations")
 option(RTS_USE_ZLIB "Use ZLIB for compression" ON)
 add_feature_info(ZLIB RTS_USE_ZLIB "Support ZLIB for compression (maps etc.)")
 option(RTS_USE_LZHL "Use LZHL for compression" ON)
