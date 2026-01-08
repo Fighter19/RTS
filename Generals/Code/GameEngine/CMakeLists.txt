@@ -602,7 +602,7 @@ target_sources(g_gameengine PRIVATE
 #    Source/Common/System/FileSystem.cpp
     Source/Common/System/FunctionLexicon.cpp
     Source/Common/System/GameCommon.cpp
-    #Source/Common/System/GameMemory.cpp
+    Source/Common/System/GameMemory.cpp
     Source/Common/System/GameType.cpp
     Source/Common/System/Geometry.cpp
     Source/Common/System/KindOf.cpp
