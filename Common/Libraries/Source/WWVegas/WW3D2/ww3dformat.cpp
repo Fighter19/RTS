@@ -74,7 +74,7 @@ unsigned char RGB_to_CIEY(Vector4 color)
 	float lum=0.2126f*color.X + 0.7152f*color.Y + 0.0722f*color.Z;
 	return (unsigned char) (255.0f*lum);
 }
-#ifdef _WIN32
+
 void Vector4_to_Color(unsigned int *outc,const Vector4 &inc,const WW3DFormat format)
 {
 	// convert to ARGB 32-bit
@@ -342,4 +342,3 @@ unsigned Get_Bytes_Per_Pixel(WW3DFormat format)
 	}
 	return 0;
 }
-#endif // _WIN32

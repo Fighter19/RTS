@@ -228,7 +228,7 @@ if(RTS_USE_DX8)
     if(WIN32)
         target_link_libraries(c_ww3d2 PUBLIC d3d8 d3d8lib d3dx8)
     else() 
-         FetchContent_Declare(
+        FetchContent_Declare(
             dxvk
             URL        https://github.com/doitsujin/dxvk/releases/download/v2.7.1/dxvk-native-2.7.1-steamrt-sniper.tar.gz
         )

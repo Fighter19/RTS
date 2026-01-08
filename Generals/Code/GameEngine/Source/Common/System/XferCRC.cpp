@@ -34,8 +34,11 @@
 #include "Common/XferDeepCRC.h"
 #include "Common/CRC.h"
 #include "Common/Snapshot.h"
+#ifdef _WIN32
 #include "winsock2.h" // for htonl
-
+#else
+#include <arpa/inet.h>
+#endif
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 XferCRC::XferCRC( void )

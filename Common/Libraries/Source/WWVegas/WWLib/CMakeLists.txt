@@ -52,6 +52,8 @@ add_library(c_wwlib STATIC
     ini.cpp
     ini.h
     inisup.h
+    int.cpp
+    int.h
     iostruct.h
     jshell.cpp
     listnode.h
@@ -70,6 +72,8 @@ add_library(c_wwlib STATIC
     #md5.h
     mempool.h
     mmsys.h
+    mpmath.cpp
+    mpmath.h
     multilist.cpp
     multilist.h
     mutex.cpp
@@ -79,6 +83,8 @@ add_library(c_wwlib STATIC
     nstrdup.cpp
     nstrdup.h
     ntree.h
+    pk.cpp
+    pk.h
     pipe.cpp
     pipe.h
     point.h
@@ -95,6 +101,13 @@ add_library(c_wwlib STATIC
     ref_ptr.h
     refcount.cpp
     refcount.h
+    registry.cpp
+    registry.h
+    rgb.cpp
+    rgb.h
+    rle.cpp
+    rle.h
+    rlerle.h
     #regexpr.cpp
     #regexpr.h
     #search.h

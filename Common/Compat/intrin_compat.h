@@ -64,7 +64,6 @@ static inline __int64 _rdtsc()
 
 #endif // defined(_MSC_VER) && _MSC_VER < 1300
 
-
 // Non-VC6 macros
 #if !(defined(_MSC_VER) && _MSC_VER < 1300)
 
@@ -149,3 +148,13 @@ static inline uint64_t _rdtsc()
 #endif // cpuid
 
 #endif // !(defined(_MSC_VER) && _MSC_VER < 1300)
+
+#if defined(_MSC_VER) 
+#define bswap32 _byteswap_ulong
+#elif defined(__has_builtin)
+#if __has_builtin(__builtin_bswap32)
+#define bswap32 __builtin_bswap32
+#else
+#error "No implementation for bswap32"
+#endif
+#endif

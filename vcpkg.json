@@ -3,6 +3,7 @@
   "builtin-baseline": "dd3097e305afa53f7b4312371f62058d2e665320",
   "dependencies": [
     "glm",
+    "gli",
     "zlib",
     "gtest",
     "benchmark",

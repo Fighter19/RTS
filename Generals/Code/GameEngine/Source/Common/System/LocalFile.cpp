@@ -49,7 +49,11 @@
 
 #include <stdio.h>
 #include <fcntl.h>
+#ifdef _WIN32
 #include <io.h>
+#else
+#define USE_BUFFERED_IO
+#endif
 #include <string.h>
 #include <sys/stat.h>
 #include <stdlib.h>

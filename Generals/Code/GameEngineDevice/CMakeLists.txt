@@ -218,6 +218,8 @@ if(RTS_USE_SDL3)
         Include/SDL3Device/GameClient/SDL3Mouse.h
         Source/SDL3Device/Common/SDL3CDManager.cpp
         Source/SDL3Device/Common/SDL3GameEngine.cpp
+        Source/SDL3Device/GameClient/SDL3Keyboard.cpp
+        Source/SDL3Device/GameClient/SDL3Mouse.cpp
     )
     target_compile_definitions(g_gameenginedevice PUBLIC RTS_USE_SDL3)
     find_package(SDL3 REQUIRED)
@@ -226,6 +228,16 @@ endif()
 
 ### C++ 17 Standard
 if(RTS_USE_STDFS)
+    target_sources(g_gameenginedevice PRIVATE
+        Include/StdDevice/Common/StdBIGFile.h
+        Include/StdDevice/Common/StdBIGFileSystem.h
+        Include/StdDevice/Common/StdLocalFile.h
+        Include/StdDevice/Common/StdLocalFileSystem.h
+        Source/StdDevice/Common/StdLocalFileSystem.cpp
+        Source/StdDevice/Common/StdLocalFile.cpp
+        Source/StdDevice/Common/StdBIGFile.cpp
+        Source/StdDevice/Common/StdBIGFileSystem.cpp
+    )
     target_compile_definitions(g_gameenginedevice PUBLIC RTS_USE_STDFS)
 endif()
 

@@ -112,7 +112,7 @@
 #include "cpudetect.h"
 #include "formconv.h"
 
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 #include "dx8renderer.h"
 #include "dx8wrapper.h"
 #include "dx8texman.h"
@@ -222,8 +222,6 @@ static int												_TextureReduction = 0;
 static int												_TextureMinMipLevels = 1;
 int														WW3D::LastFrameMemoryAllocations;
 int														WW3D::LastFrameMemoryFrees;
-
-#ifdef _WIN32
 
 /**********************************************************************************
 **
@@ -1910,4 +1908,3 @@ void WW3D::Reset_Current_Static_Sort_Lists_To_Default(void)
 	MinStaticSortLevel = 1;	// The 0 list is not used
 	MaxStaticSortLevel = MAX_SORT_LEVEL;
 }
-#endif

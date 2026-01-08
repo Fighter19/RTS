@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -22,26 +22,14 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-// AudioRandomValue.h
-// Random number generation system
-// Author: Michael S. Booth, January 1998
-// Split out into separate Logic/Client/Audio headers by MDC Sept 2002
+//////// StdLocalFile.cpp ///////////////////////////
+// Stephan Vedder, January 2026
+///////////////////////////////////////////////////////
 
-#pragma once
+#include "StdDevice/Common/StdLocalFile.h"
 
-#ifndef _AUDIO_RANDOM_VALUE_H_
-#define _AUDIO_RANDOM_VALUE_H_
+StdLocalFile::StdLocalFile() : LocalFile() {
+}
 
-#include "Lib/BaseType.h"
-
-// do NOT use these functions directly, rather use the macros below
-extern Int GetGameAudioRandomValue( int lo, int hi, const char *file, int line );
-extern Real GetGameAudioRandomValueReal( Real lo, Real hi, const char *file, int line );
-
-// use these macros to access the random value functions
-#define GameAudioRandomValue( lo, hi ) GetGameAudioRandomValue( lo, hi, __FILE__, __LINE__ )
-#define GameAudioRandomValueReal( lo, hi ) GetGameAudioRandomValueReal( lo, hi, __FILE__, __LINE__ )
-
-//--------------------------------------------------------------------------------------------------------------
-
-#endif // _AUDIO_RANDOM_VALUE_H_
+StdLocalFile::~StdLocalFile() {
+}

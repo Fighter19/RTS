@@ -2,8 +2,8 @@ add_library(g_gameengine STATIC)
 
 target_sources(g_gameengine PRIVATE
     Include/Common/ActionManager.h
-#    Include/Common/ArchiveFile.h
-#    Include/Common/ArchiveFileSystem.h
+    Include/Common/ArchiveFile.h
+    Include/Common/ArchiveFileSystem.h
     Include/Common/AsciiString.h
     Include/Common/AudioAffect.h
     Include/Common/AudioEventInfo.h
@@ -36,8 +36,8 @@ target_sources(g_gameengine PRIVATE
     Include/Common/encrypt.h
     Include/Common/Energy.h
     Include/Common/Errors.h
-#    Include/Common/file.h
-#    Include/Common/FileSystem.h
+    Include/Common/File.h
+    Include/Common/FileSystem.h
     Include/Common/FunctionLexicon.h
     Include/Common/GameAudio.h
     Include/Common/GameCommon.h
@@ -587,8 +587,8 @@ target_sources(g_gameengine PRIVATE
     Source/Common/SkirmishBattleHonors.cpp
     Source/Common/StateMachine.cpp
     Source/Common/StatsCollector.cpp
-#    Source/Common/System/ArchiveFile.cpp
-#    Source/Common/System/ArchiveFileSystem.cpp
+    Source/Common/System/ArchiveFile.cpp
+    Source/Common/System/ArchiveFileSystem.cpp
     Source/Common/System/AsciiString.cpp
     Source/Common/System/BuildAssistant.cpp
     Source/Common/System/CDManager.cpp
@@ -598,8 +598,8 @@ target_sources(g_gameengine PRIVATE
     Source/Common/System/Directory.cpp
     Source/Common/System/DisabledTypes.cpp
     Source/Common/System/encrypt.cpp
-#    Source/Common/System/File.cpp
-#    Source/Common/System/FileSystem.cpp
+    Source/Common/System/File.cpp
+    Source/Common/System/FileSystem.cpp
     Source/Common/System/FunctionLexicon.cpp
     Source/Common/System/GameCommon.cpp
     Source/Common/System/GameMemory.cpp
@@ -607,8 +607,8 @@ target_sources(g_gameengine PRIVATE
     Source/Common/System/Geometry.cpp
     Source/Common/System/KindOf.cpp
     Source/Common/System/List.cpp
-#    Source/Common/System/LocalFile.cpp
-#    Source/Common/System/LocalFileSystem.cpp
+    Source/Common/System/LocalFile.cpp
+    Source/Common/System/LocalFileSystem.cpp
     #Source/Common/System/MemoryInit.cpp
 #    Source/Common/System/ObjectStatusTypes.cpp
     Source/Common/System/QuotedPrintable.cpp
@@ -624,10 +624,10 @@ target_sources(g_gameengine PRIVATE
     Source/Common/System/Trig.cpp
     Source/Common/System/UnicodeString.cpp
     Source/Common/System/Upgrade.cpp
-#    Source/Common/System/Xfer.cpp
-#    Source/Common/System/XferCRC.cpp
-#    Source/Common/System/XferLoad.cpp
-#    Source/Common/System/XferSave.cpp
+    Source/Common/System/Xfer.cpp
+    Source/Common/System/XferCRC.cpp
+    Source/Common/System/XferLoad.cpp
+    Source/Common/System/XferSave.cpp
     Source/Common/TerrainTypes.cpp
     Source/Common/Thing/DrawModule.cpp
     Source/Common/Thing/Module.cpp

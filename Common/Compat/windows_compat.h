@@ -2,6 +2,9 @@
 #include <cstdint>
 #include <unistd.h>
 
+#include <tchar_compat.h>
+#include <wchar_compat.h>
+
 typedef void *HANDLE;
 typedef HANDLE HWND;
 typedef HANDLE HINSTANCE;
@@ -39,9 +42,9 @@ bool GetModuleFileName(HINSTANCE hInstance, char *buffer, int size);
 typedef uintptr_t (*FARPROC)();
 typedef HANDLE HMODULE;
 
-HMODULE LoadLibrary(const char *lpFileName);
-FARPROC GetProcAddress(HMODULE hModule, const char *lpProcName);
-void FreeLibrary(HMODULE hModule);
+inline HMODULE LoadLibrary(const char *lpFileName) { return NULL; }
+inline FARPROC GetProcAddress(HMODULE hModule, const char *lpProcName) { return NULL; }
+inline void FreeLibrary(HMODULE hModule) {}
 
 /// MessageBox function for displaying messages
 typedef enum eMessageBoxType {

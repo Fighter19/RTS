@@ -7,6 +7,7 @@
 #endif
 
 #include <d3d8.h>
+#include <climits>
 
 #define D3DX_DEFAULT                     UINT_MAX
 

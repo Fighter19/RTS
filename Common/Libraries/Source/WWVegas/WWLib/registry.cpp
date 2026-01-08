@@ -35,14 +35,17 @@
 
 #include "registry.h"
 #include <assert.h>
-#include <windows.h>
 
+#ifdef _WIN32
+#include <windows.h>
+#endif 
 // #include "wwdebug.h"
 
 /*
 **
 */
 RegistryClass::RegistryClass(const char *sub_key) : IsValid(false) {
+#ifdef _WIN32
 	DWORD disposition;
 	HKEY key;
 	assert(sizeof(HKEY) == sizeof(int));
@@ -51,17 +54,25 @@ RegistryClass::RegistryClass(const char *sub_key) : IsValid(false) {
 		IsValid = true;
 		Key = (int)key;
 	}
+#else
+	// Non-Win32 platform, registry not supported
+	Key = 0;
+	IsValid = false;
+#endif
 }
 
 RegistryClass::~RegistryClass(void) {
+#ifdef _WIN32
 	if (IsValid) {
 		if (::RegCloseKey((HKEY)Key) != ERROR_SUCCESS) { // Close the reg key
 		}
 		IsValid = false;
 	}
+#endif
 }
 
 int RegistryClass::Get_Int(const char *name, int def_value) {
+#ifdef _WIN32
 	assert(IsValid);
 	DWORD type, data = 0, data_len = sizeof(data);
 	if ((::RegQueryValueEx((HKEY)Key, name, NULL, &type, (LPBYTE)&data, &data_len) == ERROR_SUCCESS) &&
@@ -70,12 +81,18 @@ int RegistryClass::Get_Int(const char *name, int def_value) {
 		data = def_value;
 	}
 	return data;
+#else
+	// Non-Win32 platform, registry not supported
+	return def_value;
+#endif
 }
 
 void RegistryClass::Set_Int(const char *name, int value) {
+#ifdef _WIN32
 	assert(IsValid);
 	if (::RegSetValueEx((HKEY)Key, name, 0, REG_DWORD, (LPBYTE)&value, sizeof(DWORD)) != ERROR_SUCCESS) {
 	}
+#endif
 }
 
 bool RegistryClass::Get_Bool(const char *name, bool def_value) { return (Get_Int(name, def_value) != 0); }
@@ -83,6 +100,7 @@ bool RegistryClass::Get_Bool(const char *name, bool def_value) { return (Get_Int
 void RegistryClass::Set_Bool(const char *name, bool value) { Set_Int(name, value ? 1 : 0); }
 
 float RegistryClass::Get_Float(const char *name, float def_value) {
+#ifdef _WIN32
 	assert(IsValid);
 	float data = 0;
 	DWORD type, data_len = sizeof(data);
@@ -91,43 +109,59 @@ float RegistryClass::Get_Float(const char *name, float def_value) {
 	} else {
 		data = def_value;
 	}
+#else
+	// Non-Win32 platform, registry not supported
+	float data = def_value;
+#endif
 	return data;
 }
 
 void RegistryClass::Set_Float(const char *name, float value) {
+#ifdef _WIN32
 	assert(IsValid);
 	if (::RegSetValueEx((HKEY)Key, name, 0, REG_DWORD, (LPBYTE)&value, sizeof(DWORD)) != ERROR_SUCCESS) {
 	}
+#endif
 }
 
 int RegistryClass::Get_Bin_Size(const char *name) {
+#ifdef _WIN32
 	assert(IsValid);
 
 	unsigned long size = 0;
 	::RegQueryValueEx((HKEY)Key, name, NULL, NULL, NULL, &size);
 	return size;
+#else
+	// Non-Win32 platform, registry not supported
+	return 0;
+#endif
 }
 
 void RegistryClass::Get_Bin(const char *name, void *buffer, int buffer_size) {
+#ifdef _WIN32
 	assert(IsValid);
 	assert(buffer != NULL);
 	assert(buffer_size > 0);
 
 	unsigned long size = buffer_size;
 	::RegQueryValueEx((HKEY)Key, name, NULL, NULL, (LPBYTE)buffer, &size);
+#endif
 	return;
 }
 
 void RegistryClass::Set_Bin(const char *name, const void *buffer, int buffer_size) {
+#ifdef _WIN32
 	assert(IsValid);
 	assert(buffer != NULL);
 	assert(buffer_size > 0);
 
 	::RegSetValueEx((HKEY)Key, name, 0, REG_BINARY, (LPBYTE)buffer, buffer_size);
+#endif
 	return;
 }
 
 void RegistryClass::Get_String(const char *name, StringClass &string, const char *default_string) {
+#ifdef _WIN32
 	assert(IsValid);
 	string = (default_string == NULL) ? "" : default_string;
 
@@ -144,11 +178,16 @@ void RegistryClass::Get_String(const char *name, StringClass &string, const char
 		//
 		::RegQueryValueEx((HKEY)Key, name, NULL, &type, (LPBYTE)string.Get_Buffer(data_size), &data_size);
 	}
+#else
+	// Non-Win32 platform, registry not supported
+	string = (default_string == NULL) ? "" : default_string;
+#endif
 
 	return;
 }
 
 char *RegistryClass::Get_String(const char *name, char *value, int value_size, const char *default_string) {
+#ifdef _WIN32
 	assert(IsValid);
 	DWORD type = 0;
 	if ((::RegQueryValueEx((HKEY)Key, name, NULL, &type, (LPBYTE)value, (DWORD *)&value_size) == ERROR_SUCCESS) &&
@@ -163,14 +202,25 @@ char *RegistryClass::Get_String(const char *name, char *value, int value_size, c
 			strcpy(value, default_string);
 		}
 	}
+#else
+	// Non-Win32 platform, registry not supported
+	if (default_string == NULL) {
+		*value = 0;
+	} else {
+		assert(strlen(default_string) < (unsigned int)value_size);
+		strcpy(value, default_string);
+	}
+#endif
 	return value;
 }
 
 void RegistryClass::Set_String(const char *name, const char *value) {
+#ifdef _WIN32
 	assert(IsValid);
 	int size = strlen(value) + 1; // must include NULL
 	if (::RegSetValueEx((HKEY)Key, name, 0, REG_SZ, (LPBYTE)value, size) != ERROR_SUCCESS) {
 	}
+#endif
 }
 
 void RegistryClass::Get_Value_List(DynamicVectorClass<StringClass> &list) {
@@ -181,6 +231,7 @@ void RegistryClass::Get_Value_List(DynamicVectorClass<StringClass> &list) {
 	//
 	int index = 0;
 	unsigned long sizeof_name = sizeof(value_name);
+#ifdef _WIN32
 	while (::RegEnumValue((HKEY)Key, index++, value_name, &sizeof_name, 0, NULL, NULL, NULL) == ERROR_SUCCESS) {
 		sizeof_name = sizeof(value_name);
 
@@ -189,12 +240,15 @@ void RegistryClass::Get_Value_List(DynamicVectorClass<StringClass> &list) {
 		//
 		list.Add(value_name);
 	}
+#endif
 
 	return;
 }
 
 void RegistryClass::Delete_Value(const char *name) {
+#ifdef _WIN32
 	::RegDeleteValue((HKEY)Key, name);
+#endif
 	return;
 }
 
@@ -216,6 +270,7 @@ void RegistryClass::Deleta_All_Values(void) {
 }
 
 void RegistryClass::Get_String(const WCHAR *name, WideStringClass &string, const WCHAR *default_string) {
+#ifdef _WIN32
 	assert(IsValid);
 	string = (default_string == NULL) ? L"" : default_string;
 
@@ -232,11 +287,15 @@ void RegistryClass::Get_String(const WCHAR *name, WideStringClass &string, const
 		//
 		::RegQueryValueExW((HKEY)Key, name, NULL, &type, (LPBYTE)string.Get_Buffer((data_size / 2) + 1), &data_size);
 	}
+#else
+	string = (default_string == NULL) ? L"" : default_string;
+#endif
 
 	return;
 }
 
 void RegistryClass::Set_String(const WCHAR *name, const WCHAR *value) {
+#ifdef _WIN32
 	assert(IsValid);
 
 	//
@@ -249,5 +308,6 @@ void RegistryClass::Set_String(const WCHAR *name, const WCHAR *value) {
 	//	Set the registry key
 	//
 	::RegSetValueExW((HKEY)Key, name, 0, REG_SZ, (LPBYTE)value, size);
+#endif
 	return;
 }
