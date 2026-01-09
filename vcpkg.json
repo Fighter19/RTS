@@ -4,6 +4,8 @@
   "dependencies": [
     "glm",
     "gli",
+    "freetype",
+    "fontconfig",
     "zlib",
     "gtest",
     "benchmark",

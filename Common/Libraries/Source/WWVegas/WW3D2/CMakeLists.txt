@@ -199,6 +199,7 @@ target_sources(c_ww3d2 PRIVATE
     ww3dtrig.h
 )
 
+### DirectX 8 Renderer
 if(RTS_USE_DX8)
     target_sources(c_ww3d2 PRIVATE
         dx8caps.cpp
@@ -228,15 +229,23 @@ if(RTS_USE_DX8)
     if(WIN32)
         target_link_libraries(c_ww3d2 PUBLIC d3d8 d3d8lib d3dx8)
     else() 
-        FetchContent_Declare(
-            dxvk
-            URL        https://github.com/doitsujin/dxvk/releases/download/v2.7.1/dxvk-native-2.7.1-steamrt-sniper.tar.gz
-        )
-        FetchContent_MakeAvailable(dxvk)
-        message(STATUS "DXVK include dir: ${dxvk_SOURCE_DIR}/include/dxvk")
-        target_include_directories(c_ww3d2 PUBLIC ${dxvk_SOURCE_DIR}/include/dxvk)
+        
     endif()
     target_compile_definitions(c_ww3d2 PUBLIC RTS_USE_DX8)
+endif()
+
+### FreeType for font rendering (GDI replacement)
+if(RTS_USE_FREETYPE)
+    find_package(Freetype CONFIG REQUIRED)
+    target_link_libraries(c_ww3d2 PUBLIC Freetype::Freetype)
+    target_compile_definitions(c_ww3d2 PUBLIC RTS_USE_FREETYPE)
+endif()
+
+### FontConfig for font discovery
+if(RTS_USE_FONTCONFIG)
+    find_package(Fontconfig REQUIRED)
+    target_link_libraries(c_ww3d2 PUBLIC Fontconfig::Fontconfig)
+    target_compile_definitions(c_ww3d2 PUBLIC RTS_USE_FONTCONFIG)
 endif()
 
 ### Target configurations

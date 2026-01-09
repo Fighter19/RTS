@@ -53,6 +53,18 @@
 */
 class	SurfaceClass;
 
+#ifdef RTS_USE_FREETYPE
+struct FT_LibraryRec_;
+typedef struct FT_LibraryRec_ *FT_Library;
+struct FT_FaceRec_;
+typedef struct FT_FaceRec_ *FT_Face;
+#endif
+
+#ifdef RTS_USE_FONTCONFIG
+struct _FcConfig;
+typedef struct _FcConfig FcConfig;
+#endif
+
 //
 //	Private data structures
 //
@@ -104,9 +116,20 @@ private:
 	//
 	//	Private methods
 	//
+	bool Locate_Font(const char *font_name, StringClass &font_file_path);
+#ifdef RTS_USE_FONTCONFIG
+	bool Locate_Font_FontConfig(const char *font_name, StringClass &font_file_path);
+#endif
+#ifdef _WIN32
 	void							Create_GDI_Font( const char *font_name );
 	void							Free_GDI_Font( void );
 	const FontCharsClassCharDataStruct *	Store_GDI_Char( WCHAR ch );
+#endif
+#ifdef RTS_USE_FREETYPE
+	void 							Create_Freetype_Font(const char *font_name);
+	void 							Free_Freetype_Font();
+	const FontCharsClassCharDataStruct *Store_Freetype_Char( WCHAR ch);
+#endif
 	void							Update_Current_Buffer( int char_width );
 	const FontCharsClassCharDataStruct	*	Get_Char_Data( WCHAR ch );
 
@@ -130,6 +153,13 @@ private:
 	HBITMAP								OldGDIBitmap;
 	HBITMAP								GDIBitmap;	
 	HFONT								GDIFont;
+#endif
+#ifdef RTS_USE_FREETYPE
+	FT_Library FtLibrary = nullptr;
+	FT_Face FtFace = nullptr;
+#endif
+#ifdef RTS_USE_FONTCONFIG
+  FcConfig *FC = nullptr;
 #endif
 	uint8 *								GDIBitmapBits;
 	HDC									MemDC;
