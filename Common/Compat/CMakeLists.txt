@@ -23,7 +23,11 @@ FetchContent_Declare(
             URL        https://github.com/doitsujin/dxvk/releases/download/v2.7.1/dxvk-native-2.7.1-steamrt-sniper.tar.gz
         )
 FetchContent_MakeAvailable(dxvk)
-message(STATUS "DXVK include dir: ${dxvk_SOURCE_DIR}/include/dxvk")
+# Search library in dxvk-native folder
+target_link_directories(c_libraries_compat INTERFACE
+    ${dxvk_SOURCE_DIR}/lib
+)
+target_link_libraries(c_libraries_compat PRIVATE dxvk_d3d8)
 
 ### GLM as D3DX8 Math replacement
 find_package(glm CONFIG REQUIRED)

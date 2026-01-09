@@ -115,6 +115,7 @@ public:
 
 };
 #else
+#include <cstring>
 #define FTP_FAILED -1
 class Cftp
 {
@@ -123,16 +124,16 @@ private:
 public:
 	Cftp() {}
 	virtual ~Cftp() {}
-	HRESULT ConnectToServer(LPCSTR szServerName) { return FTP_FAILED; }
-	HRESULT DisconnectFromServer() { return FTP_FAILED; }
-	HRESULT LoginToServer( LPCSTR szUserName, LPCSTR szPassword ) { return FTP_FAILED; }
-	HRESULT LogoffFromServer( void ) { return FTP_FAILED; }
-	HRESULT FindFile( LPCSTR szRemoteFileName, int * piSize ) { return FTP_FAILED; }
-	HRESULT FileRecoveryPosition( LPCSTR szLocalFileName, LPCSTR szRegistryRoot ) { return FTP_FAILED; }
-	HRESULT RestartFrom( int i ) { return FTP_FAILED; }
-	HRESULT GetNextFileBlock( LPCSTR szLocalFileName, int * piTotalRead ) { return FTP_FAILED; }
-	HRESULT RecvReply( LPCSTR pReplyBuffer, int iSize, int * piRetCode ) { return FTP_FAILED; }
-	HRESULT SendCommand( LPCSTR pCommand, int iSize ) { return FTP_FAILED; }
+	long ConnectToServer(const char* szServerName) { return FTP_FAILED; }
+	long DisconnectFromServer() { return FTP_FAILED; }
+	long LoginToServer( const char* szUserName, const char* szPassword ) { return FTP_FAILED; }
+	long LogoffFromServer( void ) { return FTP_FAILED; }
+	long FindFile( const char* szRemoteFileName, int * piSize ) { return FTP_FAILED; }
+	long FileRecoveryPosition( const char* szLocalFileName, const char* szRegistryRoot ) { return FTP_FAILED; }
+	long RestartFrom( int i ) { return FTP_FAILED; }
+	long GetNextFileBlock( const char* szLocalFileName, int * piTotalRead ) { return FTP_FAILED; }
+	long RecvReply( const char* pReplyBuffer, int iSize, int * piRetCode ) { return FTP_FAILED; }
+	long SendCommand( const char* pCommand, int iSize ) { return FTP_FAILED; }
 	int AsyncGetHostByName( char * szName, struct sockaddr_in &address ) { return FTP_FAILED; }
 	void GetDownloadFilename( const char* localname, char* downloadname) 
 	{

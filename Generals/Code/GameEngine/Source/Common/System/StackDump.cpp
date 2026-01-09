@@ -24,7 +24,7 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
-#if defined(_DEBUG) || defined(_INTERNAL) || defined(IG_DEBUG_STACKTRACE)
+#if 1// defined(_DEBUG) || defined(_INTERNAL) || defined(IG_DEBUG_STACKTRACE)
 
 #pragma pack(push, 8)
 
@@ -32,6 +32,8 @@
 
 #include "Common/StackDump.h"
 #include "Common/Debug.h"
+
+AsciiString g_LastErrorDump;
 
 #ifdef _WIN32
 
@@ -466,7 +468,6 @@ void StackDumpFromAddresses(void**addresses, unsigned int count, void (*callback
 }
 
 
-AsciiString g_LastErrorDump;
 //*****************************************************************************
 //*****************************************************************************
 void WriteStackLine(void*address, void (*callback)(const char*))
@@ -648,6 +649,34 @@ void DumpExceptionInfo( unsigned int u, EXCEPTION_POINTERS* e_info )
 
 
 #pragma pack(pop)
+
+#else
+
+// Writes a stackdump (provide a callback : gets called per line)
+// If callback is NULL then will write using OuputDebugString
+void StackDump(void (*callback)(const char*))
+{
+}
+
+// Writes a stackdump (provide a callback : gets called per line)
+// If callback is NULL then will write using OuputDebugString
+void StackDumpFromContext(uint32_t eip,uint32_t esp,uint32_t ebp, void (*callback)(const char*))
+{
+}
+
+// Gets count* addresses from the current stack
+void FillStackAddresses(void**addresses, unsigned int count, unsigned int skip)
+{
+}
+
+// Do full stack dump using an address array
+void StackDumpFromAddresses(void**addresses, unsigned int count, void (*callback)(const char*))
+{
+}
+
+void GetFunctionDetails(void *pointer, char*name, char*filename, unsigned int* linenumber, unsigned int* address)
+{
+}
 
 #endif // _WIN32
 

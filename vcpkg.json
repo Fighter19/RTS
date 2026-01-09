@@ -17,7 +17,12 @@
         "sdl3-renderer-binding"
       ]
     },
-    "sdl3",
+    {
+      "name": "sdl3",
+      "features": [
+        "vulkan"
+      ]
+    },
     "sdl3-image"
   ]
 }

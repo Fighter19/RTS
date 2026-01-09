@@ -150,6 +150,8 @@ inline HWND getThreadHWND()
 {
 #ifdef _WIN32
 	return (theMainThreadID == GetCurrentThreadId())?ApplicationHWnd:NULL;
+#else
+	return NULL;
 #endif
 }
 

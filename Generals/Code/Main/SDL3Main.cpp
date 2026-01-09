@@ -126,7 +126,7 @@ static Bool initializeAppWindows(Bool runWindowed, Bool runSplash) {
   Int startWidth = DEFAULT_XRESOLUTION, startHeight = DEFAULT_YRESOLUTION;
   SDL_InitSubSystem(SDL_INIT_VIDEO);
   if (!SDL_Vulkan_LoadLibrary(nullptr)) {
-    DEBUG_LOG(("Failed to load Vulkan library"));
+    DEBUG_LOG(("Failed to load Vulkan library: %s", SDL_GetError()));
     return false;
   }
 

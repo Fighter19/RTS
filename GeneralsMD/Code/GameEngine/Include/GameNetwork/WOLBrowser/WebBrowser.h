@@ -74,7 +74,7 @@ public:
 
 };
 
-
+#ifdef _WIN32
 
 class WebBrowser :
 		public FEBDispatch<WebBrowser, IBrowserDispatch, &IID_IBrowserDispatch>,
@@ -124,4 +124,21 @@ class WebBrowser :
 	};
 
 extern CComObject<WebBrowser> *TheWebBrowser;
+#else
+class WebBrowser :
+		public SubsystemInterface
+	{
+	public:
+		void init( void ) {}
+		void reset( void ) {}
+		void update( void ) {}
+
+		// Create an instance of the embedded browser for Dune Emperor.
+		virtual Bool createBrowserWindow(char *tag, GameWindow *win) = 0;
+		virtual void closeBrowserWindow(GameWindow *win) = 0;
+
+		WebBrowserURL *makeNewURL(AsciiString tag) { return NULL; }
+		WebBrowserURL *findURL(AsciiString tag) { return NULL; }
+};
+#endif // _WIN32
 #endif // __WEBBROWSER_H__

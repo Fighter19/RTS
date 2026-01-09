@@ -106,7 +106,7 @@ target_sources(g_gameenginedevice PRIVATE
     Source/W3DDevice/GameClient/W3DDisplayString.cpp
     Source/W3DDevice/GameClient/W3dWaypointBuffer.cpp
     Source/W3DDevice/GameClient/W3DParticleSys.cpp
-    #Source/W3DDevice/GameClient/W3DMouse.cpp
+    Source/W3DDevice/GameClient/W3DMouse.cpp
     Source/W3DDevice/GameClient/W3DInGameUI.cpp
     Source/W3DDevice/GameClient/W3DDisplay.cpp
     Source/W3DDevice/GameClient/W3DDisplayStringManager.cpp
@@ -218,12 +218,15 @@ if(RTS_USE_SDL3)
         Include/SDL3Device/GameClient/SDL3Mouse.h
         Source/SDL3Device/Common/SDL3CDManager.cpp
         Source/SDL3Device/Common/SDL3GameEngine.cpp
+        Source/SDL3Device/Common/SDL3IMEManager.cpp
+        Source/SDL3Device/Common/SDL3OSDisplay.cpp
         Source/SDL3Device/GameClient/SDL3Keyboard.cpp
         Source/SDL3Device/GameClient/SDL3Mouse.cpp
     )
     target_compile_definitions(g_gameenginedevice PUBLIC RTS_USE_SDL3)
     find_package(SDL3 REQUIRED)
-    target_link_libraries(g_gameenginedevice PUBLIC SDL3::SDL3)
+    find_package(SDL3_image REQUIRED)
+    target_link_libraries(g_gameenginedevice PUBLIC SDL3::SDL3 SDL3_image::SDL3_image)
 endif()
 
 ### C++ 17 Standard

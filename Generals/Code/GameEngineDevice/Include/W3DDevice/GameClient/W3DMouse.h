@@ -51,7 +51,14 @@
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
+#ifdef RTS_USE_SDL3
+#include "SDL3Device/GameClient/SDL3Mouse.h"
+#define Win32Mouse SDL3Mouse
+#elif defined(_WIN32)
 #include "Win32Device/GameClient/Win32Mouse.h"
+#else
+#error "No mouse implementation for this platform!"
+#endif
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////
 class CameraClass;

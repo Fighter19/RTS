@@ -609,17 +609,17 @@ target_sources(g_gameengine PRIVATE
     Source/Common/System/List.cpp
     Source/Common/System/LocalFile.cpp
     Source/Common/System/LocalFileSystem.cpp
-    #Source/Common/System/MemoryInit.cpp
+    Source/Common/System/MemoryInit.cpp
 #    Source/Common/System/ObjectStatusTypes.cpp
     Source/Common/System/QuotedPrintable.cpp
     Source/Common/System/Radar.cpp
-#    Source/Common/System/RAMFile.cpp
+    Source/Common/System/RAMFile.cpp
     Source/Common/System/Registry.cpp
     Source/Common/System/SaveGame/GameState.cpp
     Source/Common/System/SaveGame/GameStateMap.cpp
     Source/Common/System/Snapshot.cpp
     Source/Common/System/StackDump.cpp
-#    Source/Common/System/StreamingArchiveFile.cpp
+    Source/Common/System/StreamingArchiveFile.cpp
     Source/Common/System/SubsystemInterface.cpp
     Source/Common/System/Trig.cpp
     Source/Common/System/UnicodeString.cpp
@@ -1035,6 +1035,7 @@ target_sources(g_gameengine PRIVATE
     Source/GameNetwork/GameSpy/Thread/PingThread.cpp
     Source/GameNetwork/GameSpy/Thread/ThreadUtils.cpp
     Source/GameNetwork/GameSpyOverlay.cpp
+    Source/GameNetwork/WOLBrowser/WebBrowser.cpp
     Source/GameNetwork/GUIUtil.cpp
     Source/GameNetwork/IPEnumeration.cpp
     Source/GameNetwork/LANAPI.cpp

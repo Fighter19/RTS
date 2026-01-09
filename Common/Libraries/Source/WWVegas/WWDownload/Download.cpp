@@ -19,9 +19,13 @@
 // Download.cpp : Implementation of CDownload
 #include "DownloadDebug.h"
 #include "Download.h"
+#ifdef _WIN32
 #include <mmsystem.h>
-#include <assert.h>
 #include <direct.h>
+#else
+#define _mkdir(x) mkdir(x,0755)
+#endif
+#include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/stat.h>
@@ -267,9 +271,9 @@ HRESULT CDownload::PumpMessages()
 			reenter = 0;
 			return( DOWNLOAD_FILEERROR );
 		}
-
 		if( m_FileSize > 0 )
 		{
+#ifdef _WIN32
 			// First check to see if we already have the complete file in the proper dest location...
 			//
 			// Note, we will only skip the download if the file is a patch.  Patch files should
@@ -295,7 +299,7 @@ HRESULT CDownload::PumpMessages()
 				reenter = 0;
 				return DOWNLOAD_SUCCEEDED;
 			}
-
+#endif
 
 			//
 			// Check if we can do a file resume
@@ -408,9 +412,11 @@ HRESULT CDownload::PumpMessages()
 
 	if( m_Status == DOWNLOADSTATUS_FINISHING )
 	{
+#ifdef _WIN32
 		if (m_Ftp->m_iCommandSocket)
 			m_Status = DOWNLOADSTATUS_FINDINGFILE;  // ready to find another file
 		else
+#endif
 			m_Status = DOWNLOADSTATUS_DONE;			// command channel closed, connect again...
 
 		m_TimeStarted		= 0;

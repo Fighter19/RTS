@@ -25,6 +25,10 @@
 #include "WWDownload/ftp.h"
 #include "WWDownload/DownloadDefs.h"
 
+#ifndef _WIN32
+#include "compat.h"
+#endif
+
 /////////////////////////////////////////////////////////////////////////////
 // CDownload
 

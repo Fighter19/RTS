@@ -2,8 +2,6 @@ name: CMake Build with vcpkg
 
 on:
   push:
-    branches:
-      - main
   pull_request:
     branches:
       - main
@@ -14,9 +12,10 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     strategy:
-            matrix:
-                os: [ubuntu-latest, windows-latest, macos-latest]
-
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+      fail-fast: false
+      
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

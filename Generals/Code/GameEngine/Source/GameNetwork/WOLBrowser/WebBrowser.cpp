@@ -52,6 +52,8 @@
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
 #endif
 
+#ifdef _WIN32
+
 /**
 	* OLEInitializer class - Init and shutdown OLE & COM as a global
 	* object.  Scary, nasty stuff, COM.  /me shivers.
@@ -131,6 +133,8 @@ WebBrowser::~WebBrowser()
 	}
 }
 
+#endif // _WIN32
+
 //-------------------------------------------------------------------------------------------------
 /** The INI data fields for Webpage URL's */
 //-------------------------------------------------------------------------------------------------
@@ -152,6 +156,9 @@ WebBrowserURL::WebBrowserURL()
 WebBrowserURL::~WebBrowserURL() 
 {
 }
+
+#ifdef _WIN32
+
 /******************************************************************************
 *
 * NAME
@@ -313,3 +320,5 @@ STDMETHODIMP WebBrowser::TestMethod(Int num1)
 	DEBUG_LOG(("WebBrowser::TestMethod - num1 = %d\n", num1));
 	return S_OK;
 }
+
+#endif // _WIN32

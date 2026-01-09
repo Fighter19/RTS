@@ -37,7 +37,7 @@ class CComModule {
 	HINSTANCE m_hInstance;
 };
 
-bool GetModuleFileName(HINSTANCE hInstance, char *buffer, int size);
+inline bool GetModuleFileName(HINSTANCE hInstance, char *buffer, int size) { return false; }
 
 typedef uintptr_t (*FARPROC)();
 typedef HANDLE HMODULE;
@@ -106,7 +106,7 @@ typedef enum eSetWindowPosFlags {
 #define HWND_TOPMOST   ((HWND) - 1)
 #define HWND_NOTOPMOST ((HWND) - 2)
 
-void SetWindowPos(HWND hWnd, HWND hWndInsertAfter, int X, int Y, int cx, int cy, UINT uFlags);
+inline void SetWindowPos(HWND hWnd, HWND hWndInsertAfter, int X, int Y, int cx, int cy, UINT uFlags) {}
 
 inline void GetClientRect(HWND hWnd, RECT *pRect) {}
 
@@ -136,3 +136,16 @@ inline bool GetCursorPos(struct POINT *lpPoint) { return false; }
 #define VK_F6	  0x75
 #define VK_F7	  0x76
 #define VK_F8	  0x77
+
+#define MAKE_HRESULT(sev,fac,code) \
+    ((HRESULT) (((unsigned long)(sev)<<31) | ((unsigned long)(fac)<<16) | ((unsigned long)(code))) )
+
+#define SEVERITY_SUCCESS    0
+#define SEVERITY_ERROR      1
+#define FACILITY_ITF 4
+#define E_FAIL MAKE_HRESULT(SEVERITY_ERROR, FACILITY_ITF, 0xFFFF)
+
+#define MulDiv(num, denom, div) (((denom) == 0) ? 0 : (((num) * (div)) / (denom)))
+
+inline void SetCursor(void* hCursor) {}
+#define D3DCURSOR_IMMEDIATE_UPDATE 0x00000001
