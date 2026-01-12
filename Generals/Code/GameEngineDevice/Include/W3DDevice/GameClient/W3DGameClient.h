@@ -54,7 +54,9 @@
 #endif
 #include "Win32Device/GameClient/Win32Mouse.h"
 #include "W3DDevice/GameClient/W3DMouse.h"
-#ifdef RTS_USE_BINK
+#if defined(RTS_USE_FFMPEG)
+#include "VideoDevice/FFmpeg/FFmpegVideoPlayer.h"
+#elif defined(RTS_USE_BINK)
 #include "VideoDevice/Bink/BinkVideoPlayer.h"
 #endif
 class ThingTemplate;
@@ -112,7 +114,9 @@ protected:
 
   /// Manager for display strings
 	virtual DisplayStringManager *createDisplayStringManager( void ) { return NEW W3DDisplayStringManager; }
-#ifdef RTS_USE_BINK
+#if defined(RTS_USE_FFMPEG)
+	virtual VideoPlayerInterface *createVideoPlayer( void ) { return NEW FFmpegVideoPlayer; }
+#elif defined(RTS_USE_BINK)
 	virtual VideoPlayerInterface *createVideoPlayer( void ) { return NEW BinkVideoPlayer; }
 #else
 	virtual VideoPlayerInterface *createVideoPlayer( void ) { return NULL; }

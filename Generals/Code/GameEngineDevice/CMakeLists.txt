@@ -244,6 +244,21 @@ if(RTS_USE_STDFS)
     target_compile_definitions(g_gameenginedevice PUBLIC RTS_USE_STDFS)
 endif()
 
+### FFMpeg Video Playback
+if(RTS_USE_FFMPEG)
+    target_sources(g_gameenginedevice PRIVATE
+        Include/VideoDevice/FFmpeg/FFmpegFile.h
+        Include/VideoDevice/FFmpeg/FFmpegVideoPlayer.h
+        Source/VideoDevice/FFmpeg/FFmpegVideoPlayer.cpp
+        Source/VideoDevice/FFmpeg/FFmpegFile.cpp
+    )
+    target_compile_definitions(g_gameenginedevice PRIVATE RTS_USE_FFMPEG)
+    find_package(FFMPEG REQUIRED)
+    target_include_directories(g_gameenginedevice PRIVATE ${FFMPEG_INCLUDE_DIRS})
+    target_link_directories(g_gameenginedevice PRIVATE ${FFMPEG_LIBRARY_DIRS})
+    target_link_libraries(g_gameenginedevice PRIVATE ${FFMPEG_LIBRARIES})
+endif()
+
 ### Target configuration
 set_target_properties(g_gameenginedevice PROPERTIES OUTPUT_NAME GameEngineDevice)
 target_link_libraries(g_gameenginedevice PUBLIC g_gameengine c_wwvegas c_benchmark)

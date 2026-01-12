@@ -6,6 +6,7 @@
     "gli",
     "freetype",
     "fontconfig",
+    "ffmpeg",
     "zlib",
     "gtest",
     "benchmark",
