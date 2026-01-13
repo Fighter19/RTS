@@ -203,10 +203,29 @@ endif()
 ### Miles Audio System
 if(RTS_USE_MILES)
     target_sources(g_gameenginedevice PRIVATE
-        Include/MilesAudioDevice/MilesAudioManager.h
-        Source/MilesAudioDevice/MilesAudioManager.cpp
+        Include/AudioDevice/Miles/MilesAudioManager.h
+        Source/AudioDevice/Miles/MilesAudioFileCache.cpp
+        Source/AudioDevice/Miles/MilesAudioFileCache.h
+        Source/AudioDevice/Miles/MilesAudioManager.cpp
     )
     target_compile_definitions(g_gameenginedevice PRIVATE RTS_USE_MILES)
+endif()
+
+### OpenAL Audio Device
+if(RTS_USE_OPENAL)
+    target_sources(g_gameenginedevice PRIVATE
+        Include/AudioDevice/OpenAL/OpenALAudioManager.h
+        Include/AudioDevice/OpenAL/OpenALAudioStream.h
+        Source/AudioDevice/OpenAL/OpenALAudioManager.cpp
+        Source/AudioDevice/OpenAL/OpenALAudioFileCache.cpp
+        Source/AudioDevice/OpenAL/OpenALAudioFileCache.h
+        Source/AudioDevice/OpenAL/OpenALAudioStream.cpp
+        Include/AudioDevice/OpenAL/FFmpegOpenALAudioStream.h
+        Source/AudioDevice/OpenAL/FFmpegOpenALAudioStream.cpp
+    )
+    target_compile_definitions(g_gameenginedevice PRIVATE RTS_USE_OPENAL)
+    find_package(OpenAL REQUIRED)
+    target_link_libraries(g_gameenginedevice PRIVATE OpenAL::OpenAL)
 endif()
 
 ### SDL3 Windowing & Input
@@ -258,6 +277,7 @@ if(RTS_USE_FFMPEG)
     target_link_directories(g_gameenginedevice PRIVATE ${FFMPEG_LIBRARY_DIRS})
     target_link_libraries(g_gameenginedevice PRIVATE ${FFMPEG_LIBRARIES})
 endif()
+
 
 ### Target configuration
 set_target_properties(g_gameenginedevice PROPERTIES OUTPUT_NAME GameEngineDevice)

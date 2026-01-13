@@ -36,9 +36,9 @@
 #include "GameLogic/GameLogic.h"
 #include "GameNetwork/NetworkInterface.h"
 #if defined(RTS_USE_OPENAL)
-#include "OpenALAudioDevice/OpenALAudioManager.h"
+#include "AudioDevice/OpenAL/OpenALAudioManager.h"
 #elif defined(RTS_USE_MILES)
-#include "MilesAudioDevice/MilesAudioManager.h"
+#include "AudioDevice/OpenAL/MilesAudioManager.h"
 #else
 //#error "No audio device defined"
 #endif

@@ -46,9 +46,9 @@ extern "C" {
 	#include <libswscale/swscale.h>
 }
 
-#ifdef RTS_HAS_OPENAL
-#include "OpenALAudioDevice/OpenALAudioManager.h"
-#include "OpenALAudioDevice/OpenALAudioStream.h"
+#ifdef RTS_USE_OPENAL
+#include "AudioDevice/OpenAL/OpenALAudioManager.h"
+#include "AudioDevice/OpenAL/OpenALAudioStream.h"
 #endif
 
 #include <chrono>

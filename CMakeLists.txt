@@ -37,6 +37,8 @@ cpack_add_component(BFME DISPLAY_NAME "Battle for middleearth"
 
 # RTS options
 include(FeatureSummary)
+
+### Library Options
 option(RTS_USE_GLM "Use GLM for math operations" ON)
 add_feature_info(GLM RTS_USE_GLM "Use GLM for math operations")
 option(RTS_USE_STDFS "Use standard filesystem for file operations" ON)
@@ -45,20 +47,30 @@ option(RTS_USE_FREETYPE "Use FreeType for font rendering" ON)
 add_feature_info(FREETYPE RTS_USE_FREETYPE "Use FreeType for font rendering")
 option(RTS_USE_FONTCONFIG "Use FontConfig for font discovery" ON)
 add_feature_info(FONTCONFIG RTS_USE_FONTCONFIG "Use FontConfig for font discovery")
-option(RTS_USE_FFMPEG "Use FFmpeg for video playback" ON)
-add_feature_info(FFMPEG RTS_USE_FFMPEG "Support FFmpeg for video playback") 
-option(RTS_USE_ZLIB "Use ZLIB for compression" ON)
-add_feature_info(ZLIB RTS_USE_ZLIB "Support ZLIB for compression (maps etc.)")
-option(RTS_USE_LZHL "Use LZHL for compression" ON)
-add_feature_info(LZHL RTS_USE_LZHL "Support LZHL for compression (maps etc.)")
+
+# Media libraries
 option(RTS_USE_BINK "Use BINK for video playback" OFF)
 add_feature_info(BINK RTS_USE_BINK "Support BINK for video playback")
 option(RTS_USE_MILES "Use Miles Sound System for audio playback" ON)
 add_feature_info(MILES RTS_USE_MILES "Support Miles Sound System for audio playback")
+option(RTS_USE_OPENAL "Use OpenAL for audio playback" ON)
+add_feature_info(OPENAL RTS_USE_OPENAL "Support OpenAL for audio playback")
+option(RTS_USE_FFMPEG "Use FFmpeg for video playback" ON)
+add_feature_info(FFMPEG RTS_USE_FFMPEG "Support FFmpeg for video playback") 
+
+# Platform-specific librariesq
 option(RTS_USE_DX8 "Use DirectX 8 for rendering (Windows only)" ON)
 add_feature_info(DX8 RTS_USE_DX8 "Use DirectX 8 for rendering (Windows only)")
 option(RTS_USE_SDL3 "Use SDL3 for windowing and input (cross-platform)" ON)
 add_feature_info(SDL3 RTS_USE_SDL3 "Use SDL3 for windowing and input (cross-platform)")
+
+# Compression libraries
+option(RTS_USE_ZLIB "Use ZLIB for compression" ON)
+add_feature_info(ZLIB RTS_USE_ZLIB "Support ZLIB for compression (maps etc.)")
+option(RTS_USE_LZHL "Use LZHL for compression" ON)
+add_feature_info(LZHL RTS_USE_LZHL "Support LZHL for compression (maps etc.)")
+
+### Build Options
 option(RTS_ENABLE_TESTS "Enable tests" OFF)
 add_feature_info(TESTS RTS_ENABLE_TESTS "Enable tests & benchmarks")
 option(RTS_ENABLE_COVERAGE "Enable code coverage" OFF)

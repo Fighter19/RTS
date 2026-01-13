@@ -29,7 +29,8 @@
 #pragma once
 
 #include "Lib/BaseType.h"
-
+#undef min
+#undef max
 struct AVFormatContext;
 struct AVIOContext;
 struct AVCodec;
@@ -39,7 +40,8 @@ struct AVPacket;
 struct File;
 
 #define MAX_STREAMS 8
-using FFmpegFrameCallback = void(*)(AVFrame *, int, int, void *);
+#include <functional>
+using FFmpegFrameCallback = std::function<void(AVFrame *, int, int, void *)>;
 
 class FFmpegFile
 {

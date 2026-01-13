@@ -44,10 +44,12 @@
 #include "wwdebug.h"
 #include "wwstring.h"
 
-#ifdef RTS_DEBUG
+#ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[]=__FILE__;
+#ifdef _WIN32
 #define new DEBUG_NEW
+#endif
 #endif
 
 static int Get_Bit(void const * array, int bit);
