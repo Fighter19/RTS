@@ -37,7 +37,7 @@
  *     July 15, 1998
  *
  ****************************************************************************/
-
+#include "bittype.h"
 #pragma pack(push, 1)
 
 // If you wish to display loading error messages call targa functions inside of
@@ -131,8 +131,8 @@ typedef struct _TGAHeader {
  * BZST      - Binary Zero String Terminator.
  */
 typedef struct _TGA2Footer {
-	long Extension;
-	long Developer;
+	sint32 Extension;
+	sint32 Developer;
 	char Signature[16];
 	char RsvdChar;
 	char BZST;
@@ -217,12 +217,12 @@ typedef struct _TGA2Extension {
 	TGA2TimeStamp JobTime;
 	char SoftID[41];
 	TGA2SoftVer SoftVer;
-	long KeyColor;
+	sint32 KeyColor;
 	TGA2Ratio Aspect;
 	TGA2Ratio Gamma;
-	long ColorCor;
-	long PostStamp;
-	long ScanLine;
+	sint32 ColorCor;
+	sint32 PostStamp;
+	sint32 ScanLine;
 	char Attributes;
 } TGA2Extension;
 
