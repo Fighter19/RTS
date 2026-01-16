@@ -30,6 +30,8 @@
 #include <ifaddrs.h>
 #endif
 
+#undef interface
+
 IPEnumeration::IPEnumeration( void )
 {
 	m_IPlist = NULL;
