@@ -390,7 +390,7 @@ void LensflareTypeClass::Generate_Vertex_Buffers(
 		if (col[0]>1.0f) col[0]=1.0f;
 		if (col[1]>1.0f) col[1]=1.0f;
 		if (col[2]>1.0f) col[2]=1.0f;
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 		unsigned color=DX8Wrapper::Convert_Color(col,1.0f);
 
 		vertex->x=x+ix;
@@ -424,7 +424,7 @@ void LensflareTypeClass::Generate_Vertex_Buffers(
 		vertex->v1=lic.flare_uv[a][3];
 		vertex->diffuse=color;
 		vertex++;
-#endif // _WIN32
+#endif // RTS_USE_DX8
 		vertex_count+=4;
 	}
 }
@@ -913,7 +913,7 @@ void DazzleRenderObjClass::Render(RenderInfoClass & rinfo)
 //			visibility = _VisibilityHandler->Compute_Dazzle_Visibility(rinfo,this,position);
 
 			Matrix4 view_transform,projection_transform;
-		#ifdef _WIN32
+		#ifdef RTS_USE_DX8
 			DX8Wrapper::Get_Transform(D3DTS_VIEW,view_transform);
 			DX8Wrapper::Get_Transform(D3DTS_PROJECTION,projection_transform);
 		#endif
@@ -991,7 +991,7 @@ void DazzleRenderObjClass::Render_Dazzle(CameraClass* camera)
 	Matrix4 view_transform;
 	Matrix4 world_transform;
 	Matrix4 projection_transform;
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	DX8Wrapper::Get_Transform(D3DTS_VIEW,view_transform);
 	DX8Wrapper::Get_Transform(D3DTS_WORLD,world_transform);
 	DX8Wrapper::Get_Transform(D3DTS_PROJECTION,projection_transform);
@@ -1041,7 +1041,7 @@ void DazzleRenderObjClass::Render_Dazzle(CameraClass* camera)
 		lens_max_verts=4*lensflare->lic.flare_count;
 	}
 
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	DynamicVBAccessClass vb_access(BUFFER_TYPE_DYNAMIC_DX8,dynamic_fvf_type,vertex_count*2+lens_max_verts);
 	{
 		DynamicVBAccessClass::WriteLockClass lock(&vb_access);
@@ -1156,7 +1156,7 @@ void DazzleRenderObjClass::Render_Dazzle(CameraClass* camera)
 			vertex_count+=lensflare_vertex_count;
 		}
 	}
-#endif // _WIN32
+#endif // RTS_USE_DX8
 	int dazzle_poly_count=dazzle_vertex_count>>1;
 	int halo_poly_count=halo_vertex_count>>1;
 	int lensflare_poly_count=lensflare_vertex_count>>1;
@@ -1166,7 +1166,7 @@ void DazzleRenderObjClass::Render_Dazzle(CameraClass* camera)
 		return;
 	}
 
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	DX8Wrapper::Set_Vertex_Buffer(vb_access);
 
 	DynamicIBAccessClass ib_access(BUFFER_TYPE_DYNAMIC_DX8,poly_count*3);
@@ -1217,7 +1217,7 @@ void DazzleRenderObjClass::Render_Dazzle(CameraClass* camera)
 	DX8Wrapper::Set_Transform(D3DTS_PROJECTION,old_projection_transform);
 	DX8Wrapper::Set_Transform(D3DTS_VIEW,old_view_transform);
 	DX8Wrapper::Set_Transform(D3DTS_WORLD,old_world_transform);
-#endif // _WIN32
+#endif // RTS_USE_DX8
 }
 
 // ----------------------------------------------------------------------------
@@ -1491,9 +1491,9 @@ void DazzleLayerClass::Render(CameraClass* camera)
 	unsigned time_ms=WW3D::Get_Frame_Time();
 	if (time_ms==0) time_ms=1;
 
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	DX8Wrapper::Set_Material(NULL);
-#endif // _WIN32
+#endif // RTS_USE_DX8
 
 	for (unsigned type=0;type<type_count;++type) {
 		if (!types[type]) continue;

@@ -48,7 +48,7 @@
 #include "ffactory.h"
 #include "meshmatdesc.h"
 
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 #include <d3d8.h>
 #include <d3dx8core.h>
 #include "dx8wrapper.h"
@@ -75,7 +75,7 @@ static int Calculate_Texture_Memory_Usage(const TextureClass* texture,int red_fa
 	int size=0;
 	IDirect3DTexture8* d3d_texture=const_cast<TextureClass*>(texture)->Peek_DX8_Texture();
 	if (!d3d_texture) return 0;
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	for (unsigned i=red_factor;i<d3d_texture->GetLevelCount();++i) {
 		D3DSURFACE_DESC desc;
 		DX8_ErrorCode(d3d_texture->GetLevelDesc(i,&desc));
@@ -120,7 +120,7 @@ TextureClass::TextureClass(unsigned width, unsigned height, WW3DFormat format, M
 	default:
 		break;
 	}
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	D3DPOOL d3dpool=(D3DPOOL) 0;
 	switch(pool)
 	{
@@ -189,7 +189,7 @@ TextureClass::TextureClass(
 		// If requesting bumpmap format that isn't available we'll just return the surface in whatever color
 		// format the texture file is in. (This is illegal case, the format support should always be queried
 		// before creating a bump texture!)
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 		if (!DX8Caps::Support_Texture_Format(TextureFormat)) {
 			TextureFormat=WW3D_FORMAT_UNKNOWN;
 		}
@@ -276,7 +276,7 @@ TextureClass::TextureClass(SurfaceClass *surface, MipCountType mip_level_count)
 	default:
 		break;
 	}
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	D3DTexture = DX8Wrapper::_Create_DX8_Texture(surface->Peek_D3D_Surface(), mip_level_count);
 #endif
 	LastAccessed=WW3D::Get_Sync_Time();
@@ -291,14 +291,14 @@ TextureClass::TextureClass(IDirect3DTexture8* d3d_texture)
 	Initialized(true),
 	TextureMinFilter(FILTER_TYPE_DEFAULT),
 	TextureMagFilter(FILTER_TYPE_DEFAULT),
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	MipMapFilter((d3d_texture->GetLevelCount()!=1) ? FILTER_TYPE_DEFAULT : FILTER_TYPE_NONE),
 #else
 	MipMapFilter(FILTER_TYPE_DEFAULT),
 #endif
 	UAddressMode(TEXTURE_ADDRESS_REPEAT),
 	VAddressMode(TEXTURE_ADDRESS_REPEAT),
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	MipLevelCount((MipCountType)d3d_texture->GetLevelCount()),
 #else
 	MipLevelCount(MIP_LEVELS_ALL),
@@ -311,7 +311,7 @@ TextureClass::TextureClass(IDirect3DTexture8* d3d_texture)
 	IsCompressionAllowed(false),
 	TextureLoadTask(NULL)
 {
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	D3DTexture->AddRef();
 	IDirect3DSurface8* surface;
 	DX8_ErrorCode(D3DTexture->GetSurfaceLevel(0,&surface));
@@ -346,7 +346,7 @@ TextureClass::~TextureClass(void)
 		WWDEBUG_SAY(("Warning: Texture %s was loaded but never used\n",Get_Texture_Name()));
 	}
 
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	if (D3DTexture) {
 		D3DTexture->Release();
 		D3DTexture = NULL;
@@ -375,7 +375,7 @@ void TextureClass::Invalidate()
 	if (Is_Missing_Texture()) return;
 
 	if (D3DTexture) {
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 		D3DTexture->Release();
 #endif
 		D3DTexture = NULL;
@@ -401,7 +401,7 @@ void TextureClass::Invalidate()
 
 void TextureClass::Load_Locked_Surface()
 {
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	if (D3DTexture) D3DTexture->Release();
 #endif
 	D3DTexture=0;
@@ -419,7 +419,7 @@ bool TextureClass::Is_Missing_Texture()
 	if(D3DTexture == missing_texture)
 		flag = true;
 
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	if(missing_texture)
 		missing_texture->Release();
 #endif
@@ -442,7 +442,7 @@ unsigned int TextureClass::Get_Mip_Level_Count(void)
 		return 0;
 	}
 
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	return D3DTexture->GetLevelCount();
 #else
 	return 1; // Assume 1 mip level if D3DTexture is not available
@@ -456,7 +456,7 @@ void TextureClass::Get_Level_Description(SurfaceClass::SurfaceDescription &surfa
 	if (!D3DTexture) {
 		WWASSERT_PRINT(0, "Get_Surface_Description: D3DTexture is NULL!\n");
 	}
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	D3DSURFACE_DESC d3d_surf_desc;
 	DX8_ErrorCode(D3DTexture->GetLevelDesc(level, &d3d_surf_desc));
 	surface_desc.Format = D3DFormat_To_WW3DFormat(d3d_surf_desc.Format);
@@ -469,7 +469,7 @@ void TextureClass::Get_Level_Description(SurfaceClass::SurfaceDescription &surfa
 
 SurfaceClass *TextureClass::Get_Surface_Level(unsigned int level)
 {
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	IDirect3DSurface8 *d3d_surface = NULL;
 	DX8_ErrorCode(D3DTexture->GetSurfaceLevel(level, &d3d_surface));
 	SurfaceClass *surface = W3DNEW SurfaceClass(d3d_surface);
@@ -489,7 +489,7 @@ unsigned int TextureClass::Get_Priority(void)
 		return 0;
 	}
 
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	return D3DTexture->GetPriority();
 #else
 	return 0; // If D3DTexture is not available, return 0
@@ -504,7 +504,7 @@ unsigned int TextureClass::Set_Priority(unsigned int priority)
 		WWASSERT_PRINT(0, "Set_Priority: D3DTexture is NULL!\n");
 		return 0;
 	}
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	return D3DTexture->SetPriority(priority);
 #else
 	return 0; // If D3DTexture is not available, return 0
@@ -541,7 +541,7 @@ void TextureClass::Apply(unsigned int stage)
 		Init();
 	}
 	LastAccessed=WW3D::Get_Sync_Time();
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	DX8_RECORD_TEXTURE(this);
 
 	// Set texture itself
@@ -586,7 +586,7 @@ void TextureClass::Apply(unsigned int stage)
 void TextureClass::Apply_Null(unsigned int stage)
 {
 	// This function sets the render states for a "NULL" texture
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	DX8Wrapper::Set_DX8_Texture(stage, NULL);
 #endif
 }
@@ -595,7 +595,7 @@ void TextureClass::Apply_Null(unsigned int stage)
 
 void TextureClass::Apply_New_Surface(bool initialized)
 {
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	if (D3DTexture) D3DTexture->Release();
 	D3DTexture=TextureLoadTask->Peek_D3D_Texture();
 	D3DTexture->AddRef();
@@ -782,7 +782,7 @@ bool Validate_Filters(unsigned type)
 */
 void TextureClass::_Init_Filters()
 {
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	const D3DCAPS8& dx8caps=DX8Caps::Get_Default_Caps();
 
 	_MinTextureFilters[FILTER_TYPE_NONE]=D3DTEXF_POINT;

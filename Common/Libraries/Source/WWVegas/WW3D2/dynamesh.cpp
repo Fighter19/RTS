@@ -38,7 +38,7 @@
 #include "sortingrenderer.h"
 #include "rinfo.h"
 #include "camera.h"
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 #include "dx8fvf.h"
 #include "dx8vertexbuffer.h"
 #include "dx8indexbuffer.h"
@@ -176,7 +176,7 @@ void DynamicMeshModel::Render(RenderInfoClass & rinfo)
 {
 	// Process texture reductions:
 //	MatInfo->Process_Texture_Reduction();
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	unsigned buffer_type=(Get_Flag(MeshGeometryClass::SORT)&& WW3D::Is_Sorting_Enabled()) ? BUFFER_TYPE_DYNAMIC_SORTING : BUFFER_TYPE_DYNAMIC_DX8;
 
 	/*
@@ -363,7 +363,7 @@ void DynamicMeshModel::Render(RenderInfoClass & rinfo)
 		}	// while (!done)
 
 	}	// for (pass)
-#endif // _WIN32
+#endif // RTS_USE_DX8
 }
 
 void DynamicMeshModel::Initialize_Texture_Array(int pass, int stage, TextureClass *texture)
@@ -401,9 +401,9 @@ void DynamicMeshClass::Render(RenderInfoClass & rinfo)
 		const FrustumClass & frustum = rinfo.Camera.Get_Frustum();
 
 		if (CollisionMath::Overlap_Test(frustum, Get_Bounding_Box()) != CollisionMath::OUTSIDE) {
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 			DX8Wrapper::Set_Transform(D3DTS_WORLD, Transform);
-#endif // _WIN32
+#endif // RTS_USE_DX8
 			Model->Render(rinfo);
 		}
 	}
@@ -434,9 +434,9 @@ bool DynamicMeshClass::End_Vertex()
 //			color->Z = CurVertexColor[color_array_index].Z;
 //			color->W = CurVertexColor[color_array_index].W;
 			unsigned * color = &((Model->Get_Color_Array(color_array_index))[VertCount]);
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 			*color=DX8Wrapper::Convert_Color_Clamp(CurVertexColor[color_array_index]);
-#endif // _WIN32
+#endif // RTS_USE_DX8
 		}
 	}
 

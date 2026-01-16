@@ -412,7 +412,7 @@ Render2DSentenceClass::Build_Textures (void)
 		//
 		//	Copy the contents of the texture from the surface
 		//
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 		DX8Wrapper::_Copy_DX8_Rects (curr_surface->Peek_D3D_Surface (), NULL, 0, texture_surface->Peek_D3D_Surface (), NULL);
 #endif
 		REF_PTR_RELEASE (texture_surface);

@@ -209,11 +209,11 @@ void SegLineRendererClass::Render
 )
 {
 	Matrix4 view;
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	DX8Wrapper::Get_Transform(D3DTS_VIEW,view);
 #endif
 	Matrix4 identity(true);
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	DX8Wrapper::Set_Transform(D3DTS_WORLD,identity);	
 	DX8Wrapper::Set_Transform(D3DTS_VIEW,identity);	
 
@@ -1148,7 +1148,7 @@ void SegLineRendererClass::Render
 	}	// Chunking loop
 
 	DX8Wrapper::Set_Transform(D3DTS_VIEW,view);
-#endif // _WIN32
+#endif // RTS_USE_DX8
 }
 
 

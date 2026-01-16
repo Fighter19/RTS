@@ -35,7 +35,7 @@ static IDirect3DTexture8 * _MissingTexture = NULL;
 IDirect3DTexture8* MissingTexture::_Get_Missing_Texture()
 {
 	WWASSERT(_MissingTexture);
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	_MissingTexture->AddRef();
 #endif
 	return _MissingTexture;
@@ -43,7 +43,7 @@ IDirect3DTexture8* MissingTexture::_Get_Missing_Texture()
 
 IDirect3DSurface8* MissingTexture::_Create_Missing_Surface()
 {
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	IDirect3DSurface8 *texture_surface = NULL;
 	DX8_ErrorCode(_MissingTexture->GetSurfaceLevel(0, &texture_surface));
 	D3DSURFACE_DESC texture_surface_desc;
@@ -67,7 +67,7 @@ IDirect3DSurface8* MissingTexture::_Create_Missing_Surface()
 void MissingTexture::_Init()
 {
 	WWASSERT(!_MissingTexture);
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	IDirect3DTexture8* tex=DX8Wrapper::_Create_DX8_Texture(
 		missing_image_width,
 		missing_image_height,
@@ -164,7 +164,7 @@ void MissingTexture::_Init()
 
 void MissingTexture::_Deinit()
 {
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	_MissingTexture->Release();
 #endif
 	_MissingTexture=0;

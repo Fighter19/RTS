@@ -157,10 +157,10 @@ void Init_D3D_To_WW3_Conversion()
 	D3DFormatToWW3DFormatConversionArray[D3DFMT_X8L8V8U8]=WW3D_FORMAT_X8L8V8U8;	// Bumpmap
 
 };
-#else // _WIN32
+#else // RTS_USE_DX8
 
 void Init_D3D_To_WW3_Conversion()
 {
 	// This function is only used in Windows, so we don't need to do anything here.
 }
-#endif // _WIN32
+#endif // RTS_USE_DX8

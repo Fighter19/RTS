@@ -302,7 +302,7 @@ static void Log_Textures(bool inited,unsigned& total_count, unsigned& total_mem)
 		TextureClass * tex=ite.Peek_Value();
 		if (tex->Is_Initialized()!=inited) continue;
 
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 		D3DSURFACE_DESC desc;
 		IDirect3DTexture8* d3d_texture=tex->Peek_DX8_Texture();
 		if (!d3d_texture) continue;
@@ -512,10 +512,10 @@ void WW3DAssetManager::Release_Unused_Assets(void)
  *=============================================================================================*/
 void WW3DAssetManager::Free_Assets_With_Exclusion_List(const DynamicVectorClass<StringClass> & exclusion_names)
 {
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	// Reset the dx8 mesh renderer
 	TheDX8MeshRenderer.Invalidate();
-#endif // _WIN32
+#endif // RTS_USE_DX8
 
 	// Build an exclusion list object that will do the real filtering work for us
 	W3DExclusionListClass exclusion_list(exclusion_names);

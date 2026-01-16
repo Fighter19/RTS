@@ -22,10 +22,10 @@
 #include "bitmaphandler.h"
 #include "ww3d.h"
 
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 #include "formconv.h"
 #include "dx8wrapper.h"
-#endif // _WIN32
+#endif // RTS_USE_DX8
 
 // ----------------------------------------------------------------------------
 
@@ -60,7 +60,7 @@ DDSFileClass::DDSFileClass(const char* name,unsigned reduction_factor)
 	// Verify the structure size matches the read size
 	WWASSERT(read_bytes==SurfaceDesc.Size);
 
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	Format=D3DFormat_To_WW3DFormat((D3DFORMAT)SurfaceDesc.PixelFormat.FourCC);
 	WWASSERT(
 		Format==WW3D_FORMAT_DXT1 ||
@@ -236,7 +236,7 @@ bool DDSFileClass::Load()
 void DDSFileClass::Copy_Level_To_Surface(unsigned level,IDirect3DSurface8* d3d_surface)
 {
 	WWASSERT(d3d_surface);
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	// Verify that the destination surface size matches the source surface size
 	D3DSURFACE_DESC surface_desc;
 	DX8_ErrorCode(d3d_surface->GetDesc(&surface_desc));
@@ -255,7 +255,7 @@ void DDSFileClass::Copy_Level_To_Surface(unsigned level,IDirect3DSurface8* d3d_s
 
 	// Finally, unlock the surface
 	DX8_ErrorCode(d3d_surface->UnlockRect());
-#endif // _WIN32
+#endif // RTS_USE_DX8
 }
 
 // ----------------------------------------------------------------------------

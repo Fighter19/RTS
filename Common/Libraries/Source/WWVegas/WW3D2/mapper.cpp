@@ -111,7 +111,7 @@ void LinearOffsetTextureMapperClass::Apply(int uv_array_index)
 	m[0].X=Scale.X;
 	m[1].Z=offset_v;
 	m[1].Y=Scale.Y;
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	DX8Wrapper::Set_Transform((D3DTRANSFORMSTATETYPE) (D3DTS_TEXTURE0+Stage),m);
 
 	// Disable Texgen
@@ -160,7 +160,7 @@ void ScaleTextureMapperClass::Apply(int uv_array_index)
 	
 	m[0].X=Scale.U;
 	m[1].Y=Scale.V;
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	DX8Wrapper::Set_Transform((D3DTRANSFORMSTATETYPE) (D3DTS_TEXTURE0+Stage),m);
 
 	// Disable Texgen
@@ -214,7 +214,7 @@ void GridTextureMapperClass::Apply(int uv_array_index)
 	// otherwise change to translate
 	m[0].Z = u_offset;
 	m[1].Z = v_offset;
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	DX8Wrapper::Set_Transform((D3DTRANSFORMSTATETYPE) (D3DTS_TEXTURE0+Stage), m);
 
 	// Disable Texgen
@@ -330,7 +330,7 @@ void RotateTextureMapperClass::Apply(int uv_array_index)
 	float c,s;
 	c=WWMath::Cos(CurrentAngle);
 	s=WWMath::Sin(CurrentAngle);
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	Matrix4 m(true);
 
 	// subtract center
@@ -405,7 +405,7 @@ void SineLinearOffsetTextureMapperClass::Apply(int uv_array_index)
 	// otherwise change to translate
 	m[0].Z=offset_u;
 	m[1].Z=offset_v;
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	DX8Wrapper::Set_Transform((D3DTRANSFORMSTATETYPE) (D3DTS_TEXTURE0+Stage),m);
 
 	// Disable Texgen
@@ -470,7 +470,7 @@ void StepLinearOffsetTextureMapperClass::Apply(int uv_array_index)
 	// otherwise change to translate
 	m[0].Z=CurrentStep.U;
 	m[1].Z=CurrentStep.V;
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	DX8Wrapper::Set_Transform((D3DTRANSFORMSTATETYPE) (D3DTS_TEXTURE0+Stage),m);
 
 	// Disable Texgen
@@ -550,7 +550,7 @@ void ZigZagLinearOffsetTextureMapperClass::Apply(int uv_array_index)
 	// otherwise change to translate
 	m[0].Z=offset_u;
 	m[1].Z=offset_v;
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	DX8Wrapper::Set_Transform((D3DTRANSFORMSTATETYPE) (D3DTS_TEXTURE0+Stage),m);
 
 	// Disable Texgen
@@ -583,7 +583,7 @@ void ClassicEnvironmentMapperClass::Apply(int uv_array_index)
 							0.0f, 0.5f, 0.0f, 0.5f,
 							0.0f, 0.0f, 1.0f, 0.0f );
 
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	DX8Wrapper::Set_Transform((D3DTRANSFORMSTATETYPE) (D3DTS_TEXTURE0+Stage),matenv);
 
 	// Get camera normals
@@ -604,7 +604,7 @@ void EnvironmentMapperClass::Apply(int uv_array_index)
 							0.0f, 0.25f, 0.0f, 0.5f,
 							0.0f, 0.0f, 1.0f, 0.0f );	
 
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	DX8Wrapper::Set_Transform((D3DTRANSFORMSTATETYPE) (D3DTS_TEXTURE0+Stage),matenv);
 
 	// Get camera reflection vector
@@ -660,7 +660,7 @@ void EdgeMapperClass::Apply(int uv_array_index)
 	Matrix3D matenv(	0.0f, 0.0f, 0.5f, 0.5f,
 							0.0f, 0.0f, 0.0f, VOffset,
 							0.0f, 0.0f, 1.0f, 0.0f );	
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	DX8Wrapper::Set_Transform((D3DTRANSFORMSTATETYPE) (D3DTS_TEXTURE0+Stage),matenv);
 
 	// Get camera reflection vector
@@ -690,7 +690,7 @@ void WSClassicEnvironmentMapperClass::Apply(int uv_array_index)
 							0.0f, 0.0f, 1.0f, 0.0f );
 
 	// multiply by inverse of view transform	
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	Matrix4 mat;
 	DX8Wrapper::Get_Transform(D3DTS_VIEW,mat);	
 	Matrix3D mat2(mat[0].X,mat[1].X,mat[2].X,0.0f,
@@ -723,7 +723,7 @@ void WSEnvironmentMapperClass::Apply(int uv_array_index)
 							0.0f, 0.0f, 1.0f, 0.0f );		
 
 	// multiply by inverse of view transform	
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	Matrix4 mat;	
 	DX8Wrapper::Get_Transform(D3DTS_VIEW,mat);		
 	Matrix3D mat2(mat[0].X,mat[1].X,mat[2].X,0.0f,
@@ -758,7 +758,7 @@ void ScreenMapperClass::Apply(int uv_array_index)
 
 	// multiply by projection matrix	
 	// followed by scale and translation
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	Matrix4 mat;	
 	DX8Wrapper::Get_Transform(D3DTS_PROJECTION,mat);	
 	mat[0]*=Scale.X; // entire row since we're pre-multiplying
@@ -798,7 +798,7 @@ void GridClassicEnvironmentMapperClass::Apply(int uv_array_index)
 							0.0f,	del,	0.0f,	v_offset + del,
 							0.0f,	0.0f,	1.0f,	0.0f				);		
 
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	DX8Wrapper::Set_Transform((D3DTRANSFORMSTATETYPE) (D3DTS_TEXTURE0+Stage),tform);
 
 	// Get camera normals
@@ -829,7 +829,7 @@ void GridEnvironmentMapperClass::Apply(int uv_array_index)
 	Matrix3D tform(	del,	0.0f,	0.0f,	u_offset + del,
 							0.0f,	del,	0.0f,	v_offset + del,
 							0.0f,	0.0f,	1.0f,	0.0f				);		
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	DX8Wrapper::Set_Transform((D3DTRANSFORMSTATETYPE) (D3DTS_TEXTURE0+Stage),tform);
 
 	// Get camera space reflection
@@ -903,7 +903,7 @@ void RandomTextureMapperClass::Apply(int uv_array_index)
 	voff=fmodf(voff,1.0f);
 	m[0].Z=uoff;
 	m[1].Z=voff;
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	DX8Wrapper::Set_Transform((D3DTRANSFORMSTATETYPE) (D3DTS_TEXTURE0+Stage),m);
 
 	// Disable Texgen
@@ -959,7 +959,7 @@ void BumpEnvTextureMapperClass::Apply(int uv_array_index)
 	c=ScaleFactor * WWMath::Fast_Cos(CurrentAngle);
 	s=ScaleFactor * WWMath::Fast_Sin(CurrentAngle);
 
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	// Set the Bump Environment Matrix
 	DX8Wrapper::Set_DX8_Texture_Stage_State(Stage,D3DTSS_BUMPENVMAT00, F2DW(c));
 	DX8Wrapper::Set_DX8_Texture_Stage_State(Stage,D3DTSS_BUMPENVMAT01, F2DW(-s));

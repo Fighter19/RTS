@@ -209,7 +209,7 @@ void MatrixMapperClass::Compute_Texture_Coordinate(const Vector3 & point,Vector3
 void MatrixMapperClass::Apply(int uv_array_index)
 {
 	Matrix4 m;
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	switch (Type) 
 	{
 	case ORTHO_PROJECTION:

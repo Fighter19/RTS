@@ -47,7 +47,7 @@
 #include "wwmemlog.h"
 #include "assetmgr.h"
 
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 #include "dx8fvf.h"
 #include "dx8caps.h"
 #include "dx8wrapper.h"
@@ -541,7 +541,7 @@ void Render2DClass::Render(void)
 	Matrix4 view,proj;
 	Matrix4 identity(true);
 
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	DX8Wrapper::Get_Transform(D3DTS_VIEW,view);
 	DX8Wrapper::Get_Transform(D3DTS_PROJECTION,proj);
 

@@ -286,7 +286,7 @@ public:
 		unsigned * color = Model->Get_Color_Array(color_array_index);
 		assert(color);
 
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 		color[VertCount]=DX8Wrapper::Convert_Color_Clamp(Vector4(r,g,b,a));
 #endif
 //		color[VertCount].X = r;
@@ -371,7 +371,7 @@ public:
 		CurVertexColor[color_array_index].W = color.W;
 //		Vector4 * color_list = Model->Get_Color_Array(color_array_index);
 		unsigned * color_list = Model->Get_Color_Array(color_array_index);
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 		color_list[index] = DX8Wrapper::Convert_Color_Clamp(color);
 #endif
 	}
@@ -492,7 +492,7 @@ void DynamicMeshClass::Switch_To_Multi_Vertex_Color(int color_array_index)
 */
 	unsigned * color_list = Model->Get_Color_Array(color_array_index);
 	// set the proper color for all the existing vertices
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	unsigned vertex_color=DX8Wrapper::Convert_Color_Clamp(CurVertexColor[color_array_index]);
 #else
 	unsigned vertex_color=0xFFFFFFFF; // Default to white if not using DX8Wrapper

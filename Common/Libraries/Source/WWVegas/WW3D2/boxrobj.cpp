@@ -454,7 +454,7 @@ void BoxRenderObjClass::render_box(RenderInfoClass & rinfo,const Vector3 & cente
 			verts[ivert].Z = center.Z + _BoxVerts[ivert][2] * extent.Z;
 		}
 
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 		/*
 		** Dump the box vertices into the sorting dynamic vertex buffer. 
 		*/
@@ -705,7 +705,7 @@ void AABoxRenderObjClass::Render(RenderInfoClass & rinfo)
 {
 	Matrix3D temp(1);
 	temp.Translate(Transform.Get_Translation());
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	DX8Wrapper::Set_Transform(D3DTS_WORLD,temp);
 #endif
 	render_box(rinfo,ObjSpaceCenter,ObjSpaceExtent);
@@ -1085,7 +1085,7 @@ int OBBoxRenderObjClass::Class_ID(void) const
 void OBBoxRenderObjClass::Render(RenderInfoClass & rinfo)
 {
 	Matrix3D tm(Transform);
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);
 #endif
 	render_box(rinfo,ObjSpaceCenter,ObjSpaceExtent);

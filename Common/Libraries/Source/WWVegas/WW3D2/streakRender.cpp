@@ -317,7 +317,7 @@ void StreakRendererClass::RenderStreak
 )
 {
 	Matrix4 view;
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	DX8Wrapper::Get_Transform(D3DTS_VIEW,view);
 
 	Matrix4 identity(true);
@@ -1407,7 +1407,7 @@ char q[]="&&  &&  &&  &&  &&  &&  &&  &&  &&  &&  &&  &&  &&  &&  &&  &&  &&  &&
 	}	// Chunking loop
 
 	DX8Wrapper::Set_Transform(D3DTS_VIEW,view);
-#endif // _WIN32
+#endif // RTS_USE_DX8
 }
 
 /////////////////////////////////////////////////////////////////////////////

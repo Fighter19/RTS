@@ -439,7 +439,7 @@ void SphereRenderObjClass::render_sphere()
 	} else {
 		SphereShader.Set_Texturing (ShaderClass::TEXTURING_DISABLE);
 	}
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	DX8Wrapper::Set_Shader(SphereShader);
 	DX8Wrapper::Set_Texture(0,SphereTexture);
 	DX8Wrapper::Set_Material(SphereMaterial);	
@@ -498,7 +498,7 @@ void SphereRenderObjClass::render_sphere()
 		0,
 		mesh.Vertex_ct);
 #endif
-#endif // _WIN32
+#endif // RTS_USE_DX8
 } // render_sphere
 
 
@@ -650,7 +650,7 @@ void SphereRenderObjClass::Render(RenderInfoClass & rinfo)
 		}
 
 		// Camera Align
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 		if (Flags & USE_CAMERA_ALIGN) {
 			Matrix4 view,ident(true);
 			DX8Wrapper::Get_Transform(D3DTS_VIEW,view);

@@ -760,7 +760,7 @@ void MeshMatDescClass::Post_Load_Process(bool lighting_enabled)
 			unsigned * emissive_array = ColorArray[1]->Get_Array();
 
 			for (int vidx=0; vidx<VertexCount; vidx++) {
-#ifdef _WIN32
+#ifdef RTS_USE_DX8E_DX8
 				Vector4 diffuse=DX8Wrapper::Convert_Color(diffuse_array[vidx]);
 				Vector4 emissive=DX8Wrapper::Convert_Color(emissive_array[vidx]);
 				diffuse.X *= emissive.X;
@@ -789,7 +789,7 @@ void MeshMatDescClass::Post_Load_Process(bool lighting_enabled)
 					mtl_opacity = mtl->Get_Opacity();
 				}
 
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 				// If only diffuse is used apply diffuse to color channel and set diffuse source to color 1
 				if (diffuse_used && !ambient_used && !emissive_used) {
 					Vector4 diffuse=DX8Wrapper::Convert_Color(diffuse_array[vidx]);
@@ -940,7 +940,7 @@ void MeshMatDescClass::Configure_Material(VertexMaterialClass * mtl,int pass,boo
 
 bool MeshMatDescClass::Do_Mappers_Need_Normals(void)
 {
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	if (DX8Caps::Support_NPatches() && WW3D::Get_NPatches_Level()>1) return true;
 #endif
 	for (int pass=0; pass<PassCount; pass++) {

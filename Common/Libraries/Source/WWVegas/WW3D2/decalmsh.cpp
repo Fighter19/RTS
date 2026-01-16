@@ -59,11 +59,11 @@
 #include "statistics.h"
 #include "simplevec.h"
 #include "texture.h"
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 #include "dx8vertexbuffer.h"
 #include "dx8indexbuffer.h"
 #include "dx8wrapper.h"
-#endif // _WIN32
+#endif // RTS_USE_DX8
 
 #define DISABLE_CLIPPING	0
 
@@ -298,7 +298,7 @@ void RigidDecalMeshClass::Render(void)
 	** transform between the time that the mesh is rendered and the time that the decal
 	** mesh is rendered...  It shouldn't happen though.
 	*/
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	DX8Wrapper::Set_Transform(D3DTS_WORLD,Parent->Get_Transform());
 
 	/*
@@ -363,7 +363,7 @@ void RigidDecalMeshClass::Render(void)
 												1 + Polys[next_poly_index-1].K - Polys[cur_poly_index].I);
 		cur_poly_index = next_poly_index;
 	}
-#endif // _WIN32
+#endif // RTS_USE_DX8
 }
 
 
@@ -384,11 +384,11 @@ void RigidDecalMeshClass::Render(void)
  *=============================================================================================*/
 int RigidDecalMeshClass::Process_Material_Run(int start_index)
 {
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	DX8Wrapper::Set_Texture(0,Textures[start_index]);
 	DX8Wrapper::Set_Material(VertexMaterials[Polys[start_index].I]);
 	DX8Wrapper::Set_Shader(Shaders[start_index]);
-#endif // _WIN32
+#endif // RTS_USE_DX8
 	int next_index = start_index;
 	while (	(next_index < Polys.Count()) && 
 				(Textures[next_index] == Textures[start_index]) &&
@@ -786,7 +786,7 @@ void SkinDecalMeshClass::Render(void)
 		return;
 	}
 
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	/*
 	** Skin decals coordinates are in world space
 	*/
@@ -863,7 +863,7 @@ void SkinDecalMeshClass::Render(void)
 		
 		cur_poly_index = next_poly_index;
 	}
-#endif // _WIN32
+#endif // RTS_USE_DX8
 }
 
 
@@ -884,11 +884,11 @@ void SkinDecalMeshClass::Render(void)
  *=============================================================================================*/
 int SkinDecalMeshClass::Process_Material_Run(int start_index)
 {
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	DX8Wrapper::Set_Texture(0,Textures[start_index]);
 	DX8Wrapper::Set_Material(VertexMaterials[Polys[start_index].I]);
 	DX8Wrapper::Set_Shader(Shaders[start_index]);
-#endif // _WIN32
+#endif // RTS_USE_DX8
 
 	int next_index = start_index;
 	while (	(next_index < Polys.Count()) && 

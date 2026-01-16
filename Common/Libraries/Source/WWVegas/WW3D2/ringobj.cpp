@@ -512,7 +512,7 @@ void RingRenderObjClass::render_ring(RenderInfoClass & rinfo,const Vector3 & cen
 	} else {
 		RingShader.Set_Texturing (ShaderClass::TEXTURING_DISABLE);
 	}
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	DX8Wrapper::Set_Shader(RingShader);
 	DX8Wrapper::Set_Texture(0,RingTexture);
 	DX8Wrapper::Set_Material(RingMaterial);	
@@ -577,7 +577,7 @@ void RingRenderObjClass::render_ring(RenderInfoClass & rinfo,const Vector3 & cen
 		0,
 		ring.Vertex_ct);
 #endif
-#endif // _WIN32
+#endif // RTS_USE_DX8
 } // render_ring
 
 
@@ -735,9 +735,9 @@ void RingRenderObjClass::Render(RenderInfoClass & rinfo)
 			rinfo.Gerd.loadMatrix (srtm);	 
 	#endif //WW3D_DX8
 		} else {
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 			DX8Wrapper::Set_Transform(D3DTS_WORLD,temp);
-#endif // _WIN32
+#endif // RTS_USE_DX8
 		}
 
 		//

@@ -1125,7 +1125,7 @@ bool TexProjectClass::Compute_Texture(RenderObjClass * model,SpecialRenderInfoCl
 	TextureClass * rtarget = Peek_Render_Target();
 
 	if (rtarget != NULL) {
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 		/*
 		** Set the render target
 		*/

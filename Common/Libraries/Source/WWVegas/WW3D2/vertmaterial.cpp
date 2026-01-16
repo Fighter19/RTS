@@ -62,7 +62,7 @@ class DynD3DMATERIAL8 : public W3DMPO
 {
 	W3DMPO_GLUE(DynD3DMATERIAL8)
 public:
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	D3DMATERIAL8 Mat;
 #endif
 };
@@ -83,7 +83,7 @@ VertexMaterialClass::VertexMaterialClass(void):
 	MaterialOld(NULL),
 #endif
 	Flags(0),
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	AmbientColorSource(D3DMCS_MATERIAL),
 	EmissiveColorSource(D3DMCS_MATERIAL),
 	DiffuseColorSource(D3DMCS_MATERIAL),
@@ -105,7 +105,7 @@ VertexMaterialClass::VertexMaterialClass(void):
 #else
 	MaterialOld=W3DNEW D3DMATERIAL8;
 #endif
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	memset(Material,0,sizeof(D3DMATERIAL8));
 #endif
 	Set_Ambient(1.0f,1.0f,1.0f);
@@ -148,7 +148,7 @@ VertexMaterialClass::VertexMaterialClass(const VertexMaterialClass & src) :
 #else
 	MaterialOld=W3DNEW D3DMATERIAL8;
 #endif
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	memcpy(Material, SRCMATPTR(&src), sizeof(D3DMATERIAL8));
 #endif
 }
@@ -207,7 +207,7 @@ VertexMaterialClass & VertexMaterialClass::operator = (const VertexMaterialClass
 			}
 			UVSource[stage] = src.UVSource[stage];
 		}
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 		*Material = *SRCMATPTR(&src);
 #endif
 	}
@@ -217,7 +217,7 @@ VertexMaterialClass & VertexMaterialClass::operator = (const VertexMaterialClass
 unsigned long VertexMaterialClass::Compute_CRC(void) const
 {
 	unsigned long crc = 0;
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 // don't include the name when determining whether two vertex materials match
 //	crc = CRC_Memory(reinterpret_cast<const unsigned char *>(Name.Peek_Buffer()),sizeof(char)*strlen(Name),crc);
 
@@ -244,7 +244,7 @@ unsigned long VertexMaterialClass::Compute_CRC(void) const
 void VertexMaterialClass::Get_Ambient(Vector3 * set) const
 {
 	assert(set); 
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	*set=Vector3(Material->Ambient.r,Material->Ambient.g,Material->Ambient.b);
 #endif
 }
@@ -252,7 +252,7 @@ void VertexMaterialClass::Get_Ambient(Vector3 * set) const
 void VertexMaterialClass::Set_Ambient(const Vector3 & color)
 {
 	CRCDirty=true;
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	Material->Ambient.r=color.X;
 	Material->Ambient.g=color.Y;
 	Material->Ambient.b=color.Z;	
@@ -262,7 +262,7 @@ void VertexMaterialClass::Set_Ambient(const Vector3 & color)
 void VertexMaterialClass::Set_Ambient(float r,float g,float b)
 {
 	CRCDirty=true;
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	Material->Ambient.r=r;
 	Material->Ambient.g=g;
 	Material->Ambient.b=b;	
@@ -274,7 +274,7 @@ void VertexMaterialClass::Set_Ambient(float r,float g,float b)
 void VertexMaterialClass::Get_Diffuse(Vector3 * set) const
 {
 	assert(set); 
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	*set=Vector3(Material->Diffuse.r,Material->Diffuse.g,Material->Diffuse.b);
 #endif
 }
@@ -282,7 +282,7 @@ void VertexMaterialClass::Get_Diffuse(Vector3 * set) const
 void VertexMaterialClass::Set_Diffuse(const Vector3 & color)
 {
 	CRCDirty=true;
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	Material->Diffuse.r=color.X;
 	Material->Diffuse.g=color.Y;
 	Material->Diffuse.b=color.Z;
@@ -292,7 +292,7 @@ void VertexMaterialClass::Set_Diffuse(const Vector3 & color)
 void VertexMaterialClass::Set_Diffuse(float r,float g,float b)
 {
 	CRCDirty=true;
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	Material->Diffuse.r=r;
 	Material->Diffuse.g=g;
 	Material->Diffuse.b=b;
@@ -304,7 +304,7 @@ void VertexMaterialClass::Set_Diffuse(float r,float g,float b)
 void VertexMaterialClass::Get_Specular(Vector3 * set) const
 {
 	assert(set);
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	*set=Vector3(Material->Specular.r,Material->Specular.g,Material->Specular.b);
 #endif
 }
@@ -312,7 +312,7 @@ void VertexMaterialClass::Get_Specular(Vector3 * set) const
 void VertexMaterialClass::Set_Specular(const Vector3 & color)
 {
 	CRCDirty=true;
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	Material->Specular.r=color.X;
 	Material->Specular.g=color.Y;
 	Material->Specular.b=color.Z;
@@ -322,7 +322,7 @@ void VertexMaterialClass::Set_Specular(const Vector3 & color)
 void VertexMaterialClass::Set_Specular(float r,float g,float b)
 {
 	CRCDirty=true;
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	Material->Specular.r=r;
 	Material->Specular.g=g;
 	Material->Specular.b=b;
@@ -334,7 +334,7 @@ void VertexMaterialClass::Set_Specular(float r,float g,float b)
 void VertexMaterialClass::Get_Emissive(Vector3 * set) const
 {
 	assert(set); 
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	*set=Vector3(Material->Emissive.r,Material->Emissive.g,Material->Emissive.b);
 #endif
 }
@@ -342,7 +342,7 @@ void VertexMaterialClass::Get_Emissive(Vector3 * set) const
 void VertexMaterialClass::Set_Emissive(const Vector3 & color)
 {
 	CRCDirty=true;
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	Material->Emissive.r=color.X;
 	Material->Emissive.g=color.Y;
 	Material->Emissive.b=color.Z;
@@ -352,7 +352,7 @@ void VertexMaterialClass::Set_Emissive(const Vector3 & color)
 void VertexMaterialClass::Set_Emissive(float r,float g,float b)
 {
 	CRCDirty=true;
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	Material->Emissive.r=r;
 	Material->Emissive.g=g;
 	Material->Emissive.b=b;
@@ -362,7 +362,7 @@ void VertexMaterialClass::Set_Emissive(float r,float g,float b)
 
 float	VertexMaterialClass::Get_Shininess(void) const
 {
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	return Material->Power;
 #else
 	return 0.0f; // Placeholder for non-Windows platforms
@@ -372,7 +372,7 @@ float	VertexMaterialClass::Get_Shininess(void) const
 void	VertexMaterialClass::Set_Shininess(float shin)
 {
 	CRCDirty=true;
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	Material->Power=shin;
 #else
 	// Placeholder for non-Windows platforms
@@ -382,7 +382,7 @@ void	VertexMaterialClass::Set_Shininess(float shin)
 
 float	VertexMaterialClass::Get_Opacity(void) const
 {
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	return Material->Diffuse.a;
 #else
 	return 0.0f; // Placeholder for non-Windows platforms
@@ -392,7 +392,7 @@ float	VertexMaterialClass::Get_Opacity(void) const
 void	VertexMaterialClass::Set_Opacity(float o)
 {
 	CRCDirty=true;
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	Material->Diffuse.a=o;
 #endif
 }
@@ -400,7 +400,7 @@ void	VertexMaterialClass::Set_Opacity(float o)
 void	VertexMaterialClass::Set_Ambient_Color_Source(ColorSourceType src)
 {
 	CRCDirty=true;
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	switch (src) 
 	{
 	case	COLOR1:		AmbientColorSource = D3DMCS_COLOR1; break;
@@ -413,7 +413,7 @@ void	VertexMaterialClass::Set_Ambient_Color_Source(ColorSourceType src)
 void	VertexMaterialClass::Set_Emissive_Color_Source(ColorSourceType src)
 {
 	CRCDirty=true;
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	switch (src) 
 	{
 	case	COLOR1:		EmissiveColorSource = D3DMCS_COLOR1; break;
@@ -426,7 +426,7 @@ void	VertexMaterialClass::Set_Emissive_Color_Source(ColorSourceType src)
 void	VertexMaterialClass::Set_Diffuse_Color_Source(ColorSourceType src)
 {
 	CRCDirty=true;
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	switch (src) 
 	{
 	case	COLOR1:		DiffuseColorSource = D3DMCS_COLOR1; break;
@@ -439,7 +439,7 @@ void	VertexMaterialClass::Set_Diffuse_Color_Source(ColorSourceType src)
 VertexMaterialClass::ColorSourceType 
 VertexMaterialClass::Get_Ambient_Color_Source(void)
 {
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	switch(AmbientColorSource) 
 	{
 	case D3DMCS_COLOR1:	return COLOR1;
@@ -452,7 +452,7 @@ VertexMaterialClass::Get_Ambient_Color_Source(void)
 VertexMaterialClass::ColorSourceType 
 VertexMaterialClass::Get_Emissive_Color_Source(void)
 {
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	switch(EmissiveColorSource) 
 	{
 	case D3DMCS_COLOR1:	return COLOR1;
@@ -465,7 +465,7 @@ VertexMaterialClass::Get_Emissive_Color_Source(void)
 VertexMaterialClass::ColorSourceType	
 VertexMaterialClass::Get_Diffuse_Color_Source(void)
 {
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	switch(DiffuseColorSource) 
 	{
 	case D3DMCS_COLOR1:	return COLOR1;
@@ -964,7 +964,7 @@ WW3DErrorType VertexMaterialClass::Save_W3D(ChunkSaveClass & csave)
 void VertexMaterialClass::Apply(void) const
 {
 	int i;
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	DX8Wrapper::Set_DX8_Material(Material);
 
 	if (WW3D::Is_Coloring_Enabled())
@@ -990,7 +990,7 @@ void VertexMaterialClass::Apply(void) const
 void VertexMaterialClass::Apply_Null(void)
 {
 	int i;
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	static D3DMATERIAL8 default_settings = 
 	{
 		{ 1.0f, 1.0f, 1.0f, 1.0f },	// diffuse

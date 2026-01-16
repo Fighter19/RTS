@@ -133,7 +133,7 @@ VectorClass<Vector2>			VertexUV;		// vertex texture coords
 #define MAX_QUAD_POINTS		MAX_VB_SIZE/4
 #define MAX_QUAD_IB_SIZE	6*MAX_QUAD_POINTS
 
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 DX8IndexBufferClass			*Tris, *Quads;						// Index buffers.
 SortingIndexBufferClass		*SortingTris, *SortingQuads;	// Sorting index buffers.
 #endif
@@ -882,7 +882,7 @@ void PointGroupClass::Render(RenderInfoClass &rinfo)
 
 	// Get the world and view matrices
 	Matrix4 view;
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	DX8Wrapper::Get_Transform(D3DTS_VIEW,view);
 #endif
 
@@ -919,7 +919,7 @@ void PointGroupClass::Render(RenderInfoClass &rinfo)
 
 	// the locations are now in view space
 	// so set world and view matrices to identity and render
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	Matrix4 identity(true);
 	DX8Wrapper::Set_Transform(D3DTS_WORLD,identity);	
 	DX8Wrapper::Set_Transform(D3DTS_VIEW,identity);	
@@ -994,7 +994,7 @@ void PointGroupClass::Render(RenderInfoClass &rinfo)
 
 	// restore the matrices
 	DX8Wrapper::Set_Transform(D3DTS_VIEW,view);
-#endif //_WIN32
+#endif //RTS_USE_DX8
 }
 
 
@@ -1206,7 +1206,7 @@ void PointGroupClass::Update_Arrays(
 				Matrix4 view;
 				Vector4 result;
 				if (!Billboard) {
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 					DX8Wrapper::Get_Transform(D3DTS_VIEW,view);
 #endif
 				}
@@ -1216,7 +1216,7 @@ void PointGroupClass::Update_Arrays(
 					if (!Billboard) {
 						// If we're not billboarding, then the coordinate we have is in screen space.
 						Matrix4 rotMat;
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 						D3DXMatrixRotationZ(&(D3DXMATRIX&) rotMat, ((float)point_orientation[i] / 255.0f * 2 * D3DX_PI));
 #endif
 						Vector4 orientedVecX = rotMat * GroundMultiplierX;
@@ -1532,7 +1532,7 @@ void PointGroupClass::_Init(void)
 	}
 
 	// Create the IBs
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	Tris=NEW_REF(DX8IndexBufferClass,(MAX_TRI_IB_SIZE));	
 	Quads=NEW_REF(DX8IndexBufferClass,(MAX_QUAD_IB_SIZE));	
 	SortingTris=NEW_REF(SortingIndexBufferClass,(MAX_TRI_IB_SIZE));	
@@ -1613,7 +1613,7 @@ void PointGroupClass::_Shutdown(void)
 		delete [] _QuadVertexUVFrameTable[i];
 	}
 	REF_PTR_RELEASE(PointMaterial);
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	REF_PTR_RELEASE(SortingQuads);
 	REF_PTR_RELEASE(SortingTris);
 	REF_PTR_RELEASE(Quads);
@@ -1699,11 +1699,11 @@ void PointGroupClass::RenderVolumeParticle(RenderInfoClass &rinfo, unsigned int 
 
 		// Get the world and view matrices
 		Matrix4 view;
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 		DX8Wrapper::Get_Transform(D3DTS_VIEW,view);
 #endif
 
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	//// VOLUME_PARTICLE LOOP ///////////////
 	for ( int t = 0; t < depth; ++t )
 	{
@@ -1920,7 +1920,7 @@ void PointGroupClass::RenderVolumeParticle(RenderInfoClass &rinfo, unsigned int 
 
 	// restore the matrices
 	DX8Wrapper::Set_Transform(D3DTS_VIEW,view);
-	#endif// _WIN32
+	#endif// RTS_USE_DX8
 }
 
 

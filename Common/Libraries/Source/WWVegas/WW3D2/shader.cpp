@@ -43,14 +43,14 @@
 #include "shader.h"
 #include "w3d_file.h"
 #include "wwdebug.h"
-#ifdef _WIN32
-#include "Dx8Wrapper.h"
+#ifdef RTS_USE_DX8
+#include "dx8wrapper.h"
 #include "dx8caps.h"
 #endif
 
 bool ShaderClass::ShaderDirty=true;
 unsigned long ShaderClass::CurrentShader=0;
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 unsigned long _PolygonCullMode = D3DCULL_CW;
 #else 
 unsigned long _PolygonCullMode = 0; // No culling on non-Windows platforms
@@ -356,7 +356,7 @@ void ShaderClass::Report_Unable_To_Fog (const char *source)
 	#endif
 }
 
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 class Blend
 {
 public:
@@ -388,7 +388,7 @@ const Blend dstBlendLUT[ShaderClass::DSTBLEND_MAX] =
  	Blend(D3DBLEND_SRCALPHA, true),
  	Blend(D3DBLEND_INVSRCALPHA, true)
 };
-#endif // _WIN32
+#endif // RTS_USE_DX8
 
 /***********************************************************************************************
  * ShaderClass::Apply -- Apply the renderstates for this shader                                *
@@ -406,7 +406,7 @@ void ShaderClass::Apply()
 {
 	unsigned long diff;
 
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	unsigned int TextureOpCaps=DX8Caps::Get_Default_Caps().TextureOpCaps;
 #endif 
 	if (ShaderDirty)
@@ -424,7 +424,7 @@ void ShaderClass::Apply()
 	CurrentShader=ShaderBits;
 	ShaderDirty=false;
 	// COLOR MASK
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	if(diff & (ShaderClass::MASK_COLORMASK | ShaderClass::MASK_SRCBLEND | ShaderClass::MASK_DSTBLEND | ShaderClass::MASK_ALPHATEST))
 	{
 		ULONG planeMask = 0xffffff;
@@ -824,7 +824,7 @@ void ShaderClass::Apply()
 
 	// Enable/disable alpha test
 	DX8Wrapper::Set_DX8_Render_State(D3DRS_ALPHATESTENABLE,BOOL(Get_Alpha_Test()));	
-#endif // _WIN32
+#endif // RTS_USE_DX8
 	// Enable/disable stencil test
 	// Not supported yet
 }
@@ -844,7 +844,7 @@ void ShaderClass::Apply()
  *=============================================================================================*/
 void ShaderClass::Invert_Backface_Culling(bool onoff)
 {
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	if (onoff == true) {
 		_PolygonCullMode = D3DCULL_CCW;
 	} else {
@@ -940,7 +940,7 @@ int ShaderClass::Guess_Sort_Level(void) const
  *=============================================================================================*/
 bool ShaderClass::Is_Backface_Culling_Inverted(void)
 {
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	return (_PolygonCullMode == D3DCULL_CCW);
 #else
 	return false; // Not supported yet

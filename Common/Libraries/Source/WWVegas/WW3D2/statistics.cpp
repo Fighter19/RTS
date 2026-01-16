@@ -30,7 +30,7 @@
 #include "osdep.h"
 #endif
 
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 #include "dx8renderer.h"
 #include "dx8wrapper.h"
 #include "dx8caps.h"
@@ -298,7 +298,7 @@ void Debug_Statistics::Record_DX8_Skin_Polys_And_Vertices(int pcount,int vcount)
 
 void Debug_Statistics::Record_DX8_Polys_And_Vertices(int pcount,int vcount,const ShaderClass& shader)
 {
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	if (shader.Get_NPatch_Enable()==ShaderClass::NPATCH_ENABLE && DX8Caps::Support_NPatches()) {
 		unsigned level=WW3D::Get_NPatches_Level();
 		level*=level;
@@ -374,7 +374,7 @@ void Debug_Statistics::Begin_Statistics()
 	sorting_vertices=0;
 	draw_calls=0;
 	Record_Texture_Begin();
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	DX8Wrapper::Begin_Statistics();
 #endif
 //	DX8MeshRendererClass::Begin_Statistics();
@@ -393,7 +393,7 @@ void Debug_Statistics::End_Statistics()
 	last_frame_draw_calls=draw_calls;
 
 //	DX8MeshRendererClass::End_Statistics();
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	DX8Wrapper::End_Statistics();
 #endif
 }

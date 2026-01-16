@@ -223,7 +223,7 @@ SurfaceClass::SurfaceClass(unsigned width, unsigned height, WW3DFormat format):
 {
 	WWASSERT(width);
 	WWASSERT(height);
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	D3DSurface = DX8Wrapper::_Create_DX8_Surface(width, height, format);
 #endif
 }
@@ -231,7 +231,7 @@ SurfaceClass::SurfaceClass(unsigned width, unsigned height, WW3DFormat format):
 SurfaceClass::SurfaceClass(const char *filename):
 	D3DSurface(NULL)
 {
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	D3DSurface = DX8Wrapper::_Create_DX8_Surface(filename);
 #endif
 	SurfaceDescription desc;
@@ -251,7 +251,7 @@ SurfaceClass::SurfaceClass(IDirect3DSurface8 *d3d_surface)	:
 SurfaceClass::~SurfaceClass(void)
 {
 	if (D3DSurface) {
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 		D3DSurface->Release();
 #endif
 		D3DSurface = NULL;
@@ -260,7 +260,7 @@ SurfaceClass::~SurfaceClass(void)
 
 void SurfaceClass::Get_Description(SurfaceDescription &surface_desc)
 {
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	D3DSURFACE_DESC d3d_desc;
 	::ZeroMemory(&d3d_desc, sizeof(D3DSURFACE_DESC));
 	DX8_ErrorCode(D3DSurface->GetDesc(&d3d_desc));
@@ -272,7 +272,7 @@ void SurfaceClass::Get_Description(SurfaceDescription &surface_desc)
 
 void * SurfaceClass::Lock(int * pitch)
 {
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	D3DLOCKED_RECT lock_rect;	
 	::ZeroMemory(&lock_rect, sizeof(D3DLOCKED_RECT));
 	DX8_ErrorCode(D3DSurface->LockRect(&lock_rect, 0, 0));
@@ -283,7 +283,7 @@ void * SurfaceClass::Lock(int * pitch)
 
 void SurfaceClass::Unlock(void)
 {
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	DX8_ErrorCode(D3DSurface->UnlockRect());
 #endif
 }
@@ -310,7 +310,7 @@ void SurfaceClass::Clear()
 
 	// size of each pixel in bytes
 	unsigned int size=PixelSize(sd);
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	D3DLOCKED_RECT lock_rect;	
 	::ZeroMemory(&lock_rect, sizeof(D3DLOCKED_RECT));
 	DX8_ErrorCode(D3DSurface->LockRect(&lock_rect,0,0));
@@ -350,7 +350,7 @@ void SurfaceClass::Copy(const unsigned char *other)
 
 	// size of each pixel in bytes
 	unsigned int size=PixelSize(sd);
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	D3DLOCKED_RECT lock_rect;	
 	::ZeroMemory(&lock_rect, sizeof(D3DLOCKED_RECT));
 	DX8_ErrorCode(D3DSurface->LockRect(&lock_rect,0,0));
@@ -390,7 +390,7 @@ void SurfaceClass::Copy(Vector2i &min,Vector2i &max, const unsigned char *other)
 
 	// size of each pixel in bytes
 	unsigned int size=PixelSize(sd);
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	D3DLOCKED_RECT lock_rect;	
 	::ZeroMemory(&lock_rect, sizeof(D3DLOCKED_RECT));
 	RECT rect;
@@ -442,7 +442,7 @@ unsigned char *SurfaceClass::CreateCopy(int *width,int *height,int*size,bool fli
 	*size=mysize;
 
 	unsigned char *other=W3DNEWARRAY unsigned char [sd.Height*sd.Width*mysize];
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	D3DLOCKED_RECT lock_rect;	
 	::ZeroMemory(&lock_rect, sizeof(D3DLOCKED_RECT));
 	DX8_ErrorCode(D3DSurface->LockRect(&lock_rect,0,D3DLOCK_READONLY));
@@ -495,7 +495,7 @@ void SurfaceClass::Copy(
 	SurfaceDescription sd,osd;
 	Get_Description(sd);
 	const_cast <SurfaceClass*>(other)->Get_Description(osd);
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	RECT src;
 	src.left=srcx;
 	src.right=srcx+width;
@@ -553,7 +553,7 @@ void SurfaceClass::Stretch_Copy(
 	SurfaceDescription sd,osd;
 	Get_Description(sd);
 	const_cast <SurfaceClass*>(other)->Get_Description(osd);
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	RECT src;
 	src.left=srcx;
 	src.right=srcx+srcwidth;
@@ -603,7 +603,7 @@ void SurfaceClass::FindBB(Vector2i *min,Vector2i*max)
 	case 8: mask=0xff;
 		break;
 	}
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	D3DLOCKED_RECT lock_rect;
 	::ZeroMemory(&lock_rect, sizeof(D3DLOCKED_RECT));
 	RECT rect;
@@ -681,7 +681,7 @@ bool SurfaceClass::Is_Transparent_Column(unsigned int column)
 	}
 
 	unsigned int size=PixelSize(sd);
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	D3DLOCKED_RECT lock_rect;
 	::ZeroMemory(&lock_rect, sizeof(D3DLOCKED_RECT));
 	RECT rect;
@@ -699,7 +699,7 @@ bool SurfaceClass::Is_Transparent_Column(unsigned int column)
 	// the assumption here is that whenever a pixel has alpha it's in the MSB
 	for (y = 0; y < (int) sd.Height; y++)
 	{
-		unsigned char *alpha=(unsigned char*) ((unsigned int)lock_rect.pBits+y*lock_rect.Pitch);		
+		unsigned char *alpha=(unsigned char*) ((uintptr_t)lock_rect.pBits+y*lock_rect.Pitch);		
 		#pragma MESSAGE("HY - this is not endian safe")
 		unsigned char myalpha=alpha[size-1];		
 		myalpha=(myalpha>>(8-alphabits)) & mask;		
@@ -736,7 +736,7 @@ void SurfaceClass::Get_Pixel(Vector3 &rgb, int x,int y)
 
 	x = min(x,(int)sd.Width - 1);
 	y = min(y,(int)sd.Height - 1);
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	D3DLOCKED_RECT lock_rect;
 	::ZeroMemory(&lock_rect, sizeof(D3DLOCKED_RECT));
 	RECT rect;
@@ -777,7 +777,7 @@ void SurfaceClass::Attach (IDirect3DSurface8 *surface)
 	//	Lock a reference onto the object
 	//
 	if (D3DSurface != NULL) {
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 		D3DSurface->AddRef ();
 #endif
 	}
@@ -807,7 +807,7 @@ void SurfaceClass::Detach (void)
 	//	Release the hold we have on the D3D object
 	//
 	if (D3DSurface != NULL) {
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 		D3DSurface->Release ();
 #endif
 	}
@@ -837,7 +837,7 @@ void SurfaceClass::DrawPixel(const unsigned int x,const unsigned int y, unsigned
 	Get_Description(sd);
 
 	unsigned int size=PixelSize(sd);
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	D3DLOCKED_RECT lock_rect;
 	::ZeroMemory(&lock_rect, sizeof(D3DLOCKED_RECT));
 	RECT rect;
@@ -892,7 +892,7 @@ void SurfaceClass::DrawHLine(const unsigned int y,const unsigned int x1, const u
 	Get_Description(sd);
 
 	unsigned int size=PixelSize(sd);
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	D3DLOCKED_RECT lock_rect;
 	::ZeroMemory(&lock_rect, sizeof(D3DLOCKED_RECT));
 	RECT rect;

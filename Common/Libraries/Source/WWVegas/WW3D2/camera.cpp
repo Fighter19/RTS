@@ -722,7 +722,7 @@ void CameraClass::Apply(void)
 	bool windowed;
 	WW3D::Get_Render_Target_Resolution(width,height,bits,windowed);
 	
-#ifdef _WIN32
+#ifdef RTS_USE_DX8
 	D3DVIEWPORT8 vp;
 	vp.X = (DWORD)(Viewport.Min.X * (float)width);
 	vp.Y = (DWORD)(Viewport.Min.Y * (float)height);
