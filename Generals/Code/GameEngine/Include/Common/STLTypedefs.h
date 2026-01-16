@@ -194,8 +194,9 @@ namespace rts
 	{
 		size_t operator()(AsciiString ast) const
 		{ 
-			std::hash<const char *> tmp;
-			return tmp((const char *) ast.str());
+			// TheSuperHackers @bugfix xezon 16/03/2025 Re-implements hash function that works with non-STLPort.
+			std::hash<std::string_view> hasher;
+			return hasher(std::string_view(ast.str(), ast.getLength()));
 		}
 	};
 
