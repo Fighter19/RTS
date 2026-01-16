@@ -624,7 +624,7 @@ void SurfaceClass::FindBB(Vector2i *min,Vector2i*max)
 	// the assumption here is that whenever a pixel has alpha it's in the MSB
 	for (y = min->J; y < max->J; y++) {
 		for (x = min->I; x < max->I; x++) {
-			unsigned char *alpha=(unsigned char*) ((unsigned int)lock_rect.pBits+(y-min->J)*lock_rect.Pitch+(x-min->I)*size);
+			unsigned char *alpha=(unsigned char*) ((uintptr_t)lock_rect.pBits+(y-min->J)*lock_rect.Pitch+(x-min->I)*size);
 			#pragma MESSAGE("HY - this is not endian safe")
 			unsigned char myalpha=alpha[size-1];
 			myalpha=(myalpha>>(8-alphabits)) & mask;
