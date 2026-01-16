@@ -444,8 +444,9 @@ void OpenALAudioManager::audioDebugDisplay(DebugDisplayInterface* dd, void*, FIL
 
 // Debug callback for OpenAL errors
 static void AL_APIENTRY debugCallbackAL(ALenum source, ALenum type, ALuint id,
-	ALenum severity, ALsizei length, const ALchar* message, void* userParam ) AL_API_NOEXCEPT17
+	ALenum severity, ALsizei length, const ALchar* message, void* userParam )
 {
+#if 0
 	switch (severity)
 	{
 	case AL_DEBUG_SEVERITY_HIGH_EXT:
@@ -461,6 +462,7 @@ static void AL_APIENTRY debugCallbackAL(ALenum source, ALenum type, ALuint id,
 		DEBUG_LOG(("OpenAL Message: %s", message));
 		break;
 	}
+#endif
 }
 
 ALenum OpenALAudioManager::getALFormat(uint8_t channels, uint8_t bitsPerSample)
@@ -1523,12 +1525,14 @@ void OpenALAudioManager::openDevice(void)
 		return;
 	}
 
+#if 0
 	if (alcIsExtensionPresent(m_alcDevice, "ALC_EXT_debug")) {
 		auto alDebugMessageCallbackEXT = LPALDEBUGMESSAGECALLBACKEXT{};
 		LOAD_ALC_PROC(alDebugMessageCallbackEXT);
 		alEnable(AL_DEBUG_OUTPUT_EXT);
 		alDebugMessageCallbackEXT(debugCallbackAL, nullptr);
 	}
+#endif
 
 	selectProvider(TheAudio->getProviderIndex(m_pref3DProvider));
 
