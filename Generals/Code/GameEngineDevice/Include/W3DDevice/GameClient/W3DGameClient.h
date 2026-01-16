@@ -51,6 +51,8 @@
 #ifdef _WIN32
 #include "Win32Device/GameClient/Win32DIKeyboard.h"
 #include "Win32Device/GameClient/Win32DIMouse.h"
+#else
+#include "SDL3Device/GameClient/SDL3Keyboard.h"
 #endif
 #include "Win32Device/GameClient/Win32Mouse.h"
 #include "W3DDevice/GameClient/W3DMouse.h"
@@ -132,7 +134,7 @@ protected:
 #ifdef _WIN32
 inline Keyboard *W3DGameClient::createKeyboard( void ) { return NEW DirectInputKeyboard; }
 #else
-inline Keyboard *W3DGameClient::createKeyboard( void ) { return NULL; }
+inline Keyboard *W3DGameClient::createKeyboard( void ) { return NEW SDL3Keyboard; }
 #endif
 inline Mouse *W3DGameClient::createMouse( void )
 {
