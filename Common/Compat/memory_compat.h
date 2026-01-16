@@ -2,6 +2,8 @@
 #include <alloca.h>
 #include <cstdint>
 
+#define MEMORYSTATUS MEMORYSTATUSrenamed
+
 struct MEMORYSTATUS
 {
     uint32_t dwLength;

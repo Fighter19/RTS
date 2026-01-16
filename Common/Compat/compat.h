@@ -82,6 +82,7 @@
 #include "tchar_compat.h"
 #include "wchar_compat.h"
 #include "time_compat.h"
+#include "windows_base.h"
 #include "memory_compat.h"
 #ifndef _WIN32
 #include "windows_compat.h"
