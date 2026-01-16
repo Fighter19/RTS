@@ -414,7 +414,7 @@ void GameEngine::init( int argc, char *argv[] )
 		// for fingerprinting, we need to ensure the presence of these files
 		AsciiString dirName;
 		dirName = TheArchiveFileSystem->getArchiveFilenameForFile("generalsb.sec");
-		if (dirName.compareNoCase("gensec.big") != 0)
+		if (dirName.compareNoCase("gensec.big") != 0 && dirName.compareNoCase("./gensec.big") != 0)
 		{
 			DEBUG_LOG(("generalsb.sec was not found in gensec.big - it was in '%s'\n", dirName.str()));
 			m_quitting = TRUE;
@@ -426,7 +426,7 @@ void GameEngine::init( int argc, char *argv[] )
 			dirName = noPath + 1;
 		}
 
-		if (dirName.compareNoCase("music.big") != 0)
+		if (dirName.compareNoCase("music.big") != 0 && dirName.compareNoCase("./music.big") != 0)
 		{
 			DEBUG_LOG(("generalsa.sec was not found in music.big - it was in '%s'\n", dirName.str()));
 			m_quitting = TRUE;
